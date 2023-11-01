@@ -95,7 +95,7 @@ const generateDocsDefaultOptions = (
   //    gitRevision: string;
   //    gitRemote: string;
   //    gaID: string;
-  //    theme: string;
+  theme: "default",
   //    lightHighlightTheme: ShikiTheme;
   //    darkHighlightTheme: ShikiTheme;
 

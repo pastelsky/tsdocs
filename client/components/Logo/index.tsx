@@ -6,6 +6,7 @@ const Index = ({ minWidth, maxWidth, fluidWidth, showAlpha }) => {
     <div
       style={{
         width: `clamp(${minWidth}, ${fluidWidth}, ${maxWidth})`,
+        minWidth: minWidth,
         height: "auto",
       }}
       className={styles.logoContainer}

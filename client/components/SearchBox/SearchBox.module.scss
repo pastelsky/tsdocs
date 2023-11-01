@@ -13,6 +13,7 @@
 }
 
 .searchInput, .searchSuggestionMenu {
+    width: 35vw;
     width: clamp(30rem, 35vw, 40rem);
 }
 
@@ -20,6 +21,7 @@
     @include popup;
     border-radius: 0 0 4px 4px ;
     list-style: none;
+    max-width: 100vw;
     max-width: clamp(15rem, 100vw, 30rem);
     box-shadow: var(--shadow-overlay);
     position: absolute;
