@@ -31,38 +31,39 @@ app
         return true;
       },
       extensions: ["html", "js", "css"],
-      list: {
-        format: "html",
-        render: (dirs, files) => {
-          return `
-            <html>
-            <head>
-                 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yegor256/tacit@gh-pages/tacit-css-1.6.0.min.css"/>
-            </head>
-            <body>
-           
-            <ul>
-              ${dirs
-                .map(
-                  (dir) =>
-                    `<li><a href="${`/docs/` + dir.href}">${dir.name}</a></li>`,
-                )
-                .join("\n  ")}
-            </ul>
-            <ul>
-              ${files
-                .map(
-                  (file) =>
-                    `<li><a href="${"/docs" + file.href}">${
-                      file.name
-                    }</a></li>`,
-                )
-                .join("\n  ")}
-            </ul>
-            </body></html>
-            `;
-        },
-      },
+      list: false,
+      // list: {
+      //   format: "html",
+      //   render: (dirs, files) => {
+      //     return `
+      //       <html>
+      //       <head>
+      //            <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yegor256/tacit@gh-pages/tacit-css-1.6.0.min.css"/>
+      //       </head>
+      //       <body>
+      //
+      //       <ul>
+      //         ${dirs
+      //           .map(
+      //             (dir) =>
+      //               `<li><a href="${`/docs/` + dir.href}">${dir.name}</a></li>`,
+      //           )
+      //           .join("\n  ")}
+      //       </ul>
+      //       <ul>
+      //         ${files
+      //           .map(
+      //             (file) =>
+      //               `<li><a href="${"/docs" + file.href}">${
+      //                 file.name
+      //               }</a></li>`,
+      //           )
+      //           .join("\n  ")}
+      //       </ul>
+      //       </body></html>
+      //       `;
+      //   },
+      // },
       serve: false,
     });
 

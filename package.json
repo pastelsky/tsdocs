@@ -1,9 +1,11 @@
 {
+  "name": "tsdocs.dev",
   "private": true,
   "scripts": {
     "dev": "ts-node-dev --watch ./server,./server.ts --ignore-watch .next server.ts",
     "build": "next build",
     "start": "NODE_ENV=production ts-node  server.ts",
+    "start:production": "NODE_ENV=production pm2 start --interpreter none 'ts-node server.ts'",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -28,6 +30,7 @@
     "pacote": "^17.0.4",
     "pino-pretty": "^9.4.1",
     "pkg-dir": "5.0.0",
+    "pm2": "^5.3.0",
     "prettier": "^3.0.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
