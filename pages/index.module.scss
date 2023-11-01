@@ -1,0 +1,20 @@
+.homePageContent {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.logoContainer {
+  margin-top: -5rem;
+}
+
+.tagline {
+  margin-bottom: 1rem;
+  color: var(--font-color-subtext);
+}
+.searchContainer {
+  margin-bottom: 2rem;
+}

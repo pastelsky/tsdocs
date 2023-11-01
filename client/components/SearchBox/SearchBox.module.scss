@@ -1,0 +1,72 @@
+@import "../../../stylesheets/mixins";
+
+.searchBox {
+    z-index: 1;
+    top: 3rem;
+}
+
+.searchInput {
+    box-shadow: var(--shadow-overlay);
+    font-size: var(--font-size-xl);
+    padding: 0.8rem 1.2rem;
+    border: var(--separator-size) solid var(--separator-color);
+}
+
+.searchInput, .searchSuggestionMenu {
+    width: clamp(30rem, 35vw, 40rem);
+}
+
+.searchSuggestionMenu {
+    @include popup;
+    border-radius: 0 0 4px 4px ;
+    list-style: none;
+    max-width: clamp(15rem, 100vw, 30rem);
+    box-shadow: var(--shadow-overlay);
+    position: absolute;
+    backdrop-filter: blur(10px);
+    margin: -4px 0 0;
+
+    &:not(:empty) {
+        padding: 15px 10px 10px;
+    }
+
+    li {
+        cursor: pointer;
+        border-radius:5px;
+        padding: 10px 10px;
+
+        &[aria-selected="true"] {
+            background: var(--hover-bg);
+        }
+
+    }
+}
+
+.resultName {
+    font-weight: var(--font-weight-bold);
+
+    .searchHighlight {
+        @include selectedLabel;
+    }
+}
+
+.resultDescription {
+    //font-weight: var(--font-weight-light);
+    font-size: var(--font-size-sm);
+    color: var(--font-color-subtext);
+    font-family: var(--font-family-system);
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    .searchHighlight {
+        color: var(--selected-text-color-subdued);
+    }
+}
+
+.comboBoxContainer {
+    position: relative;
+    z-index: 1;
+}
+

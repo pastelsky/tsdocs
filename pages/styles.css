@@ -1,0 +1,66 @@
+@import url(~sanitize.css);
+
+:root {
+    --primary-bg-color: #fff;
+    --selected-stroke-color: #2c75d5;
+    --selected-border-color: #0e2d57;
+    --selected-bg: rgb(238, 245, 255);
+    --hover-bg: rgba(54, 141, 255, 0.1);
+    --primary-fg-color: #37373a;
+    --primary-fg-color-faded: rgb(242, 244, 246);
+    --secondary-color: #536390;
+    --separator-color: #e6e6ea;
+    --separator-size: 0.5px;
+    --bg-color: #fff;
+
+    --selected-text-color: #1064c9;
+    --selected-text-color-subdued: #508dde;
+    --font-color-subtext: #86868f;
+
+    --shadow-overlay: 0px 10px 15px rgba(32, 37, 46, 0.05), 0px 3px 5px rgba(23, 26, 33, 0.1);
+    --font-family-code: 'SF Mono', 'JetBrains Mono', Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
+    --font-family-system: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+
+
+    --input-bg-color: var(--primary-bg-color);
+
+    --font-weight-light: 200;
+    --font-weight-regular: 400;
+    --font-weight-bold: 600;
+
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.8rem;
+    --font-size-xl: 1.5rem;
+    --font-size-regular: 0.9rem;
+}
+
+
+body {
+    color: var(--primary-fg-color);
+    background: var(--primary-bg-color);
+    font-family: var(--font-family-system);
+    font-size: var(--font-size-regular);
+}
+
+input {
+    font-weight: 300;
+    appearance: none;
+    color: var(--primary-fg-color);
+    background: var(--input-bg-color);
+    font-family: var(--font-family-code);
+    letter-spacing: -1px;
+    border-radius: 5px;
+    outline: none;
+    border: none;
+    caret-color: var(--selected-stroke-color);
+}
+
+::placeholder {
+    font-weight: var(--font-weight-light);
+    color: var(--font-color-subtext);
+}
+
+a {
+    text-decoration: none;
+    color: var(--selected-text-color);
+}

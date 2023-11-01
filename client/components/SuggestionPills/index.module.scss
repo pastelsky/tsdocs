@@ -1,0 +1,21 @@
+.suggestionsPillsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.suggestionsPill {
+  background: var(--primary-fg-color-faded);
+  padding: 0.3rem 1rem;
+  border-radius: 2rem;
+  color: var(--primary-fg-color);
+
+  & + & {
+    margin-left: 1rem;
+  }
+
+  &:hover {
+    background: var(--hover-bg);
+  }
+}
