@@ -15,7 +15,7 @@ export default function Document() {
         />
         <meta
           name="description"
-          content="Find type documentation for any npm library that ships with types or has publically available types on Definitely Typed"
+          content="Find type documentation for any npm library that ships with types or has publicly available types on Definitely Typed"
         />
 
         <link
@@ -49,7 +49,7 @@ export default function Document() {
         />
         <meta
           property="og:description"
-          content="Find type documentation for any npm library that ships with types or has publically available types on Definitely Typed"
+          content="Find type documentation for any npm library that ships with types or has publicly available types on Definitely Typed"
         />
         <meta property="og:image" content="https://tsdocs.dev/og-image.png" />
 
@@ -61,7 +61,7 @@ export default function Document() {
         />
         <meta
           property="twitter:description"
-          content="Find type documentation for any npm library that ships with types or has publically available types on Definitely Typed"
+          content="Find type documentation for any npm library that ships with types or has publicly available types on Definitely Typed"
         />
         <meta
           property="twitter:image"
