@@ -17,7 +17,7 @@ export default function Home() {
           />
         </div>
         <div className={styles.tagline}>
-          browse type documentation for any typed package
+          browse type documentation for an npm package
         </div>
         <div className={styles.searchContainer}>
           <SearchBox
