@@ -31,7 +31,7 @@ ul {
     0px 3px 5px rgba(23, 26, 33, 0.21);
 }
 
-@media (prefers-color-scheme: light), @media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light), (prefers-color-scheme: dark) {
   :root[data-theme="light"],
   :root[data-theme="os"] {
     --light-color-ts-project: #2548b6;
