@@ -66,6 +66,10 @@ ul {
   }
 }
 
+html {
+  color-scheme: light;
+}
+
 pre {
   border: none;
 }
