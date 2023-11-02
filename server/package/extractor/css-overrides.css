@@ -35,6 +35,9 @@ ul {
   :root[data-theme="light"],
   :root[data-theme="dark"],
   :root[data-theme="os"] {
+    --light-color-text: #222;
+    --dark-color-text: #222;
+
     --light-color-ts-project: #2548b6;
     --light-color-ts-enum: #2548b6;
     --light-color-ts-variable: #962b89;
