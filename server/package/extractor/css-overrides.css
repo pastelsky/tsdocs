@@ -33,6 +33,7 @@ ul {
 
 @media (prefers-color-scheme: light), (prefers-color-scheme: dark) {
   :root[data-theme="light"],
+  :root[data-theme="dark"],
   :root[data-theme="os"] {
     --light-color-ts-project: #2548b6;
     --light-color-ts-enum: #2548b6;
@@ -47,6 +48,19 @@ ul {
     --light-color-background: #f7f7f8;
     --light-color-background-secondary: #f5f5f7;
 
+    --dark-color-ts-project: #2548b6;
+    --dark-color-ts-enum: #2548b6;
+    --dark-color-ts-variable: #962b89;
+    --dark-color-ts-type-parameter: #403e48;
+    --dark-color-ts-function: #5925bd;
+    --dark-color-ts-class: #2548b6;
+    --dark-color-ts-interface: #2586b6;
+    --dark-color-ts-type-alias: #2548b6;
+    --dark-color-accent: #e5e5e7;
+    --dark-code-background: rgb(245, 245, 247);
+    --dark-color-background: #f7f7f8;
+    --dark-color-background-secondary: #f5f5f7;
+
     /* Highlight Colors */
     --light-hl-0: #2f626c;
     --light-hl-1: #000000;
@@ -56,13 +70,28 @@ ul {
     --light-hl-5: #2f626c;
     --light-hl-6: #2f626c;
 
+    --dark-hl-0: #2f626c;
+    --dark-hl-1: #000000;
+    --dark-hl-2: #0070c1;
+    --dark-hl-3: #181818;
+    --dark-hl-4: #4e17b8;
+    --dark-hl-5: #2f626c;
+    --dark-hl-6: #2f626c;
+
     --light-color-text-aside: #82868a;
     --light-color-link: #1f59c2;
+
+    --dark-color-text-aside: #82868a;
+    --dark-color-link: #1f59c2;
 
     /* Custom */
     --light-color-text-light: #62636a;
     --light-color-separator: #f7f7f7;
     --light-color-separator-dark: #e4e4e4;
+
+    --dark-color-text-light: #62636a;
+    --dark-color-separator: #f7f7f7;
+    --dark-color-separator-dark: #e4e4e4;
   }
 }
 
