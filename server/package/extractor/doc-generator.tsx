@@ -96,8 +96,8 @@ const generateDocsDefaultOptions = (
   //    gitRemote: string;
   //    gaID: string;
   theme: "default",
-  //    lightHighlightTheme: ShikiTheme;
-  //    darkHighlightTheme: ShikiTheme;
+  lightHighlightTheme: "light-plus",
+  darkHighlightTheme: "light-plus",
 
   //    markedOptions: unknown;
   //    titleLink: string;
