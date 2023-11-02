@@ -31,37 +31,39 @@ ul {
     0px 3px 5px rgba(23, 26, 33, 0.21);
 }
 
-:root[data-theme="light"],
-:root[data-theme="os"] {
-  --light-color-ts-project: #2548b6;
-  --light-color-ts-enum: #2548b6;
-  --light-color-ts-variable: #962b89;
-  --light-color-ts-type-parameter: #403e48;
-  --light-color-ts-function: #5925bd;
-  --light-color-ts-class: #2548b6;
-  --light-color-ts-interface: #2586b6;
-  --light-color-ts-type-alias: #2548b6;
-  --light-color-accent: #e5e5e7;
-  --light-code-background: rgb(245, 245, 247);
-  --light-color-background: #f7f7f8;
-  --light-color-background-secondary: #f5f5f7;
+@media (prefers-color-scheme: light), @media (prefers-color-scheme: dark) {
+  :root[data-theme="light"],
+  :root[data-theme="os"] {
+    --light-color-ts-project: #2548b6;
+    --light-color-ts-enum: #2548b6;
+    --light-color-ts-variable: #962b89;
+    --light-color-ts-type-parameter: #403e48;
+    --light-color-ts-function: #5925bd;
+    --light-color-ts-class: #2548b6;
+    --light-color-ts-interface: #2586b6;
+    --light-color-ts-type-alias: #2548b6;
+    --light-color-accent: #e5e5e7;
+    --light-code-background: rgb(245, 245, 247);
+    --light-color-background: #f7f7f8;
+    --light-color-background-secondary: #f5f5f7;
 
-  /* Highlight Colors */
-  --light-hl-0: #2f626c;
-  --light-hl-1: #000000;
-  --light-hl-2: #0070c1;
-  --light-hl-3: #181818;
-  --light-hl-4: #4e17b8;
-  --light-hl-5: #2f626c;
-  --light-hl-6: #2f626c;
+    /* Highlight Colors */
+    --light-hl-0: #2f626c;
+    --light-hl-1: #000000;
+    --light-hl-2: #0070c1;
+    --light-hl-3: #181818;
+    --light-hl-4: #4e17b8;
+    --light-hl-5: #2f626c;
+    --light-hl-6: #2f626c;
 
-  --light-color-text-aside: #82868a;
-  --light-color-link: #1f59c2;
+    --light-color-text-aside: #82868a;
+    --light-color-link: #1f59c2;
 
-  /* Custom */
-  --light-color-text-light: #62636a;
-  --light-color-separator: #f7f7f7;
-  --light-color-separator-dark: #e4e4e4;
+    /* Custom */
+    --light-color-text-light: #62636a;
+    --light-color-separator: #f7f7f7;
+    --light-color-separator-dark: #e4e4e4;
+  }
 }
 
 pre {
