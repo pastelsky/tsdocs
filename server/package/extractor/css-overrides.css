@@ -66,6 +66,10 @@ ul {
   }
 }
 
+:root {
+  color-scheme: only light;
+}
+
 html {
   color-scheme: light;
 }
