@@ -43,8 +43,6 @@ function patchEscapedName(escapedName: string) {
 }
 
 export function load(app: Application) {
-  hasMonkeyPatched = false;
-
   let activeReflection: Reflection | undefined;
   const referencedSymbols = new Map<ts.Program, Set<ts.Symbol>>();
   const symbolToActiveRefl = new Map<ts.Symbol, Reflection>();
