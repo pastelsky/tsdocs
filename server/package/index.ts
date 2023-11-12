@@ -6,34 +6,8 @@ import { checkFileExists, docsRootPath, getDocsPath } from "./utils";
 import { resolvePackageJSON } from "./resolvers";
 import { generateDocsForPackage } from "./extractor/doc-generator";
 import semver from "semver";
+import { generateDocsQueue, generateDocsQueueEvents } from "../queues";
 
-// export async function handlerAPI(req, res) {
-//   const { package: pkg, version = "latest" } = req.query;
-//
-//   if (!pkg) {
-//     res.send(404);
-//     return;
-//   }
-//
-//   if (pkg === "undefined") {
-//     console.log("undefined package");
-//     res.send(404);
-//     return;
-//   }
-//
-//   const packageJSON = await resolvePackageJSON({
-//     packageName: pkg,
-//     packageVersion: version,
-//   });
-//
-//   const { jsonPath } = await generateDocsForPackage(packageJSON);
-//
-//   const docsJSON = await fs.promises.readFile(jsonPath, "utf8");
-//   res.header("Content-Type", "application/json");
-//   res.send(docsJSON);
-// }
-
-// Fragment paths in docs folder
 const validTypeDocFragmentPaths: string[] = [
   "index",
   "index.html",
@@ -111,52 +85,40 @@ function packageFromPath(pathFragments: string) {
   };
 }
 
-export async function handlerDocsHTML(req, res) {
-  const paramsPath = req.params["*"];
-  const routePackageDetails = packageFromPath(paramsPath);
-
-  if (!routePackageDetails) {
-    res.send(404);
-    return;
-  }
-
-  const replyWithDocs = async (
-    packageName: string,
-    packageVersion: string,
-    docsFragment: string,
-    docsPathDisk: string,
-  ) => {
-    const resolvedPath = path.join(packageName, packageVersion, docsFragment);
-
-    if (paramsPath !== resolvedPath) {
-      res.redirect(`/docs/${resolvedPath}`);
+export async function resolveDocsRequest({
+  packageName,
+  packageVersion,
+}: {
+  packageName: string;
+  packageVersion: string;
+}): Promise<
+  | {
+      type: "hit";
+      packageName: string;
+      packageVersion: string;
+      docsPathDisk: string;
     }
-
-    const relativeDocsPath = path.relative(
-      docsRootPath,
-      path.join(docsPathDisk, docsFragment),
-    );
-
-    await res.sendFile(relativeDocsPath);
-  };
-
-  const { packageName, packageVersion, docsFragment } = routePackageDetails;
-
+  | {
+      type: "miss";
+      packageName: string;
+      packageVersion: string;
+      packageJSON: { [key: string]: any };
+      docsPathDisk: string;
+    }
+> {
   if (semver.valid(packageVersion)) {
     const docsPathDisk = getDocsPath({
       packageName: packageName,
       packageVersion: packageVersion,
     });
 
-    if (await checkFileExists(docsPathDisk)) {
-      await replyWithDocs(
+    if (await checkFileExists(path.join(docsPathDisk, "index.html")))
+      return {
+        type: "hit",
         packageName,
         packageVersion,
-        docsFragment,
         docsPathDisk,
-      );
-      return;
-    }
+      };
   }
 
   const packageJSON = await resolvePackageJSON({
@@ -169,14 +131,114 @@ export async function handlerDocsHTML(req, res) {
     packageVersion: packageJSON.version,
   });
 
-  if (!(await checkFileExists(docsPathDisk))) {
-    await generateDocsForPackage(packageJSON);
+  if (await checkFileExists(path.join(docsPathDisk, "index.html"))) {
+    return {
+      type: "hit",
+      packageName: packageJSON.name,
+      packageVersion: packageJSON.version,
+      docsPathDisk,
+    };
   }
 
-  await replyWithDocs(
-    packageJSON.name,
-    packageJSON.version,
-    docsFragment,
+  return {
+    type: "miss",
+    packageName: packageJSON.name,
+    packageVersion: packageJSON.version,
+    packageJSON,
     docsPathDisk,
+  };
+}
+
+export async function handlerAPIDocsTrigger(req, res) {
+  const paramsPath = req.params["*"];
+  const routePackageDetails = packageFromPath(paramsPath);
+
+  if (!routePackageDetails) {
+    res.send(404);
+    return;
+  }
+
+  const { packageName, packageVersion, docsFragment } = routePackageDetails;
+
+  const resolvedRequest = await resolveDocsRequest({
+    packageName,
+    packageVersion,
+  });
+
+  if (resolvedRequest.type === "hit") {
+    return res.send({ status: "success" });
+  } else {
+    const generateJob = await generateDocsQueue.add(
+      `generate docs ${packageName}`,
+      { packageJSON: resolvedRequest.packageJSON },
+      {
+        jobId: `${resolvedRequest.packageJSON.name}@${resolvedRequest.packageJSON.version}`,
+      },
+    );
+
+    return res.send({
+      status: "queued",
+      jobId: generateJob.id,
+      pollInterval: 2000,
+    });
+  }
+}
+
+export async function handlerAPIDocsPoll(req, res) {
+  const jobId = req.params.jobId;
+  const job = await generateDocsQueue.getJob(jobId);
+
+  if (!job) {
+    res.send(404);
+  }
+
+  if (await job.isCompleted()) {
+    return { status: "success" };
+  } else if (await job.isFailed()) {
+    return { status: "failed", failedReason: job.failedReason };
+  }
+
+  return { status: "queued" };
+}
+
+export async function handlerDocsHTML(req, res) {
+  const paramsPath = req.params["*"];
+  const routePackageDetails = packageFromPath(paramsPath);
+
+  if (!routePackageDetails) {
+    res.send(404);
+    return;
+  }
+
+  const { packageName, packageVersion, docsFragment } = routePackageDetails;
+
+  const resolvedRequest = await resolveDocsRequest({
+    packageName,
+    packageVersion,
+  });
+
+  if (resolvedRequest.type === "miss") {
+    const generateJob = await generateDocsQueue.add(
+      `generate docs ${packageName}`,
+      { packageJSON: resolvedRequest.packageJSON },
+    );
+    await generateJob.waitUntilFinished(generateDocsQueueEvents);
+  }
+
+  const resolvedPath = path.join(
+    resolvedRequest.packageName,
+    resolvedRequest.packageVersion,
+    docsFragment,
   );
+
+  if (paramsPath !== resolvedPath) {
+    res.redirect(`/docs/${resolvedPath}`);
+  }
+
+  const relativeDocsPath = path.relative(
+    docsRootPath,
+    path.join(resolvedRequest.docsPathDisk, docsFragment),
+  );
+
+  await res.sendFile(relativeDocsPath);
 }

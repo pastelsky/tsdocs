@@ -1,20 +1,25 @@
-.homePageContent {
+.homePageContainer {
   width: 100%;
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
   flex-direction: column;
 }
 
-.logoContainer {
-  margin-top: -5rem;
+.homePageContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin-top: -10rem; // offset header and logo
+  margin-bottom: 7rem;
 }
 
 .tagline {
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
   color: var(--font-color-subtext);
 }
+
 .searchContainer {
   margin-bottom: 2rem;
 }

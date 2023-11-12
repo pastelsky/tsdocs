@@ -1,0 +1,25 @@
+.header {
+  display: flex;
+  width: 100%;
+  padding: 0.8rem 2rem;
+  position: relative;
+  z-index: 10;
+}
+
+.headerMinimal {
+  border: none;
+}
+
+.headerLogo {
+}
+
+.headerLinks {
+  margin-left: auto;
+}
+
+.headerCenter {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

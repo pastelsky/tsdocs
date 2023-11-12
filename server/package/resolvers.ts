@@ -125,6 +125,7 @@ type PackageJSON = {
 };
 
 async function getPackageJSON(packagePath: string) {
+  console.log("getPackageJSON", packagePath);
   const packageJSONPath = path.join(packagePath, "package.json");
   const packageJSONContents = await fs.promises.readFile(
     packageJSONPath,

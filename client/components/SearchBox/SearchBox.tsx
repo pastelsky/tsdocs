@@ -6,9 +6,15 @@ import styles from "./SearchBox.module.scss";
 
 type SearchBoxProps = {
   onSelect: (value: string) => void;
+  initialValue?: string;
+  compact?: boolean;
 };
 
-export default function SearchBox({ onSelect }: SearchBoxProps) {
+export default function SearchBox({
+  onSelect,
+  initialValue,
+  compact,
+}: SearchBoxProps) {
   const [suggestions, setSuggestions] = React.useState([]);
 
   const {
@@ -22,6 +28,7 @@ export default function SearchBox({ onSelect }: SearchBoxProps) {
     getItemProps,
     selectedItem,
   } = useCombobox({
+    initialInputValue: initialValue,
     onSelectedItemChange: ({ selectedItem }) => {
       onSelect(selectedItem.name);
     },
@@ -39,7 +46,9 @@ export default function SearchBox({ onSelect }: SearchBoxProps) {
     },
   });
   return (
-    <div className={styles.searchBox}>
+    <div
+      className={cx(styles.searchBox, { [styles.searchBoxCompact]: compact })}
+    >
       <div className={styles.comboBoxContainer}>
         <div {...getComboboxProps()}>
           <input

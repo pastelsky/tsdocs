@@ -1,17 +1,24 @@
 import * as td from "typedoc";
 import {
+  Application,
+  DefaultTheme,
   DefaultThemeRenderContext,
+  PageEvent,
   ProjectReflection,
+  Reflection,
+  Renderer,
   TypeDocOptions,
 } from "typedoc";
 import path from "path";
 import logger from "../../../common/logger";
 import { generateTSConfig } from "./generate-tsconfig";
-import { getDocsCachePath, getDocsPath } from "../utils";
+import { getDocsPath } from "../utils";
 import { TypeDefinitionResolveError } from "../CustomError";
 import InstallationUtils from "../installation.utils";
 import { JSX, Serializer } from "typedoc";
 import { load as loadMissingExportsPlugin } from "./plugin-add-missing-exports";
+import { injectScript } from "@module-federation/nextjs-mf/utils";
+
 import {
   TypeResolveResult,
   resolveTypePathDefinitelyTyped,
@@ -20,6 +27,33 @@ import {
 import fs from "fs";
 import { transformCommonJSExport } from "./augment-extract";
 import { DocsCache } from "../DocsCache";
+import { installQueue, installQueueEvents } from "../../queues";
+
+class CustomThemeContext extends DefaultThemeRenderContext {
+  override toolbar = () => {
+    return JSX.createElement(JSX.Raw, {
+      html: `
+           <div id="foo"></div>
+      `,
+    });
+  };
+}
+
+export class CustomTheme extends DefaultTheme {
+  private _contextCache?: CustomThemeContext;
+
+  public override getRenderContext(
+    page: PageEvent<Reflection>,
+  ): CustomThemeContext {
+    this._contextCache ||= new CustomThemeContext(
+      this,
+      page,
+      this.application.options,
+    );
+
+    return new CustomThemeContext(this, page, this.application.options);
+  }
+}
 
 const makeExternalsGlobPattern = (packageName) => {
   const fragments = packageName.split("/");
@@ -95,7 +129,7 @@ const generateDocsDefaultOptions = (
   //    gitRevision: string;
   //    gitRemote: string;
   //    gaID: string;
-  theme: "default",
+  theme: "tsdocs",
   lightHighlightTheme: "light-plus",
   darkHighlightTheme: "light-plus",
 
@@ -140,27 +174,70 @@ async function generateDocsHTML(
   app: td.Application,
   project: ProjectReflection,
 ) {
-  app.renderer.hooks.on("head.end", () =>
-    JSX.Raw({
-      html: `
-     <div>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossOrigin="anonymous"
-      />
-      <link
-        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;1,400&display=swap"
-        rel="stylesheet"
-      />
-    `,
-    }),
-  );
-
   const generateTimer = logger.startTimer();
   await app.generateDocs(project, app.options.getValue("out"));
   generateTimer.done({ message: `generated html docs` });
+}
+
+function setupApp(app: td.Application) {
+  if (app["setupComplete"]) {
+    return;
+  }
+
+  app["setupComplete"] = true;
+
+  loadMissingExportsPlugin(app);
+
+  app.renderer.hooks.on("head.begin", () =>
+    JSX.createElement(JSX.Raw, {
+      html: `
+         <link rel="stylesheet" href="/shared-dist/style.css" fetchpriority="high" />
+        <script src="/shared-dist/header.umd.js" fetchpriority="high"></script>
+      `,
+    }),
+  );
+
+  app.renderer.hooks.on("body.begin", () =>
+    JSX.createElement(JSX.Raw, {
+      html: `
+        <div id="docs-header"></div>
+      `,
+    }),
+  );
+
+  // Add "private" tag to all internal methods added by `typedoc-plugin-missing-exports`
+  app.renderer.hooks.on("content.begin", (context) => {
+    if (context.page.url.includes("_internal_")) {
+      return JSX.createElement(JSX.Raw, {
+        html: `
+        <div class="tsd-internal-warning-banner">
+          <b>⚠️ Internal:</b> This API is not publically exported by the
+          package.
+        </div>
+      `,
+      });
+    }
+  });
+
+  // Add fonts
+  app.renderer.hooks.on("head.end", () =>
+    JSX.Raw({
+      html: ` <div>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;1,300&display=swap"
+          rel="stylesheet"
+        />
+     </div>`,
+    }),
+  );
+
+  app.renderer.defineTheme("tsdocs", CustomTheme);
 }
 
 async function convertAndWriteDocs(
@@ -173,6 +250,8 @@ async function convertAndWriteDocs(
     packageVersion: string;
   },
 ) {
+  setupApp(app);
+
   if (app.logger.hasErrors()) {
     logger.error(app.logger.hasErrors());
     throw new Error("Invalid options passed.");
@@ -191,38 +270,6 @@ async function convertAndWriteDocs(
     packageName,
     packageVersion,
     new Serializer().projectToObject(projectReflection, process.cwd()),
-  );
-
-  // @ts-ignore
-  //  app.renderer.hooks.on("body.begin", () => <SearchBox onSelect={() => {}} />);
-
-  // Add "private" tag to all internal methods added by `typedoc-plugin-missing-exports`
-  app.renderer.hooks.on("content.begin", (...args) => {
-    if (args[0].page.url.includes("_internal_")) {
-      return JSX.Raw({
-        html: ` <div class="tsd-internal-warning-banner">
-          <b>⚠️ Internal:</b> This API is not publically exported by the
-          package.
-        </div>`,
-      });
-    }
-  });
-
-  app.renderer.hooks.on("head.end", () =>
-    JSX.Raw({
-      html: ` <div>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;1,300&display=swap"
-          rel="stylesheet"
-        />
-     </div>`,
-    }),
   );
 
   const generateTimer = logger.startTimer();
@@ -260,7 +307,7 @@ export async function generateDocsForPackage(
       out: docsPath,
     });
 
-    loadMissingExportsPlugin(cachedApp);
+    setupApp(cachedApp);
 
     const projectFromCache = new td.Deserializer(cachedApp).reviveProject(
       typeDocFromCache,
@@ -281,11 +328,19 @@ export async function generateDocsForPackage(
 
   logger.info("Package will be installed in", { installPath });
 
-  await InstallationUtils.installPackage(
-    [`${packageJSON.name}@${packageJSON.version}`],
-    installPath,
-    { client: "npm" },
+  const packageString = `${packageJSON.name}@${packageJSON.version}`;
+
+  const installJob = await installQueue.add(
+    `install ${packageString}`,
+    {
+      packageName: packageJSON.name,
+      packageVersion: packageJSON.version,
+      installPath,
+    },
+    { jobId: packageString + installPath },
   );
+
+  await installJob.waitUntilFinished(installQueueEvents);
 
   let typeResolveResult: TypeResolveResult,
     typeResolutionType: "inbuilt" | "definitely-typed";
@@ -340,7 +395,7 @@ export async function generateDocsForPackage(
       basePath: typeResolveResult.packagePath,
     });
 
-    loadMissingExportsPlugin(app);
+    setupApp(app);
 
     await convertAndWriteDocs(app, {
       packageName: packageJSON.name,

@@ -6,10 +6,11 @@
 }
 
 .suggestionsPill {
-  background: var(--primary-fg-color-faded);
+  background: var(--primary-bg-color-highlight);
   padding: 0.3rem 1rem;
   border-radius: 2rem;
   color: var(--primary-fg-color);
+  border: 0.5px solid var(--separator-color);
 
   & + & {
     margin-left: 1rem;

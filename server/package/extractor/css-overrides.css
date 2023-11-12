@@ -1,19 +1,4 @@
 body {
-  background: white;
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    avenir next,
-    avenir,
-    segoe ui,
-    helvetica neue,
-    helvetica,
-    Cantarell,
-    Ubuntu,
-    roboto,
-    noto,
-    arial,
-    sans-serif;
   font-size: 15px;
 }
 
@@ -131,6 +116,16 @@ h4 span {
   font-size: 1rem;
 }
 
+.container {
+  background: white;
+}
+
+@media (min-width: 770px) {
+  .container {
+    padding: 61px 0 0 0;
+  }
+}
+
 @media (min-width: 770px) {
   .container-main .col-content {
     padding: 0 2rem;
@@ -182,12 +177,6 @@ a.tsd-index-link {
   height: 100vh;
   border-right: 1px solid var(--light-color-separator);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23666' opacity='0.15' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
-}
-
-@media (min-width: 770px) {
-  .container {
-    padding: 0;
-  }
 }
 
 .page-menu {
@@ -302,12 +291,12 @@ code.tsd-tag {
   font-size: 0.9rem;
   font-family: var(--font-family-code);
   background-color: unset;
-  padding: 0.4rem 1rem;
+  padding: 0.2rem 0.5rem;
 }
 
 #tsd-search .results li.current:not(.no-results),
 #tsd-search .results li:hover:not(.no-results) {
-  background: var(--light-color-separator-dark);
+  background: var(--light-color-separator);
 }
 
 #tsd-search.has-focus {
@@ -378,5 +367,9 @@ ul > li:only-child > ul:only-child {
 .tsd-page-navigation ul {
   padding-left: 1rem;
 }
+
 .tsd-typography {
+}
+
+.header-iframe {
 }

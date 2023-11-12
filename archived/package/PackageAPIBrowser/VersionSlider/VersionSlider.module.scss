@@ -11,15 +11,16 @@
   font-family: var(--font-family-code);
   user-select: none;
 
-
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
-    box-shadow: inset 12px 0 15px -4px var(--primary-bg-color), inset -12px 0 8px -4px var(--primary-bg-color);
+    box-shadow:
+      inset 12px 0 15px -4px var(--primary-bg-color),
+      inset -12px 0 8px -4px var(--primary-bg-color);
     border-radius: 4px;
     width: 100%;
     height: 100%;
@@ -34,7 +35,7 @@
   position: relative;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  padding:8px clamp(10rem, 12.5vw, 15rem) 0;
+  padding: 8px clamp(10rem, 12.5vw, 15rem) 0;
   height: 100%;
   -ms-overflow-style: none; /* Internet Explorer 10+ */
   scrollbar-width: none; /* Firefox */
@@ -44,13 +45,13 @@
   }
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     width: 100%;
     height: 100%;
     //background: linear-gradient(to right, var(--primary-bg-color) 1%, transparent 10%, transparent 90%, var(--primary-bg-color));
-    pointer-events: none
+    pointer-events: none;
   }
 }
 
@@ -68,8 +69,6 @@
   scroll-snap-align: center;
   scroll-snap-stop: always;
   font-size: var(--font-size-xs);
-
-
 
   button {
     appearance: none;
@@ -91,10 +90,8 @@
     }
   }
 
-
-
   &::after {
-    content: '';
+    content: "";
     display: block;
     width: 1px;
     height: 8px;
@@ -118,7 +115,7 @@
   opacity: 1;
 
   button {
-   @include selectedLabel;
+    @include selectedLabel;
 
     &:focus {
       background: var(--selected-bg);

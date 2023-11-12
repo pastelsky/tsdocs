@@ -1,0 +1,21 @@
+.loader {
+  animation: shimmer 1s alternate infinite;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.label {
+  margin-top: 1rem;
+}
+
+@keyframes shimmer {
+  from {
+    opacity: 0.1;
+  }
+
+  to {
+    opacity: 0.3;
+  }
+}
