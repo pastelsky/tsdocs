@@ -286,12 +286,26 @@ code.tsd-tag {
   display: flex;
 }
 
+#tsd-search {
+  padding: 1rem;
+}
+
+#tsd-search input {
+  box-shadow: none;
+  font-size: var(--font-size-regular);
+  background: var(--separator-color);
+  font-weight: 400;
+  cursor: text;
+  padding: 0.4rem 1rem;
+  width: 100%;
+}
+
 #tsd-search .results li:nth-child(even),
 #tsd-search .results li {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-family: var(--font-family-code);
   background-color: unset;
-  padding: 0.2rem 0.5rem;
+  padding: 0.1rem 0.3rem;
 }
 
 #tsd-search .results li.current:not(.no-results),

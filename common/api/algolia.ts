@@ -25,7 +25,7 @@ export async function getPackageSuggestion(query: string, highlightClass) {
   const searchParams = {
     highlightPreTag: `<span class="${highlightClass}">`,
     highlightPostTag: "</span>",
-    hitsPerPage: 6,
+    hitsPerPage: 5,
     page: 0,
     attributesToRetrieve: [
       "description",

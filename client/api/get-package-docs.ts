@@ -66,7 +66,10 @@ export async function getPackageDocs(pkg: string): Promise<void> {
 
         if (status !== "queued") {
           clearInterval(pollInterval);
-          reject("Failed because the polling API returned an unknown status");
+          reject(
+            "Failed because the polling API returned an unknown status: " +
+              status,
+          );
         }
       }, queuedTriggerResult.pollInterval);
 

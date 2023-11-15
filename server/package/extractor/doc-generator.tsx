@@ -6,6 +6,8 @@ import {
   PageEvent,
   ProjectReflection,
   Reflection,
+  ReflectionKind,
+  ReflectionSymbolId,
   Renderer,
   TypeDocOptions,
 } from "typedoc";
@@ -28,15 +30,97 @@ import fs from "fs";
 import { transformCommonJSExport } from "./augment-extract";
 import { DocsCache } from "../DocsCache";
 import { installQueue, installQueueEvents } from "../../queues";
+import { icons } from "./icon";
+
+const kindIcon = (letterPath: string, color: string) =>
+  JSX.createElement(
+    "svg",
+    {
+      class: "tsd-kind-icon",
+      viewBox: "0 0 24 24",
+    },
+    JSX.createElement("rect", {
+      fill: color,
+      "stroke-width": "1.5",
+      x: "1",
+      y: "1",
+      width: "22",
+      height: "22",
+      rx: "6",
+    }),
+    JSX.createElement(JSX.Raw, {
+      html: letterPath,
+    }),
+  );
 
 class CustomThemeContext extends DefaultThemeRenderContext {
-  override toolbar = () => {
+  _originalNav: any;
+
+  public constructor(theme, page, options) {
+    super(theme, page, options);
+    this._originalNav = this.navigation(page);
+    this.navigation = (page) =>
+      JSX.createElement("div", {}, [
+        JSX.createElement(JSX.Raw, {
+          html: `     
+            <div id="tsd-search" data-base="${this.relativeURL("./")}">
+                <input type="text" aria-label="Search" placeholder="Search within library"/>
+                <ul class="results">
+                    <li class="state loading">Preparing search index...</li>
+                    <li class="state failure">The search index is not available</li>
+                </ul>
+            </div>
+`,
+        }),
+        this._originalNav,
+      ]);
+  }
+
+  override toolbar = (context) => {
     return JSX.createElement(JSX.Raw, {
       html: `
-           <div id="foo"></div>
+
       `,
     });
   };
+
+  // override navigation = (page) => {
+  //   console.log("nav", this._originalNav);
+  //
+  //   return JSX.createElement("div", {}, [
+  //     JSX.createElement("h1", {}, "FooLalal"),
+  //     this._originalNav,
+  //   ]);
+  // };
+
+  // public override get icons() {
+  //   const originalIcons = { ...super.icons };
+  //   originalIcons[ReflectionKind.Function] = () =>
+  //     kindIcon(
+  //       `<path
+  //       d="M9.39 16V7.24H14.55V8.224H10.446V11.128H14.238V12.112H10.47V16H9.39Z"
+  //       fill="white"
+  //     />`,
+  //       "var(--color-ts-function)",
+  //     );
+  //
+  //   originalIcons[ReflectionKind.Class] = super.icons[ReflectionKind.Class];
+  //
+  //   // originalIcons["chevronDown"] = () => {
+  //   //   return JSX.createElement(JSX.Raw, {
+  //   //     html: `Foo`,
+  //   //   });
+  //   // };
+  //   //
+  //   // originalIcons["chevronSmall"] = () => {
+  //   //   return JSX.createElement(JSX.Raw, {
+  //   //     html: `Foo`,
+  //   //   });
+  //   // };
+  //   super.icons = originalIcons;
+  //   super.iconsCache();
+  //   return originalIcons;
+  // }
 }
 
 export class CustomTheme extends DefaultTheme {

@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 import styles from "./index.module.scss";
 
@@ -29,13 +30,13 @@ const SuggestionPills = () => {
   return (
     <div className={styles.suggestionsPillsContainer}>
       {randomSuggestions.map((suggestion) => (
-        <a
+        <Link
           className={styles.suggestionsPill}
-          href={`/docs/${suggestion}/index.html`}
+          href={`/search/docs/${suggestion}`}
           key={suggestion}
         >
           <div>{suggestion}</div>
-        </a>
+        </Link>
       ))}
     </div>
   );

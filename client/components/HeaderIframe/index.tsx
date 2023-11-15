@@ -4,22 +4,22 @@ import Header from "../Header";
 import "../../../pages/styles.css";
 import styles from "./HeaderIframe.module.scss";
 import { getPackageDocs } from "../../api/get-package-docs";
+import { packageFromPath } from "../../../common/utils";
 
 const HeaderIframe = () => {
+  const { packageName: initialPackageName } = packageFromPath(
+    window.location.pathname.split("/docs/")[1],
+  );
+
   const handleSearchSubmit = async (pkg: string) => {
-    try {
-      await getPackageDocs(pkg);
-      window.location.href = `/docs/${pkg}/index.html`;
-    } catch (err) {
-      console.error(err);
-    }
+    window.location = `/search/docs/${pkg}`;
   };
 
   return (
     <div className={styles.docsHeaderContainer}>
       <Header
         minimal={false}
-        initialSearchValue="foo"
+        initialSearchValue={initialPackageName}
         onSearchSubmit={handleSearchSubmit}
       />
     </div>
