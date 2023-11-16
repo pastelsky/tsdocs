@@ -12,7 +12,7 @@ const HeaderIframe = () => {
   );
 
   const handleSearchSubmit = async (pkg: string) => {
-    window.location.pathname = `/docs/${pkg}`;
+    window.location.pathname = `/docs/${pkg}/index.html`;
   };
 
   return (

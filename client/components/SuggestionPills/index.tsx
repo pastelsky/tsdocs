@@ -32,7 +32,7 @@ const SuggestionPills = () => {
       {randomSuggestions.map((suggestion) => (
         <Link
           className={styles.suggestionsPill}
-          href={`/docs/${suggestion}`}
+          href={`/docs/${suggestion}/index.html`}
           key={suggestion}
         >
           <div>{suggestion}</div>
