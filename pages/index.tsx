@@ -15,7 +15,7 @@ export default function Home() {
   const router = useRouter();
 
   const handleSearchSubmit = async (pkg: string) => {
-    router.push(`/search/docs/${pkg}`);
+    window.location.pathname = `/docs/${pkg}`;
   };
 
   return (
