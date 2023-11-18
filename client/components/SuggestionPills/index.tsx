@@ -30,7 +30,7 @@ const SuggestionPills = () => {
       {suggestions.slice(0, 4).map((suggestion) => (
         <Link
           className={styles.suggestionsPill}
-          href={`/docs/${suggestion}/index.html`}
+          href={`/search/docs/${suggestion}`}
           key={suggestion}
         >
           <div>{suggestion}</div>
