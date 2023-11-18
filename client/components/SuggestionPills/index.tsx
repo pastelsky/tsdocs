@@ -25,11 +25,9 @@ function shuffleArray(array: any[]): any[] {
 }
 
 const SuggestionPills = () => {
-  const randomSuggestions = shuffleArray(suggestions).slice(0, 4);
-  console.log(randomSuggestions);
   return (
     <div className={styles.suggestionsPillsContainer}>
-      {randomSuggestions.map((suggestion) => (
+      {suggestions.slice(0, 4).map((suggestion) => (
         <Link
           className={styles.suggestionsPill}
           href={`/docs/${suggestion}/index.html`}

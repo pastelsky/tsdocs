@@ -1,15 +1,15 @@
-import SearchBox from "../client/components/SearchBox";
-import styles from "./index.module.scss";
-import Logo from "../client/components/Logo";
-import SuggestionPills from "../client/components/SuggestionPills";
-import { useState } from "react";
-import { getPackageDocs } from "../client/api/get-package-docs";
-import Loader from "../client/components/Loader";
-import Header from "../client/components/Header";
-import Footer from "../client/components/Footer";
-import { useRouter } from "next/router";
+"use client";
 
-export default function Home() {
+import SearchBox from "../../client/components/SearchBox";
+import styles from "./home.module.scss";
+import Logo from "../../client/components/Logo";
+import SuggestionPills from "../../client/components/SuggestionPills";
+import { useState } from "react";
+import Header from "../../client/components/Header";
+import Footer from "../../client/components/Footer";
+import { useRouter } from "next/navigation";
+
+export default function Index() {
   const [pkg, setPkg] = useState<string | null>(null);
 
   const router = useRouter();

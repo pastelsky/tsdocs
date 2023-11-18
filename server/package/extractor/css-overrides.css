@@ -293,7 +293,7 @@ code.tsd-tag {
 #tsd-search input {
   box-shadow: none;
   font-size: var(--font-size-regular);
-  background: var(--separator-color);
+  border: 1.5px solid var(--separator-color);
   font-weight: 400;
   cursor: text;
   padding: 0.4rem 1rem;

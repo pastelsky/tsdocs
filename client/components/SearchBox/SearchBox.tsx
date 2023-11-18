@@ -17,13 +17,22 @@ export default function SearchBox({
 }: SearchBoxProps) {
   const [suggestions, setSuggestions] = React.useState([]);
 
+  const stateReducer = React.useCallback((state, actionAndChanges) => {
+    const { type, changes } = actionAndChanges;
+    switch (type) {
+      case useCombobox.stateChangeTypes.InputKeyDownEnter:
+        onSelect(state.inputValue);
+      default:
+        return changes;
+    }
+  }, []);
+
   const {
     isOpen,
     getToggleButtonProps,
     getLabelProps,
     getMenuProps,
     getInputProps,
-    getComboboxProps,
     highlightedIndex,
     getItemProps,
     selectedItem,
@@ -32,12 +41,13 @@ export default function SearchBox({
     onSelectedItemChange: ({ selectedItem }) => {
       onSelect(selectedItem.name);
     },
+    stateReducer,
     onInputValueChange({ inputValue }) {
       getPackageSuggestion(inputValue, styles.searchHighlight).then(
         (suggestions) => {
           console.log(suggestions);
           setSuggestions(suggestions);
-        },
+        }
       );
     },
     items: suggestions,
@@ -45,12 +55,13 @@ export default function SearchBox({
       return item.name;
     },
   });
+
   return (
     <div
       className={cx(styles.searchBox, { [styles.searchBoxCompact]: compact })}
     >
       <div className={styles.comboBoxContainer}>
-        <div {...getComboboxProps()}>
+        <div>
           <input
             placeholder="Search npm packages"
             className={styles.searchInput}
