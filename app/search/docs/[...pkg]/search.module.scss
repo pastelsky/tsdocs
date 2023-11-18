@@ -1,0 +1,13 @@
+.searchContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.searchPageLoaderContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
