@@ -36,7 +36,7 @@ export default function Search({ pkg }) {
       const result = await getPackageDocs(pkg);
 
       if (result.status === "success") {
-        // window.location.href = `/docs/${pkg}/index.html`;
+        window.location.href = `/docs/${pkg}/index.html`;
       } else {
         console.error("Getting package docs failed", result);
         setStatus("error");
