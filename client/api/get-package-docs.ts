@@ -1,4 +1,9 @@
 import axios, { AxiosResponse } from "axios";
+import {
+  PackageNotFoundError,
+  PackageVersionMismatchError,
+  TypeDefinitionResolveError,
+} from "../../server/package/CustomError";
 
 type TriggerAPIResponse =
   | {
@@ -16,68 +21,156 @@ type PollAPIResponse =
     }
   | {
       status: "failed";
-      failureReason: string;
+      errorCode: string;
+      errorMessage: string;
     };
 
-export async function getPackageDocs(pkg: string): Promise<void> {
-  return new Promise(async (resolve, reject) => {
-    const triggerResponse: AxiosResponse<TriggerAPIResponse> = await axios.post(
-      `/api/docs/trigger/${pkg}`,
-    );
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const POLL_TIMEOUT = 60000;
 
-    let triggerResult = triggerResponse.data;
-    const { status } = triggerResult;
+type PackageDocsResponse =
+  | {
+      status: "success";
+    }
+  | {
+      status: "failure";
+      errorCode: string;
+      errorMessage: string;
+    };
 
-    if (triggerResult.status === "success") {
-      resolve();
-      return;
+async function pollQueue(
+  {
+    jobId,
+    pollInterval,
+  }: {
+    jobId: string;
+    pollInterval: number;
+  },
+  timeElapsed = 0
+): Promise<PackageDocsResponse> {
+  if (timeElapsed > POLL_TIMEOUT) {
+    return {
+      status: "failure",
+      errorCode: "DOCS_TIMEOUT",
+      errorMessage: "Building docs took longer than expected",
+    };
+  }
+
+  const start = Date.now();
+
+  let pollResponse: AxiosResponse<PollAPIResponse> = null;
+
+  try {
+    pollResponse = await axios.get(`/api/docs/poll/${jobId}`);
+  } catch (err) {
+    let errorMessage = "";
+    if (err.response) {
+      errorMessage = `${err.response.status} ${JSON.stringify(
+        err.response.data
+      )}`;
     }
 
-    if (triggerResult.status === "queued") {
-      const queuedTriggerResult = triggerResult;
+    return {
+      status: "failure",
+      errorCode: "UNEXPECTED_DOCS_POLL_FAILURE",
+      errorMessage: errorMessage,
+    };
+  }
 
-      const checkStatus = async () => {
-        const pollResponse: AxiosResponse<TriggerAPIResponse> = await axios.get(
-          `/api/docs/poll/${queuedTriggerResult.jobId}`,
-        );
+  const status = pollResponse.data.status;
 
-        const status = pollResponse.data.status;
+  if (status === "success") {
+    return { status: "success" };
+  }
 
-        return status === "success";
+  if (status === "queued") {
+    await sleep(pollInterval);
+    return pollQueue({ jobId, pollInterval }, timeElapsed + Date.now() - start);
+  }
+
+  if (status === "failed") {
+    return {
+      status: "failure",
+      errorCode: pollResponse.data.errorCode,
+      errorMessage: getErrorMessage({
+        name: pollResponse.data.errorCode,
+        extra: pollResponse.data.errorMessage,
+      }),
+    };
+  }
+
+  return {
+    status: "failure",
+    errorCode: "UNEXPECTED_DOCS_POLL_STATUS",
+    errorMessage:
+      "Failed because the polling API returned an unknown status: " + status,
+  };
+}
+
+export function getErrorMessage(error: { name: string; extra: any }) {
+  switch (error.name) {
+    case PackageNotFoundError.name:
+      return "This package could not be found on the npm registry. Did you get the name right?";
+
+    case PackageVersionMismatchError.name:
+      return `The given version for this package was not found on the npm registry.\n Found versions: \n${error.extra.join(
+        ", "
+      )}`;
+
+    case TypeDefinitionResolveError.name:
+      return (
+        "Failed to resolve types for this package. " +
+        "This package likely does not ship with types, and it does not have a corresponding package `@types` package " +
+        "from which reference documentation for its APIs can be built."
+      );
+    default:
+      return "";
+  }
+}
+
+export async function getPackageDocs(
+  pkg: string
+): Promise<PackageDocsResponse> {
+  let triggerResponse: AxiosResponse<TriggerAPIResponse> = null;
+  try {
+    triggerResponse = await axios.post(`/api/docs/trigger/${pkg}`);
+  } catch (err) {
+    let errorMessage = "";
+    if (err.response?.data) {
+      return {
+        status: "failure",
+        errorCode: err.response.data.name,
+        errorMessage: getErrorMessage(err.response.data),
       };
-
-      // Otherwise, start polling every second
-      const pollInterval = setInterval(async () => {
-        const pollResponse: AxiosResponse<PollAPIResponse> = await axios.get(
-          `/api/docs/poll/${queuedTriggerResult.jobId}`,
-        );
-
-        const status = pollResponse.data.status;
-
-        if (status === "failed") {
-          clearInterval(pollInterval);
-          reject(pollResponse.data.failureReason);
-        }
-
-        if (status === "success") {
-          clearInterval(pollInterval);
-          resolve();
-        }
-
-        if (status !== "queued") {
-          clearInterval(pollInterval);
-          reject(
-            "Failed because the polling API returned an unknown status: " +
-              status,
-          );
-        }
-      }, queuedTriggerResult.pollInterval);
-
-      setTimeout(() => {
-        console.log("Polling timed out");
-        clearInterval(pollInterval);
-        reject();
-      }, 45000); // 45 seconds
     }
-  });
+
+    return {
+      status: "failure",
+      errorCode: "UNEXPECTED_DOCS_TRIGGER_FAILURE",
+      errorMessage: errorMessage,
+    };
+  }
+
+  let triggerResult = triggerResponse.data;
+  const { status } = triggerResult;
+
+  if (status === "success") {
+    return {
+      status: "success",
+    };
+  }
+
+  if (status === "queued") {
+    return await pollQueue({
+      jobId: triggerResult.jobId,
+      pollInterval: triggerResult.pollInterval,
+    });
+  }
+
+  return {
+    status: "failure",
+    errorCode: "UNEXPECTED_DOCS_TRIGGER_STATUS",
+    errorMessage:
+      "Failed because the polling API returned an unknown status: " + status,
+  };
 }

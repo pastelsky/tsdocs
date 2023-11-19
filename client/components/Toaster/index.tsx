@@ -1,9 +1,15 @@
-import anime from "animejs";
+import anime, { AnimeTimelineInstance } from "animejs";
 import React, { useEffect } from "react";
+
+let timeline: AnimeTimelineInstance = null;
 
 const Toaster = ({ status }: { status: "loading" | "error" }) => {
   useEffect(() => {
-    const timeline = anime.timeline({
+    if (timeline) {
+      timeline.pause();
+    }
+
+    timeline = anime.timeline({
       loop: true,
       easing: "easeInOutBack",
       autoplay: false,
@@ -43,8 +49,10 @@ const Toaster = ({ status }: { status: "loading" | "error" }) => {
       "-=3200"
     );
 
-    if (status === "loading") timeline.play();
-  }, []);
+    if (status === "loading") {
+      timeline.play();
+    }
+  }, [status]);
   return (
     <div style={{ width: "13rem", height: "13rem", marginTop: "-25%" }}>
       <svg

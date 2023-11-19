@@ -8,11 +8,16 @@ import {
 } from "./server/package";
 import path from "path";
 import { docsRootPath } from "./server/package/utils";
-import logger from "./common/logger";
 import { createBullBoard } from "@bull-board/api";
 import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
 import { FastifyAdapter } from "@bull-board/fastify";
 import { queues } from "./server/queues";
+import {
+  CustomError,
+  PackageNotFoundError,
+  PackageVersionMismatchError,
+} from "./server/package/CustomError";
+import logger from "./common/logger";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
@@ -124,9 +129,28 @@ app
     fastify.route({
       method: "POST",
       url: `/api/docs/trigger/*`,
-      handler: async (request, reply) => {
-        return handlerAPIDocsTrigger(request, reply);
-      },
+      handler: handlerAPIDocsTrigger,
+    });
+
+    fastify.setErrorHandler(function (error, request, reply) {
+      logger.error(error);
+
+      if (error instanceof CustomError) {
+        const payload = {
+          name: error.name,
+          extra: error.extra,
+        };
+
+        switch (error.name) {
+          case PackageVersionMismatchError.name:
+          case PackageNotFoundError.name:
+            reply.status(404).send(payload);
+            break;
+          default:
+            reply.status(500).send(payload);
+        }
+      }
+      reply.status(500).send(error);
     });
 
     fastify.route({
@@ -146,12 +170,8 @@ app
     });
 
     fastify.setNotFoundHandler((request, reply) =>
-      nextHandle(request.raw, reply.raw),
+      nextHandle(request.raw, reply.raw)
     );
-
-    fastify.setErrorHandler((error) => {
-      logger.error(error);
-    });
 
     // Run the server!
     const start = async () => {

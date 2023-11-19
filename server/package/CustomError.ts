@@ -2,7 +2,7 @@
  * Wraps the original error with a identifiable
  * name.
  */
-class CustomError extends Error {
+export class CustomError extends Error {
   originalError: any;
   extra: any;
 
@@ -30,6 +30,20 @@ export class BuildError extends CustomError {
   }
 }
 
+export class TypeDocBuildError extends CustomError {
+  constructor(originalError: any, extra?: any) {
+    super("TypeDocBuildError", originalError, extra);
+    Object.setPrototypeOf(this, TypeDocBuildError.prototype);
+  }
+}
+
+export class ResolutionError extends CustomError {
+  constructor(originalError: any, extra?: any) {
+    super("ResolutionError", originalError, extra);
+    Object.setPrototypeOf(this, ResolutionError.prototype);
+  }
+}
+
 export class EntryPointError extends CustomError {
   constructor(originalError: any, extra?: any) {
     super("EntryPointError", originalError, extra);
@@ -54,7 +68,7 @@ export class PackageNotFoundError extends CustomError {
 export class PackageVersionMismatchError extends CustomError {
   constructor(originalError: any, validVersions: string[]) {
     super("PackageVersionMismatchError", originalError, validVersions);
-    Object.setPrototypeOf(this, PackageNotFoundError.prototype);
+    Object.setPrototypeOf(this, PackageVersionMismatchError.prototype);
   }
 }
 

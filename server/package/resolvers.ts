@@ -11,6 +11,7 @@ import {
   BuildError,
   PackageNotFoundError,
   PackageVersionMismatchError,
+  ResolutionError,
 } from "./CustomError";
 
 const getTypeResolver = () =>
@@ -233,7 +234,7 @@ function handleFailedResolve(err: any, packageName: string) {
     throw new PackageVersionMismatchError(err, err.versions);
   } else {
     logger.error("Failed to resolve version %s, error %o", packageName, err);
-    throw new BuildError(err);
+    throw new ResolutionError(err);
   }
 }
 

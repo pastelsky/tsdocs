@@ -1,18 +1,39 @@
-.loader {
+.placeholderContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
   margin-top: -4rem; // offset header and logo
+  max-width: 35rem;
 }
 
-.toaster {
+.placeholderLoader .toaster {
   animation: shimmer-dark 0.5s alternate infinite;
 }
 
 .label {
   margin-top: 1rem;
+}
+
+.placeholderLoader .label {
   animation: shimmer-light 0.5s alternate infinite;
+}
+
+.placeholderError .label code {
+  font-size: var(--font-size-lg);
+  font-weight: bold;
+}
+
+.placeholderError .label p {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  color: var(--font-color-subtext);
+  line-height: 1.5;
+  margin-top: 0.5rem;
 }
 
 @keyframes shimmer-light {

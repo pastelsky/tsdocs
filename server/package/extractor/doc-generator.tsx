@@ -15,7 +15,7 @@ import path from "path";
 import logger from "../../../common/logger";
 import { generateTSConfig } from "./generate-tsconfig";
 import { getDocsPath } from "../utils";
-import { TypeDefinitionResolveError } from "../CustomError";
+import { TypeDefinitionResolveError, TypeDocBuildError } from "../CustomError";
 import InstallationUtils from "../installation.utils";
 import { JSX, Serializer } from "typedoc";
 import { load as loadMissingExportsPlugin } from "./plugin-add-missing-exports";
@@ -50,7 +50,7 @@ const kindIcon = (letterPath: string, color: string) =>
     }),
     JSX.createElement(JSX.Raw, {
       html: letterPath,
-    }),
+    })
   );
 
 class CustomThemeContext extends DefaultThemeRenderContext {
@@ -127,12 +127,12 @@ export class CustomTheme extends DefaultTheme {
   private _contextCache?: CustomThemeContext;
 
   public override getRenderContext(
-    page: PageEvent<Reflection>,
+    page: PageEvent<Reflection>
   ): CustomThemeContext {
     this._contextCache ||= new CustomThemeContext(
       this,
       page,
-      this.application.options,
+      this.application.options
     );
 
     return new CustomThemeContext(this, page, this.application.options);
@@ -152,7 +152,7 @@ const makeExternalsGlobPattern = (packageName) => {
   return [`**/node_modules/!(${packageName})/**`];
 };
 const generateDocsDefaultOptions = (
-  packageName: string,
+  packageName: string
 ): Partial<TypeDocOptions> => ({
   excludeExternals: false,
   externalPattern: makeExternalsGlobPattern(packageName),
@@ -256,7 +256,7 @@ const generateDocsDefaultOptions = (
 
 async function generateDocsHTML(
   app: td.Application,
-  project: ProjectReflection,
+  project: ProjectReflection
 ) {
   const generateTimer = logger.startTimer();
   await app.generateDocs(project, app.options.getValue("out"));
@@ -278,7 +278,7 @@ function setupApp(app: td.Application) {
          <link rel="stylesheet" href="/shared-dist/style.css" fetchpriority="high" />
         <script src="/shared-dist/header.umd.js" fetchpriority="high"></script>
       `,
-    }),
+    })
   );
 
   app.renderer.hooks.on("body.begin", () =>
@@ -286,7 +286,7 @@ function setupApp(app: td.Application) {
       html: `
         <div id="docs-header"></div>
       `,
-    }),
+    })
   );
 
   // Add "private" tag to all internal methods added by `typedoc-plugin-missing-exports`
@@ -318,7 +318,7 @@ function setupApp(app: td.Application) {
           rel="stylesheet"
         />
      </div>`,
-    }),
+    })
   );
 
   app.renderer.defineTheme("tsdocs", CustomTheme);
@@ -332,12 +332,11 @@ async function convertAndWriteDocs(
   }: {
     packageName: string;
     packageVersion: string;
-  },
+  }
 ) {
   setupApp(app);
 
   if (app.logger.hasErrors()) {
-    logger.error(app.logger.hasErrors());
     throw new Error("Invalid options passed.");
   }
 
@@ -353,7 +352,7 @@ async function convertAndWriteDocs(
   await DocsCache.set(
     packageName,
     packageVersion,
-    new Serializer().projectToObject(projectReflection, process.cwd()),
+    new Serializer().projectToObject(projectReflection, process.cwd())
   );
 
   const generateTimer = logger.startTimer();
@@ -368,7 +367,7 @@ async function convertAndWriteDocs(
 const packumentCache = new Map();
 
 export async function generateDocsForPackage(
-  packageJSON,
+  packageJSON
 ): Promise<{ docsPath: string }> {
   const docsPath = getDocsPath({
     packageName: packageJSON.name,
@@ -377,13 +376,13 @@ export async function generateDocsForPackage(
 
   const typeDocFromCache = await DocsCache.get(
     packageJSON.name,
-    packageJSON.version,
+    packageJSON.version
   );
 
   // Cache hit
   if (typeDocFromCache) {
     logger.info(
-      `Typedoc cache hit for ${packageJSON.name}@${packageJSON.version}`,
+      `Typedoc cache hit for ${packageJSON.name}@${packageJSON.version}`
     );
     const cachedApp = await td.Application.bootstrapWithPlugins({
       ...generateDocsDefaultOptions(packageJSON.name),
@@ -395,7 +394,7 @@ export async function generateDocsForPackage(
 
     const projectFromCache = new td.Deserializer(cachedApp).reviveProject(
       typeDocFromCache,
-      `${packageJSON.name} — ${packageJSON.version}`,
+      `${packageJSON.name} — ${packageJSON.version}`
     );
 
     await generateDocsHTML(cachedApp, projectFromCache);
@@ -407,7 +406,7 @@ export async function generateDocsForPackage(
 
   const installPath = await InstallationUtils.preparePath(
     packageJSON.name,
-    packageJSON.version,
+    packageJSON.version
   );
 
   logger.info("Package will be installed in", { installPath });
@@ -421,7 +420,7 @@ export async function generateDocsForPackage(
       packageVersion: packageJSON.version,
       installPath,
     },
-    { jobId: packageString + installPath },
+    { jobId: packageString + installPath }
   );
 
   await installJob.waitUntilFinished(installQueueEvents);
@@ -431,14 +430,14 @@ export async function generateDocsForPackage(
 
   typeResolveResult = await resolveTypePathInbuilt(
     installPath,
-    packageJSON.name,
+    packageJSON.name
   );
   if (typeResolveResult) {
     typeResolutionType = "inbuilt";
   } else {
     typeResolveResult = await resolveTypePathDefinitelyTyped(
       packageJSON,
-      packumentCache,
+      packumentCache
     );
     typeResolutionType = "definitely-typed";
   }
@@ -465,7 +464,7 @@ export async function generateDocsForPackage(
   try {
     let typesEntryContent = await fs.promises.readFile(
       typeResolveResult.typePath,
-      "utf-8",
+      "utf-8"
     );
     typesEntryContent = transformCommonJSExport(typesEntryContent);
     await fs.promises.writeFile(typeResolveResult.typePath, typesEntryContent);
@@ -487,6 +486,7 @@ export async function generateDocsForPackage(
     });
   } catch (error) {
     logger.error("TypeDoc exiting with unexpected error:", error);
+    throw new TypeDocBuildError(error);
   }
 
   return {
