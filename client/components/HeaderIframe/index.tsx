@@ -6,12 +6,17 @@ import styles from "./HeaderIframe.module.scss";
 import { packageFromPath } from "../../../common/utils";
 
 const HeaderIframe = () => {
+  const searchParams = new URL(window.document.location.href).searchParams;
+
+  const force = !!searchParams.get("force");
+
   const { packageName: initialPackageName } = packageFromPath(
     window.location.pathname.split("/docs/")[1]
   );
 
   const handleSearchSubmit = async (pkg: string) => {
-    window.location.pathname = `/search/docs/${pkg}`;
+    const withForce = force ? "?force=true" : "";
+    window.location.pathname = `/search/docs/${pkg}${withForce}`;
   };
 
   return (

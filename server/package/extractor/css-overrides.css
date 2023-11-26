@@ -2,10 +2,6 @@ body {
   font-size: 15px;
 }
 
-ul {
-  padding-inline-start: 20px;
-}
-
 :root {
   --font-family-code: "SF Mono", "JetBrains Mono", Menlo, Consolas, Monaco,
     Liberation Mono, Lucida Console, monospace;
@@ -20,34 +16,39 @@ ul {
   :root[data-theme="light"],
   :root[data-theme="dark"],
   :root[data-theme="os"] {
+    --light-color-active-menu-item: #efeff0;
     --light-color-text: #222;
     --dark-color-text: #222;
 
     --light-color-ts-project: #2548b6;
-    --light-color-ts-enum: #2548b6;
-    --light-color-ts-variable: #962b89;
+
+    --light-color-ts-enum: #0585ae;
+    --light-color-ts-enum-background: #dcf2f2;
+
+    --light-color-ts-namespace: #1305ae;
+    --light-color-ts-namespace-background: #ececf4;
+
+    --light-color-ts-variable: #78059e;
+    --light-color-ts-variable-background: #eee1f2;
+
     --light-color-ts-type-parameter: #403e48;
-    --light-color-ts-function: #5925bd;
-    --light-color-ts-class: #2548b6;
-    --light-color-ts-interface: #2586b6;
-    --light-color-ts-type-alias: #2548b6;
+
+    --light-color-ts-function: #6639ba;
+    --light-color-ts-function-background: #e9e9f2;
+
+    --light-color-ts-class: #0550ae;
+    --light-color-ts-class-background: #dce7f2;
+
+    --light-color-ts-interface: #04679f;
+    --light-color-ts-interface-background: #e1ecf2;
+
+    --light-color-ts-type-alias: #ae05a7;
+    --light-color-ts-type-alias-background: #f4ebf4;
+
     --light-color-accent: #e5e5e7;
     --light-code-background: rgb(245, 245, 247);
     --light-color-background: #f7f7f8;
     --light-color-background-secondary: #f5f5f7;
-
-    --dark-color-ts-project: #2548b6;
-    --dark-color-ts-enum: #2548b6;
-    --dark-color-ts-variable: #962b89;
-    --dark-color-ts-type-parameter: #403e48;
-    --dark-color-ts-function: #5925bd;
-    --dark-color-ts-class: #2548b6;
-    --dark-color-ts-interface: #2586b6;
-    --dark-color-ts-type-alias: #2548b6;
-    --dark-color-accent: #e5e5e7;
-    --dark-code-background: rgb(245, 245, 247);
-    --dark-color-background: #f7f7f8;
-    --dark-color-background-secondary: #f5f5f7;
 
     /* Highlight Colors */
     --light-hl-0: #2f626c;
@@ -83,8 +84,23 @@ ul {
   }
 }
 
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-ts-function-background: var(--light-color-ts-function-background);
+    --color-ts-class-background: var(--light-color-ts-class-background);
+    --color-ts-variable-background: var(--light-color-ts-variable-background);
+    --color-ts-interface-background: var(--light-color-ts-interface-background);
+    --color-ts-enum-background: var(--light-color-ts-enum-background);
+    --color-ts-type-alias-background: var(
+      --light-color-ts-type-alias-background
+    );
+    --color-ts-namespace-background: var(--light-color-ts-namespace-background);
+  }
+}
+
 :root {
   color-scheme: only light;
+  --primary-bg-color-transparent: rgba(247, 249, 250, 0.85);
 }
 
 html {
@@ -121,8 +137,9 @@ h4 span {
 }
 
 @media (min-width: 770px) {
-  .container {
-    padding: 61px 0 0 0;
+  #docs-header {
+    height: 61px;
+    background: var(--primary-bg-color-transparent);
   }
 }
 
@@ -133,7 +150,7 @@ h4 span {
   }
 
   .container-main {
-    margin-top: 0;
+    margin: 0;
   }
 }
 
@@ -160,10 +177,11 @@ a.tsd-index-link {
 }
 
 .tsd-navigation .tsd-kind-icon {
-  height: 14px;
-  width: 14px;
-  min-width: 16px;
-  min-height: 16px;
+  height: 20px;
+  width: 20px;
+  min-height: unset;
+  min-width: unset;
+  margin-right: 0.4rem;
 }
 
 .tsd-navigation a,
@@ -174,18 +192,24 @@ a.tsd-index-link {
 
 .container .site-menu {
   background: #fff;
-  height: 100vh;
+  height: 100%;
   border-right: 1px solid var(--light-color-separator);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23666' opacity='0.15' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+  overflow: visible;
+}
+
+.container .site-menu > div {
+  height: 100%;
+}
+
+@media (min-width: 770px) and (max-width: 1399px) {
+  .site-menu {
+    margin-top: 0;
+  }
 }
 
 .page-menu {
   border-left: 1px solid var(--light-color-separator);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23666' opacity='0.1' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
-}
-
-.tsd-signature-type {
-  font-size: 0.95rem;
+  background-image: var(--sidebar-background);
 }
 
 .tsd-signature,
@@ -227,6 +251,7 @@ pre {
 a.tsd-signature-type {
   text-decoration: underline;
   text-decoration-thickness: from-font;
+  font-style: normal;
 }
 
 a.tsd-signature-type:hover {
@@ -265,7 +290,7 @@ ul.tsd-hierarchy li {
 }
 
 .tsd-panel h4 {
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .tsd-panel-group {
@@ -280,6 +305,11 @@ code.tsd-tag {
   margin-right: 5px;
 }
 
+.site-menu .tsd-navigation {
+  overflow-y: scroll;
+  height: calc(100% - 65px);
+}
+
 .tsd-navigation a,
 .tsd-navigation summary > span,
 .tsd-page-navigation a {
@@ -287,7 +317,14 @@ code.tsd-tag {
 }
 
 #tsd-search {
-  padding: 1rem;
+  padding: 1rem 1rem 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+#tsd-search.has-focus {
+  background: none;
 }
 
 #tsd-search input {
@@ -303,18 +340,17 @@ code.tsd-tag {
 #tsd-search .results li:nth-child(even),
 #tsd-search .results li {
   font-size: 0.8rem;
-  font-family: var(--font-family-code);
   background-color: unset;
-  padding: 0.1rem 0.3rem;
+  padding: 0.1rem 0.4rem;
+}
+
+#tsd-search .results li a {
+  color: inherit;
 }
 
 #tsd-search .results li.current:not(.no-results),
 #tsd-search .results li:hover:not(.no-results) {
   background: var(--light-color-separator);
-}
-
-#tsd-search.has-focus {
-  background-color: var(--light-color-separator);
 }
 
 #tsd-search .results li:not(:last-of-type) {
@@ -327,10 +363,9 @@ code.tsd-tag {
 
 #tsd-search .results {
   max-width: 800px;
-  border-radius: 0 0 10px 10px;
+  border-radius: 0 0 4px 4px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.99);
-  box-shadow: var(--shadow-overlay);
 }
 
 #tsd-search .results .no-results {
@@ -361,6 +396,9 @@ code.tsd-tag {
 #tsd-toolbar-links a {
   transition: opacity 0.1s;
 }
+.tsd-navigation a.current {
+  font-weight: 600;
+}
 
 .tsd-page-toolbar {
   background: rgba(250, 250, 250, 0.9);
@@ -386,4 +424,46 @@ ul > li:only-child > ul:only-child {
 }
 
 .header-iframe {
+}
+
+.tsd-kind-icon-custom {
+  background: #ecdceb;
+  padding: 0 5px;
+  border-radius: 3px;
+  font-family: var(--font-family-code);
+  font-weight: bold;
+  color: #9f0499;
+  line-height: 1.4;
+  margin-right: 2px;
+}
+
+[id^="icon-"] rect {
+  stroke: none;
+  stroke-width: 0;
+  rx: 8px;
+}
+
+[id^="icon-"] path {
+  stroke-width: 0.5px;
+}
+
+#icon-chevronDown path {
+  fill: #4b4e5c;
+  stroke: white;
+  stroke-width: 1.5px;
+}
+
+.tsd-breadcrumb {
+  font-family: var(--font-family-code);
+  font-size: 14px;
+}
+
+.container {
+  padding: 0 1rem;
+}
+
+@media (min-width: 770px) {
+  .tsd-filter-visibility {
+    padding-left: 1.5rem;
+  }
 }

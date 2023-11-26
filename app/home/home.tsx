@@ -4,7 +4,7 @@ import SearchBox from "../../client/components/SearchBox";
 import styles from "./home.module.scss";
 import Logo from "../../client/components/Logo";
 import SuggestionPills from "../../client/components/SuggestionPills";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../../client/components/Header";
 import Footer from "../../client/components/Footer";
 import { useRouter } from "next/navigation";
@@ -17,6 +17,10 @@ export default function Index() {
   const handleSearchSubmit = async (pkg: string) => {
     router.push(`/search/docs/${pkg}`);
   };
+
+  useEffect(() => {
+    router.prefetch("/search/docs/foo");
+  }, []);
 
   return (
     <div className={styles.homePageContainer}>

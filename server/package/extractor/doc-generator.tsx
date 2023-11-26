@@ -32,27 +32,6 @@ import { DocsCache } from "../DocsCache";
 import { installQueue, installQueueEvents } from "../../queues";
 import { icons } from "./icon";
 
-const kindIcon = (letterPath: string, color: string) =>
-  JSX.createElement(
-    "svg",
-    {
-      class: "tsd-kind-icon",
-      viewBox: "0 0 24 24",
-    },
-    JSX.createElement("rect", {
-      fill: color,
-      "stroke-width": "1.5",
-      x: "1",
-      y: "1",
-      width: "22",
-      height: "22",
-      rx: "6",
-    }),
-    JSX.createElement(JSX.Raw, {
-      html: letterPath,
-    })
-  );
-
 class CustomThemeContext extends DefaultThemeRenderContext {
   _originalNav: any;
 
@@ -78,49 +57,9 @@ class CustomThemeContext extends DefaultThemeRenderContext {
 
   override toolbar = (context) => {
     return JSX.createElement(JSX.Raw, {
-      html: `
-
-      `,
+      html: ``,
     });
   };
-
-  // override navigation = (page) => {
-  //   console.log("nav", this._originalNav);
-  //
-  //   return JSX.createElement("div", {}, [
-  //     JSX.createElement("h1", {}, "FooLalal"),
-  //     this._originalNav,
-  //   ]);
-  // };
-
-  // public override get icons() {
-  //   const originalIcons = { ...super.icons };
-  //   originalIcons[ReflectionKind.Function] = () =>
-  //     kindIcon(
-  //       `<path
-  //       d="M9.39 16V7.24H14.55V8.224H10.446V11.128H14.238V12.112H10.47V16H9.39Z"
-  //       fill="white"
-  //     />`,
-  //       "var(--color-ts-function)",
-  //     );
-  //
-  //   originalIcons[ReflectionKind.Class] = super.icons[ReflectionKind.Class];
-  //
-  //   // originalIcons["chevronDown"] = () => {
-  //   //   return JSX.createElement(JSX.Raw, {
-  //   //     html: `Foo`,
-  //   //   });
-  //   // };
-  //   //
-  //   // originalIcons["chevronSmall"] = () => {
-  //   //   return JSX.createElement(JSX.Raw, {
-  //   //     html: `Foo`,
-  //   //   });
-  //   // };
-  //   super.icons = originalIcons;
-  //   super.iconsCache();
-  //   return originalIcons;
-  // }
 }
 
 export class CustomTheme extends DefaultTheme {
@@ -263,6 +202,50 @@ async function generateDocsHTML(
   generateTimer.done({ message: `generated html docs` });
 }
 
+const iconColors = {
+  [ReflectionKind.Class]: {
+    background: "var(--color-ts-class-background)",
+    foreground: "var(--color-ts-class)",
+    path: "M22.153 16.1V9.107h1.271l.125 1.043h.069c.184-.338.47-.625.856-.86.387-.235.834-.352 1.34-.352.839 0 1.47.258 1.893.775.424.517.636 1.278.636 2.284V16.1h-1.465v-3.92c0-.582-.12-1.034-.359-1.353-.24-.32-.617-.48-1.133-.48-.506 0-.93.174-1.27.522-.332.348-.498.85-.498 1.509V16.1h-1.465Zm-5.825.17c-.829 0-1.46-.258-1.893-.775-.423-.527-.635-1.288-.635-2.284V9.107h1.464v3.92c0 .574.12 1.025.36 1.354.248.32.626.48 1.132.48.507 0 .93-.175 1.271-.523.341-.347.511-.85.511-1.508V9.107h1.465v6.994h-1.271l-.124-1.043h-.07c-.184.338-.47.625-.856.86-.387.235-.838.352-1.354.352ZM5.46 19.203v-1.311h1.12c.322 0 .553-.07.69-.212.148-.131.222-.357.222-.676v-6.627h-1.74v-1.27h1.74v-.972c0-.78.189-1.34.566-1.678.378-.339.917-.508 1.617-.508h1.671v1.312H9.854c-.322 0-.552.065-.69.197-.139.132-.208.362-.208.69v.96h2.39v1.269h-2.39v6.64c0 .78-.189 1.34-.566 1.679-.378.338-.921.507-1.63.507h-1.3Z",
+  },
+  [ReflectionKind.Function]: {
+    background: "var(--color-ts-function-background)",
+    foreground: "var(--color-ts-function)",
+    path: "M22.153 16.1V9.107h1.271l.125 1.043h.069c.184-.338.47-.625.856-.86.387-.235.834-.352 1.34-.352.839 0 1.47.258 1.893.775.424.517.636 1.278.636 2.284V16.1h-1.465v-3.92c0-.582-.12-1.034-.359-1.353-.24-.32-.617-.48-1.133-.48-.506 0-.93.174-1.27.522-.332.348-.498.85-.498 1.509V16.1h-1.465Zm-5.825.17c-.829 0-1.46-.258-1.893-.775-.423-.527-.635-1.288-.635-2.284V9.107h1.464v3.92c0 .574.12 1.025.36 1.354.248.32.626.48 1.132.48.507 0 .93-.175 1.271-.523.341-.347.511-.85.511-1.508V9.107h1.465v6.994h-1.271l-.124-1.043h-.07c-.184.338-.47.625-.856.86-.387.235-.838.352-1.354.352ZM5.46 19.203v-1.311h1.12c.322 0 .553-.07.69-.212.148-.131.222-.357.222-.676v-6.627h-1.74v-1.27h1.74v-.972c0-.78.189-1.34.566-1.678.378-.339.917-.508 1.617-.508h1.671v1.312H9.854c-.322 0-.552.065-.69.197-.139.132-.208.362-.208.69v.96h2.39v1.269h-2.39v6.64c0 .78-.189 1.34-.566 1.679-.378.338-.921.507-1.63.507h-1.3Z",
+  },
+  [ReflectionKind.Enum]: {
+    background: "var(--color-ts-enum-background)",
+    foreground: "var(--color-ts-enum)",
+    path: "M22.153 16.1V9.107h1.271l.125 1.043h.069c.184-.338.47-.625.856-.86.387-.235.834-.352 1.34-.352.839 0 1.47.258 1.893.775.424.517.636 1.278.636 2.284V16.1h-1.465v-3.92c0-.582-.12-1.034-.359-1.353-.24-.32-.617-.48-1.133-.48-.506 0-.93.174-1.27.522-.332.348-.498.85-.498 1.509V16.1h-1.465Zm-5.825.17c-.829 0-1.46-.258-1.893-.775-.423-.527-.635-1.288-.635-2.284V9.107h1.464v3.92c0 .574.12 1.025.36 1.354.248.32.626.48 1.132.48.507 0 .93-.175 1.271-.523.341-.347.511-.85.511-1.508V9.107h1.465v6.994h-1.271l-.124-1.043h-.07c-.184.338-.47.625-.856.86-.387.235-.838.352-1.354.352ZM5.46 19.203v-1.311h1.12c.322 0 .553-.07.69-.212.148-.131.222-.357.222-.676v-6.627h-1.74v-1.27h1.74v-.972c0-.78.189-1.34.566-1.678.378-.339.917-.508 1.617-.508h1.671v1.312H9.854c-.322 0-.552.065-.69.197-.139.132-.208.362-.208.69v.96h2.39v1.269h-2.39v6.64c0 .78-.189 1.34-.566 1.679-.378.338-.921.507-1.63.507h-1.3Z",
+  },
+  [ReflectionKind.Interface]: {
+    background: "var(--color-ts-interface-background)",
+    foreground: "var(--color-ts-interface)",
+    path: "M22.153 16.1V9.107h1.271l.125 1.043h.069c.184-.338.47-.625.856-.86.387-.235.834-.352 1.34-.352.839 0 1.47.258 1.893.775.424.517.636 1.278.636 2.284V16.1h-1.465v-3.92c0-.582-.12-1.034-.359-1.353-.24-.32-.617-.48-1.133-.48-.506 0-.93.174-1.27.522-.332.348-.498.85-.498 1.509V16.1h-1.465Zm-5.825.17c-.829 0-1.46-.258-1.893-.775-.423-.527-.635-1.288-.635-2.284V9.107h1.464v3.92c0 .574.12 1.025.36 1.354.248.32.626.48 1.132.48.507 0 .93-.175 1.271-.523.341-.347.511-.85.511-1.508V9.107h1.465v6.994h-1.271l-.124-1.043h-.07c-.184.338-.47.625-.856.86-.387.235-.838.352-1.354.352ZM5.46 19.203v-1.311h1.12c.322 0 .553-.07.69-.212.148-.131.222-.357.222-.676v-6.627h-1.74v-1.27h1.74v-.972c0-.78.189-1.34.566-1.678.378-.339.917-.508 1.617-.508h1.671v1.312H9.854c-.322 0-.552.065-.69.197-.139.132-.208.362-.208.69v.96h2.39v1.269h-2.39v6.64c0 .78-.189 1.34-.566 1.679-.378.338-.921.507-1.63.507h-1.3Z",
+  },
+  [ReflectionKind.Namespace]: {
+    background: "var(--color-ts-namespace-background)",
+    foreground: "var(--color-ts-namespace)",
+    path: "M22.153 16.1V9.107h1.271l.125 1.043h.069c.184-.338.47-.625.856-.86.387-.235.834-.352 1.34-.352.839 0 1.47.258 1.893.775.424.517.636 1.278.636 2.284V16.1h-1.465v-3.92c0-.582-.12-1.034-.359-1.353-.24-.32-.617-.48-1.133-.48-.506 0-.93.174-1.27.522-.332.348-.498.85-.498 1.509V16.1h-1.465Zm-5.825.17c-.829 0-1.46-.258-1.893-.775-.423-.527-.635-1.288-.635-2.284V9.107h1.464v3.92c0 .574.12 1.025.36 1.354.248.32.626.48 1.132.48.507 0 .93-.175 1.271-.523.341-.347.511-.85.511-1.508V9.107h1.465v6.994h-1.271l-.124-1.043h-.07c-.184.338-.47.625-.856.86-.387.235-.838.352-1.354.352ZM5.46 19.203v-1.311h1.12c.322 0 .553-.07.69-.212.148-.131.222-.357.222-.676v-6.627h-1.74v-1.27h1.74v-.972c0-.78.189-1.34.566-1.678.378-.339.917-.508 1.617-.508h1.671v1.312H9.854c-.322 0-.552.065-.69.197-.139.132-.208.362-.208.69v.96h2.39v1.269h-2.39v6.64c0 .78-.189 1.34-.566 1.679-.378.338-.921.507-1.63.507h-1.3Z",
+  },
+  [ReflectionKind.TypeAlias]: {
+    background: "var(--color-ts-type-alias-background)",
+    foreground: "var(--color-ts-type-alias)",
+    path: "M22.153 16.1V9.107h1.271l.125 1.043h.069c.184-.338.47-.625.856-.86.387-.235.834-.352 1.34-.352.839 0 1.47.258 1.893.775.424.517.636 1.278.636 2.284V16.1h-1.465v-3.92c0-.582-.12-1.034-.359-1.353-.24-.32-.617-.48-1.133-.48-.506 0-.93.174-1.27.522-.332.348-.498.85-.498 1.509V16.1h-1.465Zm-5.825.17c-.829 0-1.46-.258-1.893-.775-.423-.527-.635-1.288-.635-2.284V9.107h1.464v3.92c0 .574.12 1.025.36 1.354.248.32.626.48 1.132.48.507 0 .93-.175 1.271-.523.341-.347.511-.85.511-1.508V9.107h1.465v6.994h-1.271l-.124-1.043h-.07c-.184.338-.47.625-.856.86-.387.235-.838.352-1.354.352ZM5.46 19.203v-1.311h1.12c.322 0 .553-.07.69-.212.148-.131.222-.357.222-.676v-6.627h-1.74v-1.27h1.74v-.972c0-.78.189-1.34.566-1.678.378-.339.917-.508 1.617-.508h1.671v1.312H9.854c-.322 0-.552.065-.69.197-.139.132-.208.362-.208.69v.96h2.39v1.269h-2.39v6.64c0 .78-.189 1.34-.566 1.679-.378.338-.921.507-1.63.507h-1.3Z",
+  },
+  [ReflectionKind.Variable]: {
+    background: "var(--color-ts-variable-background)",
+    foreground: "var(--color-ts-variable)",
+    path: "M22.153 16.1V9.107h1.271l.125 1.043h.069c.184-.338.47-.625.856-.86.387-.235.834-.352 1.34-.352.839 0 1.47.258 1.893.775.424.517.636 1.278.636 2.284V16.1h-1.465v-3.92c0-.582-.12-1.034-.359-1.353-.24-.32-.617-.48-1.133-.48-.506 0-.93.174-1.27.522-.332.348-.498.85-.498 1.509V16.1h-1.465Zm-5.825.17c-.829 0-1.46-.258-1.893-.775-.423-.527-.635-1.288-.635-2.284V9.107h1.464v3.92c0 .574.12 1.025.36 1.354.248.32.626.48 1.132.48.507 0 .93-.175 1.271-.523.341-.347.511-.85.511-1.508V9.107h1.465v6.994h-1.271l-.124-1.043h-.07c-.184.338-.47.625-.856.86-.387.235-.838.352-1.354.352ZM5.46 19.203v-1.311h1.12c.322 0 .553-.07.69-.212.148-.131.222-.357.222-.676v-6.627h-1.74v-1.27h1.74v-.972c0-.78.189-1.34.566-1.678.378-.339.917-.508 1.617-.508h1.671v1.312H9.854c-.322 0-.552.065-.69.197-.139.132-.208.362-.208.69v.96h2.39v1.269h-2.39v6.64c0 .78-.189 1.34-.566 1.679-.378.338-.921.507-1.63.507h-1.3Z",
+  },
+};
+
+iconColors[ReflectionKind.CallSignature] = iconColors[ReflectionKind.Function];
+iconColors[ReflectionKind.TypeLiteral] = iconColors[ReflectionKind.TypeAlias];
+iconColors[ReflectionKind.TypeParameter] = iconColors[ReflectionKind.TypeAlias];
+iconColors[ReflectionKind.Module] = iconColors[ReflectionKind.Namespace];
+iconColors[ReflectionKind.Project] = iconColors[ReflectionKind.Namespace];
+
 function setupApp(app: td.Application) {
   if (app["setupComplete"]) {
     return;
@@ -276,7 +259,23 @@ function setupApp(app: td.Application) {
     JSX.createElement(JSX.Raw, {
       html: `
          <link rel="stylesheet" href="/shared-dist/style.css" fetchpriority="high" />
-        <script src="/shared-dist/header.umd.js" fetchpriority="high"></script>
+         <script src="/shared-dist/header.umd.js" fetchpriority="high"></script>
+         <style>
+           ${Object.entries(iconColors)
+             .map(([id, { background, foreground, path }]) => {
+               return `
+                 #icon-${id} rect {
+                   fill: ${background};
+                 }
+           
+                 #icon-${id} path {
+                    fill: ${foreground};
+                    stroke: ${foreground};
+                 }
+           `;
+             })
+             .join("\n")}
+          </style>
       `,
     })
   );
@@ -367,7 +366,8 @@ async function convertAndWriteDocs(
 const packumentCache = new Map();
 
 export async function generateDocsForPackage(
-  packageJSON
+  packageJSON,
+  { force }
 ): Promise<{ docsPath: string }> {
   const docsPath = getDocsPath({
     packageName: packageJSON.name,
@@ -380,7 +380,7 @@ export async function generateDocsForPackage(
   );
 
   // Cache hit
-  if (typeDocFromCache) {
+  if (!force && typeDocFromCache) {
     logger.info(
       `Typedoc cache hit for ${packageJSON.name}@${packageJSON.version}`
     );

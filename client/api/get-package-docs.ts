@@ -129,11 +129,14 @@ export function getErrorMessage(error: { name: string; extra: any }) {
 }
 
 export async function getPackageDocs(
-  pkg: string
+  pkg: string,
+  { force }: { force: boolean }
 ): Promise<PackageDocsResponse> {
   let triggerResponse: AxiosResponse<TriggerAPIResponse> = null;
+  const withForce = force ? "?force=true" : "";
+
   try {
-    triggerResponse = await axios.post(`/api/docs/trigger/${pkg}`);
+    triggerResponse = await axios.post(`/api/docs/trigger/${pkg}${withForce}`);
   } catch (err) {
     let errorMessage = "";
     if (err.response?.data) {

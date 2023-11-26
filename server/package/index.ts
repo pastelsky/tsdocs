@@ -5,13 +5,17 @@ import { resolvePackageJSON } from "./resolvers";
 import semver from "semver";
 import { generateDocsQueue, generateDocsQueueEvents } from "../queues";
 import { packageFromPath } from "../../common/utils";
+import { PackageNotFoundError } from "./CustomError";
+import logger from "../../common/logger";
 
 export async function resolveDocsRequest({
   packageName,
   packageVersion,
+  force,
 }: {
   packageName: string;
   packageVersion: string;
+  force: boolean;
 }): Promise<
   | {
       type: "hit";
@@ -27,7 +31,7 @@ export async function resolveDocsRequest({
       docsPathDisk: string;
     }
 > {
-  if (semver.valid(packageVersion)) {
+  if (!force && semver.valid(packageVersion)) {
     const docsPathDisk = getDocsPath({
       packageName: packageName,
       packageVersion: packageVersion,
@@ -52,6 +56,16 @@ export async function resolveDocsRequest({
     packageVersion: packageJSON.version,
   });
 
+  if (force) {
+    return {
+      type: "miss",
+      packageName: packageJSON.name,
+      packageVersion: packageJSON.version,
+      packageJSON,
+      docsPathDisk,
+    };
+  }
+
   if (await checkFileExists(path.join(docsPathDisk, "index.html"))) {
     return {
       type: "hit",
@@ -71,11 +85,17 @@ export async function resolveDocsRequest({
 }
 
 export async function handlerAPIDocsTrigger(req, res) {
+  console.log("Foo", req.params);
   const paramsPath = req.params["*"];
+  const { force } = req.query;
   const routePackageDetails = packageFromPath(paramsPath);
+  logger.info("routePackageDetails is ", routePackageDetails);
 
   if (!routePackageDetails) {
-    res.send(404);
+    logger.error("Route package details not found in " + paramsPath);
+    res.send(404).send({
+      name: PackageNotFoundError.name,
+    });
     return;
   }
 
@@ -84,6 +104,7 @@ export async function handlerAPIDocsTrigger(req, res) {
   const resolvedRequest = await resolveDocsRequest({
     packageName,
     packageVersion,
+    force,
   });
 
   if (resolvedRequest.type === "hit") {
@@ -91,7 +112,7 @@ export async function handlerAPIDocsTrigger(req, res) {
   } else {
     const generateJob = await generateDocsQueue.add(
       `generate docs ${packageName}`,
-      { packageJSON: resolvedRequest.packageJSON },
+      { packageJSON: resolvedRequest.packageJSON, force },
       {
         jobId: `${resolvedRequest.packageJSON.name}@${resolvedRequest.packageJSON.version}`,
       }
@@ -106,10 +127,11 @@ export async function handlerAPIDocsTrigger(req, res) {
 }
 
 export async function handlerAPIDocsPoll(req, res) {
-  const jobId = req.params.jobId;
+  const jobId = req.params["*"];
   const job = await generateDocsQueue.getJob(jobId);
 
   if (!job) {
+    logger.error(`Job ${jobId} not found in queue`);
     res.send(404);
   }
 
@@ -127,6 +149,7 @@ export async function handlerAPIDocsPoll(req, res) {
 
 export async function handlerDocsHTML(req, res) {
   const paramsPath = req.params["*"];
+  const { force } = req.query;
   const routePackageDetails = packageFromPath(paramsPath);
 
   if (!routePackageDetails) {
@@ -139,12 +162,13 @@ export async function handlerDocsHTML(req, res) {
   const resolvedRequest = await resolveDocsRequest({
     packageName,
     packageVersion,
+    force,
   });
 
   if (resolvedRequest.type === "miss") {
     const generateJob = await generateDocsQueue.add(
       `generate docs ${packageName}`,
-      { packageJSON: resolvedRequest.packageJSON }
+      { packageJSON: resolvedRequest.packageJSON, force }
     );
     await generateJob.waitUntilFinished(generateDocsQueueEvents);
   }

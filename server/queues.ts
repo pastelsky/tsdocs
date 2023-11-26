@@ -30,21 +30,22 @@ const installWorker = new Worker<InstallWorkerOptions>(
     await InstallationUtils.installPackage(
       [`${job.data.packageName}@${job.data.packageVersion}`],
       job.data.installPath,
-      { client: "npm" },
+      { client: "npm" }
     );
   },
-  { concurrency: os.cpus().length - 1, connection: redisOptions },
+  { concurrency: os.cpus().length - 1, connection: redisOptions }
 );
 
 type GenerateDocsWorkerOptions = {
   packageJSON: object;
+  force: boolean;
 };
 
 export const generateDocsQueue = new Queue<GenerateDocsWorkerOptions>(
   "generate-docs-package",
   {
     connection: redisOptions,
-  },
+  }
 );
 
 export const generateDocsQueueEvents = new QueueEvents(generateDocsQueue.name, {
@@ -54,9 +55,11 @@ export const generateDocsQueueEvents = new QueueEvents(generateDocsQueue.name, {
 const generateDocsWorker = new Worker<GenerateDocsWorkerOptions>(
   generateDocsQueue.name,
   async (job: Job) => {
-    return await generateDocsForPackage(job.data.packageJSON);
+    return await generateDocsForPackage(job.data.packageJSON, {
+      force: job.data.force,
+    });
   },
-  { concurrency: os.cpus().length - 1, connection: redisOptions },
+  { concurrency: os.cpus().length - 1, connection: redisOptions }
 );
 
 export const queues = [installQueue, generateDocsQueue];

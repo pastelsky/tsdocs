@@ -8,15 +8,22 @@ import Header from "../../../../client/components/Header";
 import Footer from "../../../../client/components/Footer";
 import { packageFromPath } from "../../../../common/utils";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 export default function Search({ pkg }) {
   const pkgArray = Array.isArray(pkg) ? pkg : [pkg];
+  const pkgPath = pkgArray.map(decodeURIComponent).join("/");
+
   const [status, setStatus] = useState<"loading" | "error">("loading");
   const [error, setError] = useState<{
     errorCode: string;
     errorMessage: string;
   } | null>(null);
+
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const force = !!searchParams.get("force");
+  const withForce = force ? "?force=true" : "";
 
   let packageName = "";
 
@@ -28,15 +35,15 @@ export default function Search({ pkg }) {
     });
   }
 
-  const pathFragments = packageFromPath(pkgArray.join("/"));
+  const pathFragments = packageFromPath(pkgPath);
   packageName = pathFragments.packageName;
 
   const searchAndRedirect = async (pkg: string) => {
     try {
-      const result = await getPackageDocs(pkg);
+      const result = await getPackageDocs(pkg, { force });
 
       if (result.status === "success") {
-        window.location.href = `/docs/${pkg}/index.html`;
+        window.location.href = `/docs/${pkg}/index.html${withForce}`;
       } else {
         console.error("Getting package docs failed", result);
         setStatus("error");
@@ -57,12 +64,12 @@ export default function Search({ pkg }) {
 
   const handleSearchSubmit = async (pkg: string) => {
     setStatus("loading");
-    router.replace(`/search/docs/${pkg}`);
+    router.replace(`/search/docs/${pkg}${withForce}`);
     searchAndRedirect(pkg);
   };
 
   useEffect(() => {
-    searchAndRedirect(pkgArray.join("/"));
+    searchAndRedirect(packageName);
   }, []);
 
   return (

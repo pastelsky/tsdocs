@@ -155,7 +155,7 @@ app
 
     fastify.route({
       method: "GET",
-      url: `/api/docs/poll/:jobId`,
+      url: `/api/docs/poll/*`,
       handler: async (request, reply) => {
         return handlerAPIDocsPoll(request, reply);
       },
