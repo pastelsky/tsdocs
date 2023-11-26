@@ -85,7 +85,6 @@ export async function resolveDocsRequest({
 }
 
 export async function handlerAPIDocsTrigger(req, res) {
-  console.log("Foo", req.params);
   const paramsPath = req.params["*"];
   const { force } = req.query;
   const routePackageDetails = packageFromPath(paramsPath);

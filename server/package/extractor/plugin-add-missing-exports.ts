@@ -2,7 +2,6 @@
 
 import { ok } from "assert";
 import path from "path";
-import { match } from "minimatch";
 import {
   Application,
   Context,
@@ -14,7 +13,6 @@ import {
   DeclarationReflection,
   ProjectReflection,
 } from "typedoc";
-import paths_1 from "typedoc/dist/lib/utils/paths";
 import fs from "fs";
 
 declare module "typedoc" {
@@ -43,21 +41,24 @@ function patchEscapedName(escapedName: string) {
 }
 
 export function load(app: Application) {
-  let activeReflection: Reflection | undefined;
-  const referencedSymbols = new Map<ts.Program, Set<ts.Symbol>>();
-  const symbolToActiveRefl = new Map<ts.Symbol, Reflection>();
-  const knownPrograms = new Map<Reflection, ts.Program>();
+  app["missingExportsPlugin"] = {
+    activeReflection: undefined,
+    referencedSymbols: new Map<ts.Program, Set<ts.Symbol>>(),
+    symbolToActiveRefl: new Map<ts.Symbol, Reflection>(),
+    knownPrograms: new Map<Reflection, ts.Program>(),
+  };
 
   function discoverMissingExports(
     context: Context,
-    program: ts.Program,
+    program: ts.Program
   ): Set<ts.Symbol> {
     // An export is missing if if was referenced
     // Is not contained in the documented
     // And is "owned" by the active reflection
-    const referenced = referencedSymbols.get(program) || new Set();
+    const referenced =
+      app["missingExportsPlugin"].referencedSymbols.get(program) || new Set();
     const ownedByOther = new Set<ts.Symbol>();
-    referencedSymbols.set(program, ownedByOther);
+    app["missingExportsPlugin"].referencedSymbols.set(program, ownedByOther);
 
     for (const s of [...referenced]) {
       // Patch package name:
@@ -67,7 +68,10 @@ export function load(app: Application) {
       }
       if (context.project.getReflectionFromSymbol(s)) {
         referenced.delete(s);
-      } else if (symbolToActiveRefl.get(s) !== activeReflection) {
+      } else if (
+        app["missingExportsPlugin"].symbolToActiveRefl.get(s) !==
+        app["missingExportsPlugin"].activeReflection
+      ) {
         referenced.delete(s);
         ownedByOther.add(s);
       }
@@ -78,21 +82,40 @@ export function load(app: Application) {
 
   // Monkey patch the constructor for references so that we can get every
   const origCreateSymbolReference = ReferenceType.createSymbolReference;
+  app["missingExportsPlugin"].createSymbolReference = function (
+    symbol,
+    context,
+    name
+  ) {
+    ok(
+      app["missingExportsPlugin"].activeReflection,
+      "active reflection has not been set"
+    );
+    const set = app["missingExportsPlugin"].referencedSymbols.get(
+      context.program
+    );
+    app["missingExportsPlugin"].symbolToActiveRefl.set(
+      symbol,
+      app["missingExportsPlugin"].activeReflection
+    );
+    if (set) {
+      set.add(symbol);
+    } else {
+      app["missingExportsPlugin"].referencedSymbols.set(
+        context.program,
+        new Set([symbol])
+      );
+    }
+    return origCreateSymbolReference.call(this, symbol, context, name);
+  };
 
-  if (!hasMonkeyPatched) {
-    ReferenceType.createSymbolReference = function (symbol, context, name) {
-      hasMonkeyPatched = true;
-      ok(activeReflection, "active reflection has not been set");
-      const set = referencedSymbols.get(context.program);
-      symbolToActiveRefl.set(symbol, activeReflection);
-      if (set) {
-        set.add(symbol);
-      } else {
-        referencedSymbols.set(context.program, new Set([symbol]));
-      }
-      return origCreateSymbolReference.call(this, symbol, context, name);
-    };
-  }
+  ReferenceType.createSymbolReference = (symbol, context, name) => {
+    return app["missingExportsPlugin"].createSymbolReference(
+      symbol,
+      context,
+      name
+    );
+  };
 
   app.options.addDeclaration({
     name: "internalModule",
@@ -104,10 +127,10 @@ export function load(app: Application) {
     Converter.EVENT_CREATE_DECLARATION,
     (context: Context, refl: Reflection) => {
       if (refl.kindOf(ReflectionKind.Project | ReflectionKind.Module)) {
-        knownPrograms.set(refl, context.program);
-        activeReflection = refl;
+        app["missingExportsPlugin"].knownPrograms.set(refl, context.program);
+        app["missingExportsPlugin"].activeReflection = refl;
       }
-    },
+    }
   );
 
   const basePath = path.join(app.options.getValue("basePath"), "..", "..");
@@ -123,9 +146,9 @@ export function load(app: Application) {
       }
 
       for (const mod of modules) {
-        activeReflection = mod;
+        app["missingExportsPlugin"].activeReflection = mod;
 
-        const program = knownPrograms.get(mod);
+        const program = app["missingExportsPlugin"].knownPrograms.get(mod);
         if (!program) continue;
         let missing = discoverMissingExports(context, program);
         if (!missing || !missing.size) continue;
@@ -139,7 +162,7 @@ export function load(app: Application) {
             ReflectionKind.Module,
             void 0,
             void 0,
-            context.converter.application.options.getValue("internalModule"),
+            context.converter.application.options.getValue("internalModule")
           );
         context.finalizeDeclarationReflection(internalNs);
         const internalContext = context.withScope(internalNs);
@@ -171,12 +194,12 @@ export function load(app: Application) {
         context.setActiveProgram(void 0);
       }
 
-      knownPrograms.clear();
-      referencedSymbols.clear();
-      symbolToActiveRefl.clear();
+      app["missingExportsPlugin"].knownPrograms.clear();
+      app["missingExportsPlugin"].referencedSymbols.clear();
+      app["missingExportsPlugin"].symbolToActiveRefl.clear();
     },
     void 0,
-    1e9,
+    1e9
   );
 }
 
@@ -187,7 +210,7 @@ const fd = fs.openSync("./accessed", "a");
 function shouldConvertSymbol(
   symbol: ts.Symbol,
   checker: ts.TypeChecker,
-  basePath: string,
+  basePath: string
 ) {
   while (symbol.flags & ts.SymbolFlags.Alias) {
     symbol = checker.getAliasedSymbol(symbol);
@@ -207,7 +230,7 @@ function shouldConvertSymbol(
   }
 
   const isOutsideBase = (symbol.getDeclarations() ?? []).some(
-    (node) => !node.getSourceFile().fileName.startsWith(basePath),
+    (node) => !node.getSourceFile().fileName.startsWith(basePath)
   );
 
   if (isOutsideBase) {

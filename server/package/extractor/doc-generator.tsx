@@ -333,8 +333,6 @@ async function convertAndWriteDocs(
     packageVersion: string;
   }
 ) {
-  setupApp(app);
-
   if (app.logger.hasErrors()) {
     throw new Error("Invalid options passed.");
   }
