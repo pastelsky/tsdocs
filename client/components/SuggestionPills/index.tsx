@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 
 import styles from "./index.module.scss";
 
-const suggestions = [
+const allSuggestions = [
   "three",
   "execa",
   "globby",
@@ -15,19 +15,33 @@ const suggestions = [
   "@testing-library/react",
   "react-router-dom",
   "d3",
+  "lodash-es",
 ];
 
-function shuffleArray(array: any[]): any[] {
-  let currentDate = new Date();
-  let currentHour = currentDate.getHours();
+function getRandomElements(array: string[], n: number) {
+  let result = [];
+  let taken = new Set();
 
-  return array.sort(() => 0.5 - Math.sin(currentHour));
+  while (result.length < n && result.length < array.length) {
+    let index = Math.floor(Math.random() * array.length);
+    if (!taken.has(index)) {
+      result.push(array[index]);
+      taken.add(index);
+    }
+  }
+
+  return result;
 }
 
 const SuggestionPills = () => {
+  const [suggestions, setSuggestions] = React.useState<string[]>([]);
+  useEffect(() => {
+    setSuggestions(getRandomElements(allSuggestions, 4));
+  }, []);
+
   return (
     <div className={styles.suggestionsPillsContainer}>
-      {suggestions.slice(0, 4).map((suggestion) => (
+      {suggestions.map((suggestion) => (
         <Link
           className={styles.suggestionsPill}
           href={`/search/docs/${suggestion}`}

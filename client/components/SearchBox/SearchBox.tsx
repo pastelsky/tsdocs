@@ -8,12 +8,14 @@ type SearchBoxProps = {
   onSelect: (value: string) => void;
   initialValue?: string;
   compact?: boolean;
+  autoFocus?: boolean;
 };
 
 export default function SearchBox({
   onSelect,
   initialValue,
   compact,
+  autoFocus,
 }: SearchBoxProps) {
   const [suggestions, setSuggestions] = React.useState([]);
 
@@ -67,6 +69,7 @@ export default function SearchBox({
             className={styles.searchInput}
             spellCheck={false}
             {...getInputProps()}
+            autoFocus={autoFocus}
           />
         </div>
       </div>

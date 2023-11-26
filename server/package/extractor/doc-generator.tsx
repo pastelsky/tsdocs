@@ -146,9 +146,9 @@ const generateDocsDefaultOptions = (
   },
   useTsLinkResolution: true,
   categorizeByGroup: true,
+  sourceLinkTemplate: `https://unpkg.com/browse/{path}`,
 
   //    name: string;
-  //    sourceLinkTemplate: string;
   //    gitRevision: string;
   //    gitRemote: string;
   //    gaID: string;
@@ -323,6 +323,20 @@ function setupApp(app: td.Application) {
   app.renderer.defineTheme("tsdocs", CustomTheme);
 }
 
+function updateSourceFilename(obj) {
+  for (let key in obj) {
+    if (typeof obj[key] === "object" && obj[key] !== null) {
+      updateSourceFilename(obj[key]); // recursive call for nested objects/arrays
+    } else {
+      if (key === "sourceFileName" || key === "fileName") {
+        obj[key] = obj[key].includes("node_modules/")
+          ? obj[key].split("node_modules/")[1]
+          : obj[key];
+      }
+    }
+  }
+}
+
 async function convertAndWriteDocs(
   app: td.Application,
   {
@@ -346,11 +360,14 @@ async function convertAndWriteDocs(
 
   convertTimer.done({ message: `created typedoc for ${packageName}` });
 
-  await DocsCache.set(
-    packageName,
-    packageVersion,
-    new Serializer().projectToObject(projectReflection, process.cwd())
+  let serializedReflection = new Serializer().projectToObject(
+    projectReflection,
+    process.cwd()
   );
+
+  updateSourceFilename(serializedReflection);
+
+  await DocsCache.set(packageName, packageVersion, serializedReflection);
 
   const generateTimer = logger.startTimer();
   await app.generateDocs(projectReflection, app.options.getValue("out"));

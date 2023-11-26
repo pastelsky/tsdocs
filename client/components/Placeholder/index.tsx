@@ -3,7 +3,7 @@ import cx from "classnames";
 import styles from "./Placeholder.module.scss";
 import Toaster from "../Toaster";
 
-const Loader = ({
+const Placeholder = ({
   status,
   error,
 }: {
@@ -38,4 +38,4 @@ const Loader = ({
   );
 };
 
-export default Loader;
+export default Placeholder;

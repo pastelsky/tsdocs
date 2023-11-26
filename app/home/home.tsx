@@ -45,7 +45,7 @@ export default function Index() {
           </div>
         </>
         <div className={styles.searchContainer}>
-          <SearchBox onSelect={(pkg) => handleSearchSubmit(pkg)} />
+          <SearchBox onSelect={(pkg) => handleSearchSubmit(pkg)} autoFocus />
         </div>
         <SuggestionPills />
       </div>

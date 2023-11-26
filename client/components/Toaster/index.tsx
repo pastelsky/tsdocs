@@ -18,7 +18,7 @@ const Toaster = ({ status }: { status: "loading" | "error" }) => {
     timeline.add({
       targets: "#toaster-knob, #toaster-knob-content",
       translateY: 600,
-      duration: 4000,
+      duration: 3000,
     });
 
     timeline.add(
@@ -26,16 +26,16 @@ const Toaster = ({ status }: { status: "loading" | "error" }) => {
         targets:
           "#toaster-paper-1-container, #toaster-paper-2-container, #toaster-paper-3-container",
         translateY: 1400,
-        duration: 3000,
+        duration: 2000,
         delay: anime.stagger(100),
       },
-      "-=3500"
+      "-=2500"
     );
 
     timeline.add({
       targets: "#toaster-knob, #toaster-knob-content",
       translateY: 0,
-      duration: 4000,
+      duration: 3000,
     });
 
     timeline.add(
@@ -43,10 +43,10 @@ const Toaster = ({ status }: { status: "loading" | "error" }) => {
         targets:
           "#toaster-paper-1-container, #toaster-paper-2-container, #toaster-paper-3-container",
         translateY: 1000,
-        duration: 3000,
+        duration: 2000,
         delay: anime.stagger(100),
       },
-      "-=3200"
+      "-=2200"
     );
 
     if (status === "loading") {
