@@ -10,74 +10,40 @@ import { JSX, ReflectionKind } from "typedoc";
 const kindIcon = (
   letterPath: string,
   color: string,
-  circular: boolean = false,
+  circular: boolean = false
 ) =>
-  JSX.createElement(JSX.Raw, {
-    html: `<svg class="tsd-kind-icon" viewBox="0 0 24 24">
-    <rect
-      fill="${color}"
-      stroke-width="1.5"
-      x="1"
-      y="1"
-      width="22"
-      height="22"
-      rx="${circular ? "12" : "6"}"
-    />
-    ${letterPath}
-  </svg>`,
+  JSX.createElement(
+    "svg",
+    {
+      class: "tsd-kind-icon",
+      viewBox: "0 0 24 24",
+    },
+    JSX.createElement(JSX.Raw, {
+      html: `
+        <rect
+          fill="${color}"
+          stroke-width="1.5"
+          x="1"
+          y="1"
+          width="22"
+          height="22"
+          rx="${circular ? "12" : "6"}"
+        />
+        ${letterPath}
+   `,
+    })
+  );
+
+function kindIcon2({ text, type }: { text: string; type: string }) {
+  return JSX.createElement(JSX.Raw, {
+    html: `
+      <div
+        class="tsd-kind-icon-custom tsd-kind-icon-${type}"
+      >
+        ${text}
+      </div>
+    `,
   });
-
-export function buildRefIcons<T extends Record<string, () => JSX.Element>>(
-  icons: T,
-): { refs: T; cache: JSX.Element } {
-  const refs: Record<string, () => JSX.Element> = {};
-  const children: JSX.Element[] = [];
-
-  for (const [name, builder] of Object.entries(icons)) {
-    const jsx = builder.call(icons);
-    assert(
-      jsx.tag === "svg",
-      "TypeDoc's frontend assumes that icons are written as svg elements",
-    );
-    // This one cannot be cached because the CSS selector depends on targeting SVG elements
-    // within it. Ick. Surely there's a nicer way?
-    if (name === "checkbox") {
-      refs[name] = () => jsx;
-      continue;
-    }
-
-    children.push(
-      JSX.createElement(
-        "g",
-        {
-          id: `icon-${name}`,
-        },
-        jsx.children,
-      ),
-    );
-
-    const ref = JSX.createElement(
-      "svg",
-      {
-        ...jsx.props,
-        id: undefined,
-      },
-      JSX.createElement("use", { href: `#icon-${name}` }),
-    );
-
-    refs[name] = () => ref;
-  }
-
-  return {
-    refs: refs as T,
-    cache: JSX.createElement(
-      "svg",
-      {
-        style: { display: "none" },
-      },
-      children,
-    ),
-  };
 }
 
 export const icons: Record<
@@ -97,19 +63,12 @@ export const icons: Record<
         fill="var(--color-text)"
       />`,
       "#FF4D4D",
-      true,
+      true
     ),
   [ReflectionKind.CallSignature]() {
     return this[ReflectionKind.Function]();
   },
-  [ReflectionKind.Class]: () =>
-    kindIcon(
-      `<path
-        d="M11.898 16.1201C11.098 16.1201 10.466 15.8961 10.002 15.4481C9.53803 15.0001 9.30603 14.3841 9.30603 13.6001V9.64012C9.30603 8.85612 9.53803 8.24012 10.002 7.79212C10.466 7.34412 11.098 7.12012 11.898 7.12012C12.682 7.12012 13.306 7.34812 13.77 7.80412C14.234 8.25212 14.466 8.86412 14.466 9.64012H13.386C13.386 9.14412 13.254 8.76412 12.99 8.50012C12.734 8.22812 12.37 8.09212 11.898 8.09212C11.426 8.09212 11.054 8.22412 10.782 8.48812C10.518 8.75212 10.386 9.13212 10.386 9.62812V13.6001C10.386 14.0961 10.518 14.4801 10.782 14.7521C11.054 15.0161 11.426 15.1481 11.898 15.1481C12.37 15.1481 12.734 15.0161 12.99 14.7521C13.254 14.4801 13.386 14.0961 13.386 13.6001H14.466C14.466 14.3761 14.234 14.9921 13.77 15.4481C13.306 15.8961 12.682 16.1201 11.898 16.1201Z"
-        fill="var(--color-text)"
-      />`,
-      "var(--color-ts-class)",
-    ),
+  [ReflectionKind.Class]: () => kindIcon2({ text: "class", type: "class" }),
   [ReflectionKind.Constructor]: () =>
     kindIcon(
       `<path
@@ -117,7 +76,7 @@ export const icons: Record<
         fill="var(--color-text)"
       />`,
       "#4D7FFF",
-      true,
+      true
     ),
   [ReflectionKind.ConstructorSignature]() {
     return this[ReflectionKind.Constructor]();
@@ -128,19 +87,12 @@ export const icons: Record<
         d="M9.45 16V7.24H14.49V8.224H10.518V10.936H14.07V11.908H10.518V15.016H14.49V16H9.45Z"
         fill="var(--color-text)"
       />`,
-      "var(--color-ts-enum)",
+      "var(--color-ts-enum)"
     ),
   [ReflectionKind.EnumMember]() {
     return this[ReflectionKind.Property]();
   },
-  [ReflectionKind.Function]: () =>
-    kindIcon(
-      `<path
-        d="M9.39 16V7.24H14.55V8.224H10.446V11.128H14.238V12.112H10.47V16H9.39Z"
-        fill="green"
-      />`,
-      "var(--color-ts-function)",
-    ),
+  [ReflectionKind.Function]: () => kindIcon2({ text: "fun", type: "function" }),
   [ReflectionKind.GetSignature]() {
     return this[ReflectionKind.Accessor]();
   },
@@ -153,7 +105,7 @@ export const icons: Record<
         d="M9.51 16V15.016H11.298V8.224H9.51V7.24H14.19V8.224H12.402V15.016H14.19V16H9.51Z"
         fill="var(--color-text)"
       />`,
-      "var(--color-ts-interface)",
+      "var(--color-ts-interface)"
     ),
   [ReflectionKind.Method]: () =>
     kindIcon(
@@ -162,7 +114,7 @@ export const icons: Record<
         fill="var(--color-text)"
       />`,
       "#FF4DB8",
-      true,
+      true
     ),
   [ReflectionKind.Module]() {
     return this[ReflectionKind.Namespace]();
@@ -174,7 +126,7 @@ export const icons: Record<
         d="M9.33 16V7.24H10.77L13.446 14.74C13.43 14.54 13.41 14.296 13.386 14.008C13.37 13.712 13.354 13.404 13.338 13.084C13.33 12.756 13.326 12.448 13.326 12.16V7.24H14.37V16H12.93L10.266 8.5C10.282 8.692 10.298 8.936 10.314 9.232C10.33 9.52 10.342 9.828 10.35 10.156C10.366 10.476 10.374 10.784 10.374 11.08V16H9.33Z"
         fill="var(--color-text)"
       />`,
-      "var(--color-ts-namespace)",
+      "var(--color-ts-namespace)"
     ),
   [ReflectionKind.Parameter]() {
     return this[ReflectionKind.Property]();
@@ -189,7 +141,7 @@ export const icons: Record<
         fill="var(--color-text)"
       />`,
       "#FF984D",
-      true,
+      true
     ),
   [ReflectionKind.Reference]: () =>
     kindIcon(
@@ -198,7 +150,7 @@ export const icons: Record<
         fill="var(--color-text)"
       />`,
       "#FF4D82", // extract into a CSS variable potentially?
-      true,
+      true
     ),
   [ReflectionKind.SetSignature]() {
     return this[ReflectionKind.Accessor]();
@@ -209,7 +161,7 @@ export const icons: Record<
         d="M11.31 16V8.224H8.91V7.24H14.79V8.224H12.39V16H11.31Z"
         fill="var(--color-text)"
       />`,
-      "var(--color-ts-type-alias)",
+      "var(--color-ts-type-alias)"
     ),
   [ReflectionKind.TypeLiteral]() {
     return this[ReflectionKind.TypeAlias]();
@@ -223,30 +175,53 @@ export const icons: Record<
         d="M11.106 16L8.85 7.24H9.966L11.454 13.192C11.558 13.608 11.646 13.996 11.718 14.356C11.79 14.708 11.842 14.976 11.874 15.16C11.906 14.976 11.954 14.708 12.018 14.356C12.09 13.996 12.178 13.608 12.282 13.192L13.758 7.24H14.85L12.582 16H11.106Z"
         fill="var(--color-text)"
       />`,
-      "var(--color-ts-variable)",
+      "var(--color-ts-variable)"
     ),
   chevronDown: () =>
-    JSX.createElement(JSX.Raw, {
-      html: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+    JSX.createElement(
+      "svg",
+      {
+        width: "20",
+        height: "20",
+        viewBox: "0 0 24 24",
+      },
+      JSX.createElement(JSX.Raw, {
+        html: `
       <path
         d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z"
         fill="var(--color-text)"
-      />
-    </svg>`,
-    }),
+      />`,
+      })
+    ),
   chevronSmall: () =>
-    JSX.createElement(JSX.Raw, {
-      html: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <path
-        d="M1.5 5.50969L8 11.6609L14.5 5.50969L12.5466 3.66086L8 7.96494L3.45341 3.66086L1.5 5.50969Z"
-        fill="var(--color-text)"
-      />
-    </svg>`,
-    }),
+    JSX.createElement(
+      "svg",
+      {
+        width: "16",
+        height: "16",
+        viewBox: "0 0 16 16",
+        fill: "none",
+      },
+      JSX.createElement(JSX.Raw, {
+        html: `
+        <path
+          d="M1.5 5.50969L8 11.6609L14.5 5.50969L12.5466 3.66086L8 7.96494L3.45341 3.66086L1.5 5.50969Z"
+          fill="var(--color-text)"
+        />
+      `,
+      })
+    ),
   checkbox: () =>
-    JSX.createElement(JSX.Raw, {
-      html: `<svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
-      <rect
+    JSX.createElement(
+      "svg",
+      {
+        width: "32",
+        height: "32",
+        viewBox: "0 0 32 32",
+        fill: "none",
+      },
+      JSX.createElement(JSX.Raw, {
+        html: `<rect
         class="tsd-checkbox-background"
         width="30"
         height="30"
@@ -262,30 +237,51 @@ export const icons: Record<
         stroke-width="3.5"
         stroke-linejoin="round"
         fill="none"
-      />
-    </svg>`,
-    }),
+      />`,
+      })
+    ),
   menu: () =>
-    JSX.createElement(JSX.Raw, {
-      html: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    JSX.createElement(
+      "svg",
+      {
+        width: "16",
+        height: "16",
+        viewBox: "0 0 16 16",
+        fill: "none",
+      },
+      JSX.createElement(JSX.Raw, {
+        html: `
       {["3", "7", "11"].map((y) => (
         <rect x="1" y={y} width="14" height="2" fill="var(--color-text)" />
-      ))}
-    </svg>`,
-    }),
+      ))}`,
+      })
+    ),
   search: () =>
-    JSX.createElement(JSX.Raw, {
-      html: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <path
+    JSX.createElement(
+      "svg",
+      {
+        width: "16",
+        height: "16",
+        viewBox: "0 0 16 16",
+        fill: "none",
+      },
+      JSX.createElement(JSX.Raw, {
+        html: `<path
         d="M15.7824 13.833L12.6666 10.7177C12.5259 10.5771 12.3353 10.499 12.1353 10.499H11.6259C12.4884 9.39596 13.001 8.00859 13.001 6.49937C13.001 2.90909 10.0914 0 6.50048 0C2.90959 0 0 2.90909 0 6.49937C0 10.0896 2.90959 12.9987 6.50048 12.9987C8.00996 12.9987 9.39756 12.4863 10.5008 11.6239V12.1332C10.5008 12.3332 10.5789 12.5238 10.7195 12.6644L13.8354 15.7797C14.1292 16.0734 14.6042 16.0734 14.8948 15.7797L15.7793 14.8954C16.0731 14.6017 16.0731 14.1267 15.7824 13.833ZM6.50048 10.499C4.29094 10.499 2.50018 8.71165 2.50018 6.49937C2.50018 4.29021 4.28781 2.49976 6.50048 2.49976C8.71001 2.49976 10.5008 4.28708 10.5008 6.49937C10.5008 8.70852 8.71314 10.499 6.50048 10.499Z"
         fill="var(--color-text)"
-      />
-    </svg>`,
-    }),
+      />`,
+      })
+    ),
   anchor: () =>
-    JSX.createElement(JSX.Raw, {
-      html: `<svg viewBox="0 0 24 24">
-      <g
+    JSX.createElement(
+      "svg",
+      {
+        width: "24",
+        height: "24",
+        viewBox: "0 0 24 24",
+      },
+      JSX.createElement(JSX.Raw, {
+        html: `<g
         stroke-width="2"
         stroke="currentColor"
         fill="none"
@@ -295,7 +291,7 @@ export const icons: Record<
         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
         <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
         <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
-      </g>
-    </svg>`,
-    }),
+      </g>`,
+      })
+    ),
 };

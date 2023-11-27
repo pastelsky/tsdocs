@@ -2,7 +2,7 @@ import { Queue, QueueEvents } from "bullmq";
 import { Worker, Job } from "bullmq";
 import InstallationUtils from "./package/installation.utils";
 import os from "os";
-import { generateDocsForPackage } from "./package/extractor/doc-generator";
+import path from "path";
 
 const redisOptions = {
   port: 6379,
@@ -54,19 +54,15 @@ export const generateDocsQueueEvents = new QueueEvents(generateDocsQueue.name, {
 
 const generateDocsWorker = new Worker<GenerateDocsWorkerOptions>(
   generateDocsQueue.name,
-  async (job: Job) => {
-    return await generateDocsForPackage(job.data.packageJSON, {
-      force: job.data.force,
-    });
-  },
-  { concurrency: os.cpus().length - 1, connection: redisOptions }
+  path.join(__dirname, "./workers/docs-builder-worker.js"),
+  {
+    concurrency: os.cpus().length - 1,
+    connection: redisOptions,
+    useWorkerThreads: true,
+    removeOnComplete: {
+      age: 5,
+    },
+  }
 );
 
 export const queues = [installQueue, generateDocsQueue];
-
-// Remove events from queue every 5 seconds
-setInterval(() => {
-  queues.forEach((queue) => {
-    queue.clean(1000, 1000, "completed");
-  });
-}, 5000).unref();

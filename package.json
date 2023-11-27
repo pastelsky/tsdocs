@@ -32,6 +32,7 @@
     "debounce": "^1.2.1",
     "downshift": "^8.2.3",
     "enhanced-resolve": "^5.15.0",
+    "esbuild-register": "^3.5.0",
     "fastify": "^4.24.1",
     "lru-cache": "^10.0.1",
     "minimatch": "^9.0.3",

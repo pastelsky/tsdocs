@@ -4545,6 +4545,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"esbuild-register@npm:^3.5.0":
+  version: 3.5.0
+  resolution: "esbuild-register@npm:3.5.0"
+  dependencies:
+    debug: ^4.3.4
+  peerDependencies:
+    esbuild: ">=0.12 <1"
+  checksum: f4307753c9672a2c901d04a1165031594a854f0a4c6f4c1db08aa393b68a193d38f2df483dc8ca0513e89f7b8998415e7e26fb9830989fb8cdccc5fb5f181c6b
+  languageName: node
+  linkType: hard
+
 "esbuild@npm:^0.18.10":
   version: 0.18.20
   resolution: "esbuild@npm:0.18.20"
@@ -9408,6 +9419,7 @@ __metadata:
     debounce: ^1.2.1
     downshift: ^8.2.3
     enhanced-resolve: ^5.15.0
+    esbuild-register: ^3.5.0
     fastify: ^4.24.1
     husky: ^8.0.3
     lint-staged: ^13.3.0

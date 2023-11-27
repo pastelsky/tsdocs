@@ -89,7 +89,7 @@ export function load(app: Application) {
   ) {
     ok(
       app["missingExportsPlugin"].activeReflection,
-      "active reflection has not been set"
+      "active reflection has not been set for " + symbol.escapedName
     );
     const set = app["missingExportsPlugin"].referencedSymbols.get(
       context.program
