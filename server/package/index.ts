@@ -188,7 +188,7 @@ export async function handlerDocsHTML(req, res) {
   );
 
   if (relativeDocsPath.endsWith(".html")) {
-    res.set("Cache-Control", "public, max-age=10");
+    res.header("Cache-Control", "public, max-age=10");
   }
   await res.sendFile(relativeDocsPath);
 }
