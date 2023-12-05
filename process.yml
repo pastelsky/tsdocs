@@ -1,0 +1,10 @@
+# Write a generic process.yml
+# This is a template for the process.yml file
+
+apps:
+  - script: "./server.ts"
+    name: "server"
+    env:
+      NODE_ENV: "production"
+    interpreter: "node"
+    interpreter_args: "-r ts-node/register --inspect"

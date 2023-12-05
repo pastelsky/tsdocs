@@ -3,6 +3,7 @@ import { Worker, Job } from "bullmq";
 import InstallationUtils from "./package/installation.utils";
 import os from "os";
 import path from "path";
+import logger from "../common/logger";
 
 const redisOptions = {
   port: 6379,
@@ -24,6 +25,10 @@ export const installQueueEvents = new QueueEvents(installQueue.name, {
   connection: redisOptions,
 });
 
+installQueue.on("error", (err) => {
+  logger.error("Error install queue:", err);
+});
+
 const installWorker = new Worker<InstallWorkerOptions>(
   installQueue.name,
   async (job: Job) => {
@@ -33,7 +38,10 @@ const installWorker = new Worker<InstallWorkerOptions>(
       { client: "npm" }
     );
   },
-  { concurrency: os.cpus().length - 1, connection: redisOptions }
+  {
+    concurrency: os.cpus().length - 1,
+    connection: redisOptions,
+  }
 );
 
 type GenerateDocsWorkerOptions = {
@@ -47,9 +55,12 @@ export const generateDocsQueue = new Queue<GenerateDocsWorkerOptions>(
     connection: redisOptions,
   }
 );
-
 export const generateDocsQueueEvents = new QueueEvents(generateDocsQueue.name, {
   connection: redisOptions,
+});
+
+generateDocsQueue.on("error", (err) => {
+  logger.error("Error generating docs:", err);
 });
 
 const generateDocsWorker = new Worker<GenerateDocsWorkerOptions>(
@@ -58,11 +69,18 @@ const generateDocsWorker = new Worker<GenerateDocsWorkerOptions>(
   {
     concurrency: os.cpus().length - 1,
     connection: redisOptions,
-    useWorkerThreads: true,
-    removeOnComplete: {
-      age: 5,
-    },
+    useWorkerThreads: false,
   }
 );
 
 export const queues = [installQueue, generateDocsQueue];
+
+setInterval(async () => {
+  for (let queue of queues) {
+    const failedJobs = await queue.getFailed();
+    for (const job of failedJobs) {
+      console.log("Removing all failed jobs");
+      await job.remove();
+    }
+  }
+}, 10000);

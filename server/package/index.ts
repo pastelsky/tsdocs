@@ -92,13 +92,15 @@ export async function handlerAPIDocsTrigger(req, res) {
 
   if (!routePackageDetails) {
     logger.error("Route package details not found in " + paramsPath);
-    res.send(404).send({
+    res.code(404).send({
       name: PackageNotFoundError.name,
     });
     return;
   }
 
   const { packageName, packageVersion, docsFragment } = routePackageDetails;
+
+  let resolvedRequest;
 
   const resolvedRequest = await resolveDocsRequest({
     packageName,
@@ -131,7 +133,8 @@ export async function handlerAPIDocsPoll(req, res) {
 
   if (!job) {
     logger.error(`Job ${jobId} not found in queue`);
-    res.send(404);
+    res.status(404);
+    return;
   }
 
   if (await job.isCompleted()) {
@@ -152,7 +155,7 @@ export async function handlerDocsHTML(req, res) {
   const routePackageDetails = packageFromPath(paramsPath);
 
   if (!routePackageDetails) {
-    res.send(404);
+    res.status(404);
     return;
   }
 

@@ -430,7 +430,11 @@ export async function generateDocsForPackage(
       packageVersion: packageJSON.version,
       installPath,
     },
-    { jobId: packageString + installPath }
+    {
+      jobId: packageString + installPath,
+      removeOnComplete: true,
+      removeOnFail: true,
+    }
   );
 
   await installJob.waitUntilFinished(installQueueEvents);

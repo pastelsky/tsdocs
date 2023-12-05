@@ -45,7 +45,7 @@ app
     fastify.register(fastifyStatic, {
       root: docsRootPath,
       index: ["index.html"],
-      redirect: true,
+      redirect: false,
       allowedPath: (pathName) => {
         if (pathName.includes("..")) {
           return false;
