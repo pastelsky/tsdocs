@@ -237,10 +237,11 @@ export async function handlerDocsHTML(req, res) {
   if (relativeDocsPath.endsWith(".html")) {
     res.header("Cache-Control", "public, max-age=30");
     const linkHeaderContent = extractPreloadResources(resolvedAbsolutePath)
-      .map(({ url, rel, as }) => {
-        return `<https://tsdocs.dev${url}>; rel="${rel}"; as="${as}"`;
-      })
-      .join(",");
+      .map(
+        ({ url, rel, as }) =>
+          `<https://tsdocs.dev${url}>; rel="${rel}"; as="${as}"`,
+      )
+      .join(", ");
     res.header("Link", linkHeaderContent);
   }
 

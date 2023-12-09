@@ -7,4 +7,4 @@ apps:
     env:
       NODE_ENV: "production"
     interpreter: "node"
-    interpreter_args: "-r ts-node/register --inspect"
+    interpreter_args: "-r ts-node/register"

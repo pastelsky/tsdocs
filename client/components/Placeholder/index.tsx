@@ -25,7 +25,9 @@ const Placeholder = ({
       </div>
 
       {status === "loading" && (
-        <div className={styles.label}>Baking reference docs...</div>
+        <div className={styles.label}>
+          Installing package and extracting docs...
+        </div>
       )}
 
       {status === "error" && (

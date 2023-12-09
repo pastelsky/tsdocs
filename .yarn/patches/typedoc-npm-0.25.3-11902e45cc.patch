@@ -1,0 +1,18 @@
+diff --git a/dist/lib/output/plugins/JavascriptIndexPlugin.js b/dist/lib/output/plugins/JavascriptIndexPlugin.js
+index 0ee1c2b1656c17ef69c5f8af4f5e45b37182cc9c..d74f2c8b5cf88a9ce233a9da86472cb316bfd05e 100644
+--- a/dist/lib/output/plugins/JavascriptIndexPlugin.js
++++ b/dist/lib/output/plugins/JavascriptIndexPlugin.js
+@@ -131,8 +131,11 @@ let JavascriptIndexPlugin = (() => {
+             const initialSearchResults = Object.values(event.project.reflections).filter((refl) => {
+                 return (refl instanceof models_1.DeclarationReflection &&
+                     refl.url &&
+-                    refl.name &&
+-                    !refl.flags.isExternal);
++                    refl.name 
++                    // Include externals in search because they include re-exports for e.g.
++                    // &&
++                     // !refl.flags.isExternal
++                    );
+             });
+             const indexEvent = new events_1.IndexEvent(events_1.IndexEvent.PREPARE_INDEX, initialSearchResults);
+             this.owner.trigger(indexEvent);
