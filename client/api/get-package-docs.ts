@@ -129,6 +129,7 @@ export function getErrorMessage(error: { name: string; extra: any }) {
         "from which reference documentation for its APIs can be built."
       );
     default:
+      console.warn("Could not get error message for error: ", error);
       return "";
   }
 }

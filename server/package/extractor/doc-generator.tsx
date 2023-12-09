@@ -258,7 +258,7 @@ function setupApp(app: td.Application) {
     JSX.createElement(JSX.Raw, {
       html: `
          <link rel="stylesheet" href="/shared-dist/style.css" fetchpriority="high" />
-         <script src="/shared-dist/header.umd.js" fetchpriority="high"></script>
+         <script src="/shared-dist/header.umd.js" fetchpriority="high" defer></script>
          <style>
            ${Object.entries(iconColors)
              .map(([id, { background, foreground, path }]) => {

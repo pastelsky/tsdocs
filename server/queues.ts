@@ -4,7 +4,6 @@ import InstallationUtils from "./package/installation.utils";
 import os from "os";
 import path from "path";
 import logger from "../common/logger";
-import { generateDocsForPackage } from "./package/extractor/doc-generator";
 
 const redisOptions = {
   port: 6379,
@@ -75,6 +74,7 @@ const generateDocsWorker = new Worker<GenerateDocsWorkerOptions>(
 );
 
 export const queues = [installQueue, generateDocsQueue];
+const workers = [installWorker, generateDocsWorker];
 
 setInterval(async () => {
   for (let queue of queues) {
@@ -87,3 +87,22 @@ setInterval(async () => {
     }
   }
 }, 1000);
+
+async function shutdownWorkers(): Promise<void> {
+  await Promise.all(workers.map((worker) => installWorker.close()));
+  process.exit(0);
+}
+
+async function handleSignal() {
+  try {
+    await shutdownWorkers();
+  } catch (err) {
+    console.error("Error during shutdown", err);
+    process.exit(1);
+  }
+}
+
+process.on("SIGTERM", handleSignal);
+process.on("SIGINT", handleSignal);
+// process.on('uncaughtException', handleSignal);
+// process.on('unhandledRejection', handleSignal);
