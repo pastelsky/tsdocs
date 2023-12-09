@@ -232,10 +232,10 @@ export async function handlerDocsHTML(req, res) {
   const relativeDocsPath = path.relative(docsRootPath, resolvedAbsolutePath);
 
   if (relativeDocsPath.endsWith(".html")) {
-    res.header("Cache-Control", "public, max-age=10");
+    res.header("Cache-Control", "public, max-age=30");
     const linkHeaderContent = extractPreloadResources(resolvedAbsolutePath)
       .map(({ url, rel, as }) => {
-        return `<https://tsdocs.dev${url}>; rel="${rel}; as=${as}"`;
+        return `<https://tsdocs.dev${url}>; rel="${rel}"; as="${as}"`;
       })
       .join(",");
     res.header("Link", linkHeaderContent);
