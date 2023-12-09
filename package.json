@@ -88,5 +88,8 @@
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
   },
-  "packageManager": "yarn@3.6.4"
+  "packageManager": "yarn@4.0.2",
+  "resolutions": {
+    "typedoc@^0.25.3": "patch:typedoc@npm%3A0.25.3#./.yarn/patches/typedoc-npm-0.25.3-11902e45cc.patch"
+  }
 }
