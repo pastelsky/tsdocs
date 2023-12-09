@@ -168,7 +168,10 @@ function extractPreloadResources(htmlPath: string) {
         if (!href.startsWith("http") && !href.startsWith("//")) {
           const relativeDocsPath = path.join(
             "/docs",
-            path.relative(docsRootPath, path.join(htmlPath, href)),
+            path.relative(
+              docsRootPath,
+              path.join(path.basename(htmlPath), href),
+            ),
           );
           return {
             url: relativeDocsPath,
