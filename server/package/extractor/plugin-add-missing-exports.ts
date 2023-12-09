@@ -1,6 +1,5 @@
 // From https://github.com/Gerrit0/typedoc-plugin-missing-exports/blob/48c65892e05923cab8dd63c92d1ea153e8089c5a/index.ts
 
-import { ok } from "assert";
 import path from "path";
 import {
   Application,
@@ -14,6 +13,7 @@ import {
   ProjectReflection,
 } from "typedoc";
 import fs from "fs";
+import logger from "../../../common/logger";
 
 declare module "typedoc" {
   export interface TypeDocOptionMap {
@@ -87,10 +87,12 @@ export function load(app: Application) {
     context,
     name,
   ) {
-    ok(
-      app["missingExportsPlugin"].activeReflection,
-      "active reflection has not been set for " + symbol.escapedName,
-    );
+    if (!app["missingExportsPlugin"].activeReflection) {
+      logger.error(
+        "active reflection has not been set for " + symbol.escapedName,
+      );
+      return origCreateSymbolReference.call(this, symbol, context, name);
+    }
     const set = app["missingExportsPlugin"].referencedSymbols.get(
       context.program,
     );
