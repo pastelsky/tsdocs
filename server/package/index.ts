@@ -160,7 +160,8 @@ function extractPreloadResources(htmlPath: string) {
         if (href.startsWith("/")) {
           return {
             url: href,
-            rel: "prefetch",
+            rel: "preload",
+            as: "style",
           };
         }
 
@@ -172,6 +173,7 @@ function extractPreloadResources(htmlPath: string) {
           return {
             url: relativeDocsPath,
             rel: "preload",
+            as: "style",
           };
         }
         return null;
@@ -179,7 +181,11 @@ function extractPreloadResources(htmlPath: string) {
     })
     .filter(Boolean);
 
-  const jsAssets = { url: "/shared-dist/header.umd.js", rel: "preload" };
+  const jsAssets = {
+    url: "/shared-dist/header.umd.js",
+    rel: "preload",
+    as: "script",
+  };
   return [...linkAssets, jsAssets];
 }
 
@@ -228,8 +234,8 @@ export async function handlerDocsHTML(req, res) {
   if (relativeDocsPath.endsWith(".html")) {
     res.header("Cache-Control", "public, max-age=10");
     const linkHeaderContent = extractPreloadResources(resolvedAbsolutePath)
-      .map(({ url, rel }) => {
-        return `<https://tsdocs.dev${url}>; rel="${rel}"`;
+      .map(({ url, rel, as }) => {
+        return `<https://tsdocs.dev${url}>; rel="${rel}; as=${as}"`;
       })
       .join(",");
     res.header("Link", linkHeaderContent);
