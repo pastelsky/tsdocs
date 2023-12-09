@@ -7,6 +7,8 @@ import { generateDocsQueue, generateDocsQueueEvents } from "../queues";
 import { packageFromPath } from "../../common/utils";
 import { PackageNotFoundError } from "./CustomError";
 import logger from "../../common/logger";
+import { parse } from "node-html-parser";
+import fs from "fs";
 
 export async function resolveDocsRequest({
   packageName,
@@ -147,6 +149,40 @@ export async function handlerAPIDocsPoll(req, res) {
   return { status: "queued" };
 }
 
+function extractPreloadResources(htmlPath: string) {
+  const htmlContent = fs.readFileSync(htmlPath, "utf8");
+  const root = parse(htmlContent);
+  const linkAssets = root
+    .querySelectorAll("link")
+    .map((link) => link.getAttribute("href"))
+    .map((href) => {
+      if (href.split("?")[0].endsWith(".css")) {
+        if (href.startsWith("/")) {
+          return {
+            url: href,
+            rel: "prefetch",
+          };
+        }
+
+        if (!href.startsWith("http") && !href.startsWith("//")) {
+          const relativeDocsPath = path.join(
+            "/docs",
+            path.relative(docsRootPath, path.join(htmlPath, href)),
+          );
+          return {
+            url: relativeDocsPath,
+            rel: "preload",
+          };
+        }
+        return null;
+      }
+    })
+    .filter(Boolean);
+
+  const jsAssets = { url: "/shared-dist/header.umd.js", rel: "preload" };
+  return [...linkAssets, jsAssets];
+}
+
 export async function handlerDocsHTML(req, res) {
   const paramsPath = req.params["*"];
   const { force } = req.query;
@@ -183,13 +219,21 @@ export async function handlerDocsHTML(req, res) {
     res.redirect(`/docs/${resolvedPath}`);
   }
 
-  const relativeDocsPath = path.relative(
-    docsRootPath,
-    path.join(resolvedRequest.docsPathDisk, docsFragment),
+  const resolvedAbsolutePath = path.join(
+    resolvedRequest.docsPathDisk,
+    docsFragment,
   );
+  const relativeDocsPath = path.relative(docsRootPath, resolvedAbsolutePath);
 
   if (relativeDocsPath.endsWith(".html")) {
     res.header("Cache-Control", "public, max-age=10");
+    const linkHeaderContent = extractPreloadResources(resolvedAbsolutePath)
+      .map(({ url, rel }) => {
+        return `<https://tsdocs.dev${url}>; rel="${rel}"`;
+      })
+      .join(",");
+    res.header("Link", linkHeaderContent);
   }
+
   await res.sendFile(relativeDocsPath);
 }
