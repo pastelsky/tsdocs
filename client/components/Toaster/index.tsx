@@ -29,7 +29,7 @@ const Toaster = ({ status }: { status: "loading" | "error" }) => {
         duration: 2000,
         delay: anime.stagger(100),
       },
-      "-=2500"
+      "-=2500",
     );
 
     timeline.add({
@@ -46,7 +46,7 @@ const Toaster = ({ status }: { status: "loading" | "error" }) => {
         duration: 2000,
         delay: anime.stagger(100),
       },
-      "-=2200"
+      "-=2200",
     );
 
     if (status === "loading") {

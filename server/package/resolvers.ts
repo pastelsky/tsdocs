@@ -60,12 +60,12 @@ function definitionPath(filePath: string) {
 
 export async function resolveTypePathInbuilt(
   packageContainingPath,
-  packageName
+  packageName,
 ): Promise<TypeResolveResult> {
   const packagePath = path.join(
     packageContainingPath,
     "node_modules",
-    packageName
+    packageName,
   );
 
   const packageJSON = await getPackageJSON(packagePath);
@@ -86,7 +86,7 @@ export async function resolveTypePathInbuilt(
         if (err || resolvedPath === false) {
           logger.warn(
             "Failed to resolve inbuilt types for %s",
-            packageJSON.name
+            packageJSON.name,
           );
           return resolve(null);
         } else {
@@ -107,14 +107,14 @@ export async function resolveTypePathInbuilt(
               } else {
                 logger.warn(
                   "Failed to resolve inbuilt types for %s",
-                  packageJSON.name
+                  packageJSON.name,
                 );
                 return resolve(null);
               }
             });
           }
         }
-      }
+      },
     );
   });
 }
@@ -129,14 +129,14 @@ async function getPackageJSON(packagePath: string) {
   const packageJSONPath = path.join(packagePath, "package.json");
   const packageJSONContents = await fs.promises.readFile(
     packageJSONPath,
-    "utf-8"
+    "utf-8",
   );
   return JSON.parse(packageJSONContents);
 }
 
 export async function resolveTypePathDefinitelyTyped(
   packageJSON: PackageJSON,
-  packumentCache
+  packumentCache,
 ) {
   let typeVersions = [];
   if (!packageJSON.name) {
@@ -154,19 +154,19 @@ export async function resolveTypePathDefinitelyTyped(
     logger.warn(
       "Failed to resolve definitely typed definitions for ",
       { name: packageJSON.name, version: packageJSON.version },
-      err
+      err,
     );
     return null;
   }
 
   const matchingMajors = typeVersions.filter(
-    (version) => semver.parse(version).major === parsedPackageVersion.major
+    (version) => semver.parse(version).major === parsedPackageVersion.major,
   );
 
   const matchingMinors = typeVersions.filter(
     (version) =>
       semver.parse(version).major === parsedPackageVersion.major &&
-      semver.parse(version).minor === parsedPackageVersion.minor
+      semver.parse(version).minor === parsedPackageVersion.minor,
   );
 
   let matchingTypeVersion = null;
@@ -188,7 +188,7 @@ export async function resolveTypePathDefinitelyTyped(
   if (!matchingTypeVersion) {
     logger.warn(
       "No matching minor version found for a definitely typed definition for",
-      { name: packageJSON.name, version: packageJSON.version }
+      { name: packageJSON.name, version: packageJSON.version },
     );
 
     return null;
@@ -196,24 +196,24 @@ export async function resolveTypePathDefinitelyTyped(
 
   const installPath = await InstallationUtils.preparePath(
     packageJSON.name,
-    packageJSON.version
+    packageJSON.version,
   );
   await InstallationUtils.installPackage(
     [`${typesPackageName}@${matchingTypeVersion}`],
     installPath,
-    { client: "npm" }
+    { client: "npm" },
   );
 
   const typeResolveResult = await resolveTypePathInbuilt(
     installPath,
-    typesPackageName
+    typesPackageName,
   );
 
   if (!typeResolveResult) {
     logger.error(
       'Could not resolve type path for "%s" at version %s',
       typesPackageName,
-      matchingTypeVersion
+      matchingTypeVersion,
     );
     return null;
   }

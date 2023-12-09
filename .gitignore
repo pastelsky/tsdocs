@@ -39,4 +39,5 @@ yarn-error.log*
 
 combined.log
 error.log
+err.log
 

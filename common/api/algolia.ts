@@ -7,17 +7,17 @@ const ALGOLIA_API_KEY = "1fb64b9fde1959aacbe82000a34dd717";
 export async function getPackageVersions(packageName) {
   const packageDetails = await axios.get(
     `https://${ALGOLIA_APP_ID}-dsn.algolia.net/1/indexes/npm-search/${encodeURIComponent(
-      packageName
+      packageName,
     )}`,
     {
       params: {
         "x-algolia-application-id": ALGOLIA_APP_ID,
         "x-algolia-api-key": ALGOLIA_API_KEY,
       },
-    }
+    },
   );
   return Object.keys(packageDetails.data.versions).map((version) =>
-    semver.parse(version)
+    semver.parse(version),
   );
 }
 
@@ -91,7 +91,7 @@ export async function getPackageSuggestion(query: string, highlightClass) {
     version: hit.version,
     highlightedName: fixQuotes(hit._highlightResult?.name?.value || hit.name),
     highlightedDescription: fixQuotes(
-      hit._highlightResult?.description?.value || hit.description
+      hit._highlightResult?.description?.value || hit.description,
     ),
   }));
 }

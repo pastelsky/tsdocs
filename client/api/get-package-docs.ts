@@ -46,7 +46,7 @@ async function pollQueue(
     jobId: string;
     pollInterval: number;
   },
-  timeElapsed = 0
+  timeElapsed = 0,
 ): Promise<PackageDocsResponse> {
   if (timeElapsed > POLL_TIMEOUT) {
     return {
@@ -66,7 +66,7 @@ async function pollQueue(
     let errorMessage = "";
     if (err.response) {
       errorMessage = `${err.response.status} ${JSON.stringify(
-        err.response.data
+        err.response.data,
       )}`;
     }
 
@@ -114,7 +114,7 @@ export function getErrorMessage(error: { name: string; extra: any }) {
 
     case PackageVersionMismatchError.name:
       return `The given version for this package was not found on the npm registry.\n Found versions: \n${error.extra.join(
-        ", "
+        ", ",
       )}`;
 
     case TypeDefinitionResolveError.name:
@@ -130,7 +130,7 @@ export function getErrorMessage(error: { name: string; extra: any }) {
 
 export async function getPackageDocs(
   pkg: string,
-  { force }: { force: boolean }
+  { force }: { force: boolean },
 ): Promise<PackageDocsResponse> {
   let triggerResponse: AxiosResponse<TriggerAPIResponse> = null;
   const withForce = force ? "?force=true" : "";

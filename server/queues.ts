@@ -4,6 +4,7 @@ import InstallationUtils from "./package/installation.utils";
 import os from "os";
 import path from "path";
 import logger from "../common/logger";
+import { generateDocsForPackage } from "./package/extractor/doc-generator";
 
 const redisOptions = {
   port: 6379,
@@ -35,13 +36,13 @@ const installWorker = new Worker<InstallWorkerOptions>(
     await InstallationUtils.installPackage(
       [`${job.data.packageName}@${job.data.packageVersion}`],
       job.data.installPath,
-      { client: "npm" }
+      { client: "npm" },
     );
   },
   {
     concurrency: os.cpus().length - 1,
     connection: redisOptions,
-  }
+  },
 );
 
 type GenerateDocsWorkerOptions = {
@@ -53,7 +54,7 @@ export const generateDocsQueue = new Queue<GenerateDocsWorkerOptions>(
   "generate-docs-package",
   {
     connection: redisOptions,
-  }
+  },
 );
 export const generateDocsQueueEvents = new QueueEvents(generateDocsQueue.name, {
   connection: redisOptions,
@@ -69,8 +70,8 @@ const generateDocsWorker = new Worker<GenerateDocsWorkerOptions>(
   {
     concurrency: os.cpus().length - 1,
     connection: redisOptions,
-    useWorkerThreads: false,
-  }
+    useWorkerThreads: true,
+  },
 );
 
 export const queues = [installQueue, generateDocsQueue];

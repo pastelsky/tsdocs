@@ -70,7 +70,7 @@ export default function Search({ pkg }) {
 
   useEffect(() => {
     searchAndRedirect(packageName);
-  }, []);
+  }, [packageName]);
 
   return (
     <div className={styles.searchContainer}>

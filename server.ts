@@ -170,7 +170,7 @@ app
     });
 
     fastify.setNotFoundHandler((request, reply) =>
-      nextHandle(request.raw, reply.raw)
+      nextHandle(request.raw, reply.raw),
     );
 
     // Run the server!

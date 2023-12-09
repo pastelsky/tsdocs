@@ -24,7 +24,7 @@ export async function convertExportAssignment(filePath: string) {
   const statements = sourceFile.getStatements();
   const exportEqualAssignments = statements.filter(
     (statement) =>
-      Node.isExportAssignment(statement) && statement.isExportEquals()
+      Node.isExportAssignment(statement) && statement.isExportEquals(),
   );
   const firstExportEqualAssignment = exportEqualAssignments[0];
   const eligible = exportEqualAssignments.length === 1;
@@ -35,7 +35,7 @@ export async function convertExportAssignment(filePath: string) {
     }
     logger.warn(
       "Fixed %s by converting export equals to default export",
-      filePath
+      filePath,
     );
     await fs.promises.writeFile(filePath, sourceFile.getText());
   }

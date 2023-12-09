@@ -49,7 +49,7 @@ export default function SearchBox({
         (suggestions) => {
           console.log(suggestions);
           setSuggestions(suggestions);
-        }
+        },
       );
     },
     items: suggestions,

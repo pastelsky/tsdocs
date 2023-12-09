@@ -100,8 +100,6 @@ export async function handlerAPIDocsTrigger(req, res) {
 
   const { packageName, packageVersion, docsFragment } = routePackageDetails;
 
-  let resolvedRequest;
-
   const resolvedRequest = await resolveDocsRequest({
     packageName,
     packageVersion,
@@ -116,7 +114,7 @@ export async function handlerAPIDocsTrigger(req, res) {
       { packageJSON: resolvedRequest.packageJSON, force },
       {
         jobId: `${resolvedRequest.packageJSON.name}@${resolvedRequest.packageJSON.version}`,
-      }
+      },
     );
 
     return res.send({
@@ -170,7 +168,7 @@ export async function handlerDocsHTML(req, res) {
   if (resolvedRequest.type === "miss") {
     const generateJob = await generateDocsQueue.add(
       `generate docs ${packageName}`,
-      { packageJSON: resolvedRequest.packageJSON, force }
+      { packageJSON: resolvedRequest.packageJSON, force },
     );
     await generateJob.waitUntilFinished(generateDocsQueueEvents);
   }
@@ -178,7 +176,7 @@ export async function handlerDocsHTML(req, res) {
   const resolvedPath = path.join(
     resolvedRequest.packageName,
     resolvedRequest.packageVersion,
-    docsFragment
+    docsFragment,
   );
 
   if (paramsPath !== resolvedPath) {
@@ -187,7 +185,7 @@ export async function handlerDocsHTML(req, res) {
 
   const relativeDocsPath = path.relative(
     docsRootPath,
-    path.join(resolvedRequest.docsPathDisk, docsFragment)
+    path.join(resolvedRequest.docsPathDisk, docsFragment),
   );
 
   if (relativeDocsPath.endsWith(".html")) {

@@ -11,7 +11,7 @@ const HeaderIframe = () => {
   const force = !!searchParams.get("force");
 
   const { packageName: initialPackageName } = packageFromPath(
-    window.location.pathname.split("/docs/")[1]
+    window.location.pathname.split("/docs/")[1],
   );
 
   const handleSearchSubmit = async (pkg: string) => {
@@ -36,6 +36,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
   root.render(
     <React.StrictMode>
       <HeaderIframe />
-    </React.StrictMode>
+    </React.StrictMode>,
   );
 });

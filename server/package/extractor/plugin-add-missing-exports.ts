@@ -50,7 +50,7 @@ export function load(app: Application) {
 
   function discoverMissingExports(
     context: Context,
-    program: ts.Program
+    program: ts.Program,
   ): Set<ts.Symbol> {
     // An export is missing if if was referenced
     // Is not contained in the documented
@@ -85,25 +85,25 @@ export function load(app: Application) {
   app["missingExportsPlugin"].createSymbolReference = function (
     symbol,
     context,
-    name
+    name,
   ) {
     ok(
       app["missingExportsPlugin"].activeReflection,
-      "active reflection has not been set for " + symbol.escapedName
+      "active reflection has not been set for " + symbol.escapedName,
     );
     const set = app["missingExportsPlugin"].referencedSymbols.get(
-      context.program
+      context.program,
     );
     app["missingExportsPlugin"].symbolToActiveRefl.set(
       symbol,
-      app["missingExportsPlugin"].activeReflection
+      app["missingExportsPlugin"].activeReflection,
     );
     if (set) {
       set.add(symbol);
     } else {
       app["missingExportsPlugin"].referencedSymbols.set(
         context.program,
-        new Set([symbol])
+        new Set([symbol]),
       );
     }
     return origCreateSymbolReference.call(this, symbol, context, name);
@@ -113,7 +113,7 @@ export function load(app: Application) {
     return app["missingExportsPlugin"].createSymbolReference(
       symbol,
       context,
-      name
+      name,
     );
   };
 
@@ -130,7 +130,7 @@ export function load(app: Application) {
         app["missingExportsPlugin"].knownPrograms.set(refl, context.program);
         app["missingExportsPlugin"].activeReflection = refl;
       }
-    }
+    },
   );
 
   const basePath = path.join(app.options.getValue("basePath"), "..", "..");
@@ -162,7 +162,7 @@ export function load(app: Application) {
             ReflectionKind.Module,
             void 0,
             void 0,
-            context.converter.application.options.getValue("internalModule")
+            context.converter.application.options.getValue("internalModule"),
           );
         context.finalizeDeclarationReflection(internalNs);
         const internalContext = context.withScope(internalNs);
@@ -199,7 +199,7 @@ export function load(app: Application) {
       app["missingExportsPlugin"].symbolToActiveRefl.clear();
     },
     void 0,
-    1e9
+    1e9,
   );
 }
 
@@ -210,7 +210,7 @@ const fd = fs.openSync("./accessed", "a");
 function shouldConvertSymbol(
   symbol: ts.Symbol,
   checker: ts.TypeChecker,
-  basePath: string
+  basePath: string,
 ) {
   while (symbol.flags & ts.SymbolFlags.Alias) {
     symbol = checker.getAliasedSymbol(symbol);
@@ -230,7 +230,7 @@ function shouldConvertSymbol(
   }
 
   const isOutsideBase = (symbol.getDeclarations() ?? []).some(
-    (node) => !node.getSourceFile().fileName.startsWith(basePath)
+    (node) => !node.getSourceFile().fileName.startsWith(basePath),
   );
 
   if (isOutsideBase) {

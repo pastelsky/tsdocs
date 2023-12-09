@@ -32,7 +32,7 @@ export class DocsCache {
       });
 
       const response = await axios.get(
-        `https://cf-tsdocs-worker.binalgo.workers.dev/${docsCachePath}`
+        `https://cf-tsdocs-worker.binalgo.workers.dev/${docsCachePath}`,
       );
 
       return JSON.parse(response.data);
@@ -44,14 +44,14 @@ export class DocsCache {
   static async get(packageName: string, packageVersion: string) {
     const docsFromDisk = await DocsCache.getFromDisk(
       packageName,
-      packageVersion
+      packageVersion,
     );
 
     if (docsFromDisk) {
       logger.info(
         "Docs cache hit for %s %s from disk",
         packageName,
-        packageVersion
+        packageVersion,
       );
       return docsFromDisk;
     }
@@ -62,7 +62,7 @@ export class DocsCache {
       logger.info(
         "Docs cache hit for %s %s from DB",
         packageName,
-        packageVersion
+        packageVersion,
       );
       return docsFromDB;
     }
@@ -90,7 +90,7 @@ export class DocsCache {
     await axios.put(
       `https://cf-tsdocs-worker.binalgo.workers.dev/${docsPath}`,
       data,
-      {}
+      {},
     );
   }
 
@@ -103,7 +103,7 @@ export class DocsCache {
           logger.info(
             "Disk: Docs cache set for %s %s",
             packageName,
-            packageVersion
+            packageVersion,
           );
         })
         .catch((err) => {
@@ -114,7 +114,7 @@ export class DocsCache {
           logger.info(
             "DB: Docs cache set for %s %s",
             packageName,
-            packageVersion
+            packageVersion,
           );
         })
         .catch((err) => {

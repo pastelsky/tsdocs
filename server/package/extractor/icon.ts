@@ -10,7 +10,7 @@ import { JSX, ReflectionKind } from "typedoc";
 const kindIcon = (
   letterPath: string,
   color: string,
-  circular: boolean = false
+  circular: boolean = false,
 ) =>
   JSX.createElement(
     "svg",
@@ -31,7 +31,7 @@ const kindIcon = (
         />
         ${letterPath}
    `,
-    })
+    }),
   );
 
 function kindIcon2({ text, type }: { text: string; type: string }) {
@@ -63,7 +63,7 @@ export const icons: Record<
         fill="var(--color-text)"
       />`,
       "#FF4D4D",
-      true
+      true,
     ),
   [ReflectionKind.CallSignature]() {
     return this[ReflectionKind.Function]();
@@ -76,7 +76,7 @@ export const icons: Record<
         fill="var(--color-text)"
       />`,
       "#4D7FFF",
-      true
+      true,
     ),
   [ReflectionKind.ConstructorSignature]() {
     return this[ReflectionKind.Constructor]();
@@ -87,7 +87,7 @@ export const icons: Record<
         d="M9.45 16V7.24H14.49V8.224H10.518V10.936H14.07V11.908H10.518V15.016H14.49V16H9.45Z"
         fill="var(--color-text)"
       />`,
-      "var(--color-ts-enum)"
+      "var(--color-ts-enum)",
     ),
   [ReflectionKind.EnumMember]() {
     return this[ReflectionKind.Property]();
@@ -105,7 +105,7 @@ export const icons: Record<
         d="M9.51 16V15.016H11.298V8.224H9.51V7.24H14.19V8.224H12.402V15.016H14.19V16H9.51Z"
         fill="var(--color-text)"
       />`,
-      "var(--color-ts-interface)"
+      "var(--color-ts-interface)",
     ),
   [ReflectionKind.Method]: () =>
     kindIcon(
@@ -114,7 +114,7 @@ export const icons: Record<
         fill="var(--color-text)"
       />`,
       "#FF4DB8",
-      true
+      true,
     ),
   [ReflectionKind.Module]() {
     return this[ReflectionKind.Namespace]();
@@ -126,7 +126,7 @@ export const icons: Record<
         d="M9.33 16V7.24H10.77L13.446 14.74C13.43 14.54 13.41 14.296 13.386 14.008C13.37 13.712 13.354 13.404 13.338 13.084C13.33 12.756 13.326 12.448 13.326 12.16V7.24H14.37V16H12.93L10.266 8.5C10.282 8.692 10.298 8.936 10.314 9.232C10.33 9.52 10.342 9.828 10.35 10.156C10.366 10.476 10.374 10.784 10.374 11.08V16H9.33Z"
         fill="var(--color-text)"
       />`,
-      "var(--color-ts-namespace)"
+      "var(--color-ts-namespace)",
     ),
   [ReflectionKind.Parameter]() {
     return this[ReflectionKind.Property]();
@@ -141,7 +141,7 @@ export const icons: Record<
         fill="var(--color-text)"
       />`,
       "#FF984D",
-      true
+      true,
     ),
   [ReflectionKind.Reference]: () =>
     kindIcon(
@@ -150,7 +150,7 @@ export const icons: Record<
         fill="var(--color-text)"
       />`,
       "#FF4D82", // extract into a CSS variable potentially?
-      true
+      true,
     ),
   [ReflectionKind.SetSignature]() {
     return this[ReflectionKind.Accessor]();
@@ -161,7 +161,7 @@ export const icons: Record<
         d="M11.31 16V8.224H8.91V7.24H14.79V8.224H12.39V16H11.31Z"
         fill="var(--color-text)"
       />`,
-      "var(--color-ts-type-alias)"
+      "var(--color-ts-type-alias)",
     ),
   [ReflectionKind.TypeLiteral]() {
     return this[ReflectionKind.TypeAlias]();
@@ -175,7 +175,7 @@ export const icons: Record<
         d="M11.106 16L8.85 7.24H9.966L11.454 13.192C11.558 13.608 11.646 13.996 11.718 14.356C11.79 14.708 11.842 14.976 11.874 15.16C11.906 14.976 11.954 14.708 12.018 14.356C12.09 13.996 12.178 13.608 12.282 13.192L13.758 7.24H14.85L12.582 16H11.106Z"
         fill="var(--color-text)"
       />`,
-      "var(--color-ts-variable)"
+      "var(--color-ts-variable)",
     ),
   chevronDown: () =>
     JSX.createElement(
@@ -191,7 +191,7 @@ export const icons: Record<
         d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z"
         fill="var(--color-text)"
       />`,
-      })
+      }),
     ),
   chevronSmall: () =>
     JSX.createElement(
@@ -209,7 +209,7 @@ export const icons: Record<
           fill="var(--color-text)"
         />
       `,
-      })
+      }),
     ),
   checkbox: () =>
     JSX.createElement(
@@ -238,7 +238,7 @@ export const icons: Record<
         stroke-linejoin="round"
         fill="none"
       />`,
-      })
+      }),
     ),
   menu: () =>
     JSX.createElement(
@@ -254,7 +254,7 @@ export const icons: Record<
       {["3", "7", "11"].map((y) => (
         <rect x="1" y={y} width="14" height="2" fill="var(--color-text)" />
       ))}`,
-      })
+      }),
     ),
   search: () =>
     JSX.createElement(
@@ -270,7 +270,7 @@ export const icons: Record<
         d="M15.7824 13.833L12.6666 10.7177C12.5259 10.5771 12.3353 10.499 12.1353 10.499H11.6259C12.4884 9.39596 13.001 8.00859 13.001 6.49937C13.001 2.90909 10.0914 0 6.50048 0C2.90959 0 0 2.90909 0 6.49937C0 10.0896 2.90959 12.9987 6.50048 12.9987C8.00996 12.9987 9.39756 12.4863 10.5008 11.6239V12.1332C10.5008 12.3332 10.5789 12.5238 10.7195 12.6644L13.8354 15.7797C14.1292 16.0734 14.6042 16.0734 14.8948 15.7797L15.7793 14.8954C16.0731 14.6017 16.0731 14.1267 15.7824 13.833ZM6.50048 10.499C4.29094 10.499 2.50018 8.71165 2.50018 6.49937C2.50018 4.29021 4.28781 2.49976 6.50048 2.49976C8.71001 2.49976 10.5008 4.28708 10.5008 6.49937C10.5008 8.70852 8.71314 10.499 6.50048 10.499Z"
         fill="var(--color-text)"
       />`,
-      })
+      }),
     ),
   anchor: () =>
     JSX.createElement(
@@ -292,6 +292,6 @@ export const icons: Record<
         <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
         <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
       </g>`,
-      })
+      }),
     ),
 };

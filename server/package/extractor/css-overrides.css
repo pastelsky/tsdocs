@@ -16,39 +16,62 @@ body {
   :root[data-theme="light"],
   :root[data-theme="dark"],
   :root[data-theme="os"] {
+    color-scheme: light !important;
     --light-color-active-menu-item: #efeff0;
+    --dark-color-active-menu-item: #efeff0;
+
     --light-color-text: #222;
     --dark-color-text: #222;
 
     --light-color-ts-project: #2548b6;
+    --dark-color-ts-project: #2548b6;
 
     --light-color-ts-enum: #0585ae;
+    --dark-color-ts-enum: #0585ae;
     --light-color-ts-enum-background: #dcf2f2;
+    --dark-color-ts-enum-background: #dcf2f2;
 
     --light-color-ts-namespace: #1305ae;
+    --dark-color-ts-namespace: #1305ae;
     --light-color-ts-namespace-background: #ececf4;
+    --dark-color-ts-namespace-background: #ececf4;
 
     --light-color-ts-variable: #78059e;
+    --dark-color-ts-variable: #78059e;
     --light-color-ts-variable-background: #eee1f2;
+    --dark-color-ts-variable-background: #eee1f2;
 
     --light-color-ts-type-parameter: #403e48;
+    --dark-color-ts-type-parameter: #403e48;
 
     --light-color-ts-function: #6639ba;
     --light-color-ts-function-background: #e9e9f2;
+    --dark-color-ts-function: #6639ba;
+    --dark-color-ts-function-background: #e9e9f2;
 
     --light-color-ts-class: #0550ae;
     --light-color-ts-class-background: #dce7f2;
+    --dark-color-ts-class: #0550ae;
+    --dark-color-ts-class-background: #dce7f2;
 
     --light-color-ts-interface: #04679f;
     --light-color-ts-interface-background: #e1ecf2;
+    --dark-color-ts-interface: #04679f;
+    --dark-color-ts-interface-background: #e1ecf2;
 
     --light-color-ts-type-alias: #ae05a7;
     --light-color-ts-type-alias-background: #f4ebf4;
+    --dark-color-ts-type-alias: #ae05a7;
+    --dark-color-ts-type-alias-background: #f4ebf4;
 
     --light-color-accent: rgb(237, 237, 242);
     --light-code-background: rgb(245, 245, 247);
     --light-color-background: #f7f7f8;
     --light-color-background-secondary: #f5f5f7;
+    --dark-color-accent: rgb(237, 237, 242);
+    --dark-code-background: rgb(245, 245, 247);
+    --dark-color-background: #f7f7f8;
+    --dark-color-background-secondary: #f5f5f7;
 
     /* Highlight Colors */
     --light-hl-0: #2f626c;
@@ -95,6 +118,12 @@ body {
       --light-color-ts-type-alias-background
     );
     --color-ts-namespace-background: var(--light-color-ts-namespace-background);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: light !important;
   }
 }
 
