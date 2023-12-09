@@ -170,7 +170,7 @@ function extractPreloadResources(htmlPath: string) {
             "/docs",
             path.relative(
               docsRootPath,
-              path.join(path.basename(htmlPath), href),
+              path.join(path.dirname(htmlPath), href),
             ),
           );
           return {
