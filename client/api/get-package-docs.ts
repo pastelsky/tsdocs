@@ -65,9 +65,14 @@ async function pollQueue(
   } catch (err) {
     let errorMessage = "";
     if (err.response) {
-      errorMessage = `${err.response.status} ${JSON.stringify(
-        err.response.data,
-      )}`;
+      if (err.response.status === 404) {
+        errorMessage =
+          "Building docs for this package failed, because the job to build the docs was removed from queue.";
+      } else {
+        errorMessage = `${err.response.status} ${
+          err.response.data ? JSON.stringify(err.response.data) : ""
+        }`;
+      }
     }
 
     return {

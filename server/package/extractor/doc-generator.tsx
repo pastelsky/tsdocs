@@ -431,8 +431,6 @@ export async function generateDocsForPackage(
     },
     {
       jobId: packageString + installPath,
-      removeOnComplete: true,
-      removeOnFail: true,
     },
   );
 

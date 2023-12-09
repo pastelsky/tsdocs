@@ -80,8 +80,10 @@ setInterval(async () => {
   for (let queue of queues) {
     const failedJobs = await queue.getFailed();
     for (const job of failedJobs) {
-      console.log("Removing all failed jobs");
-      await job.remove();
+      if (job.finishedOn < Date.now() - 10000) {
+        console.log("Removing all failed jobs");
+        await job.remove();
+      }
     }
   }
-}, 10000);
+}, 1000);

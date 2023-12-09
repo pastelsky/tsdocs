@@ -432,6 +432,7 @@ code.tsd-tag {
 #tsd-search input:focus {
   border: 1.5px solid var(--selected-stroke-color);
 }
+
 .tsd-navigation a.current {
   font-weight: 600;
   border-radius: 5px;
