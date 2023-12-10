@@ -13,14 +13,12 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://tsdocs.dev"),
   title: "TS Docs | Reference docs for npm packages",
   applicationName: "TS Docs",
-  description:
-    "Find type documentation for any npm library that ships with types or has publicly available types on Definitely Typed",
+  description: "Generate type documentation for npm libraries",
   openGraph: {
     type: "website",
     url: "https://tsdocs.dev/",
     title: "TS Docs | Reference docs for npm packages",
-    description:
-      "Find type documentation for any npm library that ships with types or has publicly available types on Definitely Typed",
+    description: "Generate type documentation for npm libraries",
     images: [
       {
         url: "https://tsdocs.dev/og-image.png",
@@ -31,8 +29,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "https://tsdocs.dev/",
     title: "TS Docs | Reference docs for npm packages",
-    description:
-      "Find type documentation for any npm library that ships with types or has publicly available types on Definitely Typed",
+    description: "Generate type documentation for npm libraries",
     images: [
       {
         url: "https://tsdocs.dev/og-image.png",
