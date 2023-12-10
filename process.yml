@@ -8,3 +8,4 @@ apps:
       NODE_ENV: "production"
     interpreter: "node"
     interpreter_args: "-r ts-node/register"
+    exec_mode: "cluster"
