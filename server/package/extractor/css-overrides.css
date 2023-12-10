@@ -168,6 +168,12 @@ h4 {
   }
 }
 
+@media (max-width: 480px) {
+  #docs-header {
+    height: 95px;
+  }
+}
+
 @media (min-width: 770px) {
   .container-main .col-content {
     padding: 0 2rem;
@@ -177,6 +183,9 @@ h4 {
   .container-main {
     margin: 0;
   }
+}
+
+.tsd-page-toolbar {
 }
 
 a.tsd-index-link {
@@ -216,7 +225,6 @@ a.tsd-index-link {
 }
 
 .container .site-menu {
-  background: #fff;
   height: 100%;
   border-right: 1px solid var(--light-color-separator);
   overflow: visible;
@@ -341,10 +349,15 @@ code.tsd-tag {
 }
 
 #tsd-search {
-  padding: 1rem 1rem 1rem 0;
   position: sticky;
   top: 0;
   z-index: 1;
+}
+
+@media (min-width: 770px) {
+  #tsd-search {
+    padding: 1rem 1rem 1rem 0;
+  }
 }
 
 #tsd-search.has-focus {

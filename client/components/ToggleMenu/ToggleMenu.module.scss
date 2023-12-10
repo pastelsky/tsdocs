@@ -1,0 +1,11 @@
+.toggleButton {
+  background: none;
+  appearance: none;
+  border: none;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: var(--font-color-subtext-dark);
+  }
+}

@@ -8,10 +8,12 @@ const Header = ({
   minimal,
   initialSearchValue,
   onSearchSubmit,
+  linksSection,
 }: {
   minimal: boolean;
   initialSearchValue: string;
   onSearchSubmit: (pkg: string) => void;
+  linksSection?: React.ReactNode;
 }) => {
   return (
     <div className={cx(styles.header, { [styles.headerMinimal]: minimal })}>
@@ -20,8 +22,8 @@ const Header = ({
           <a href="/">
             <Logo
               maxWidth="8rem"
-              minWidth="8rem"
-              fluidWidth="8rem"
+              minWidth="6rem"
+              fluidWidth="30vw"
               showAlpha={false}
               showImage={false}
             />
@@ -54,6 +56,7 @@ const Header = ({
             ></path>
           </svg>
         </a>
+        {linksSection}
       </div>
     </div>
   );

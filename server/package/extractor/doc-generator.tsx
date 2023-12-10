@@ -41,7 +41,7 @@ class CustomThemeContext extends DefaultThemeRenderContext {
     this.navigation = (page) =>
       JSX.createElement("div", {}, [
         JSX.createElement(JSX.Raw, {
-          html: `     
+          html: `
             <div id="tsd-search" data-base="${this.relativeURL("./")}">
                 <input type="text" aria-label="Search" placeholder="Search within library"/>
                 <ul class="results">
@@ -136,10 +136,6 @@ const generateDocsDefaultOptions = (
     "Namespaces",
   ],
   customCss: path.join(__dirname, "./css-overrides.css"),
-
-  navigationLinks: {
-    Home: "/",
-  },
   navigation: {
     includeCategories: true,
     includeGroups: true,

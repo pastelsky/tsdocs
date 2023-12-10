@@ -5,6 +5,7 @@
   position: relative;
   z-index: 10;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .headerMinimal {
@@ -16,6 +17,8 @@
 
 .headerLinks {
   margin-left: auto;
+  display: flex;
+  align-items: center;
 }
 
 .headerCenter {
@@ -26,12 +29,15 @@
 }
 
 .headerSearchContainer {
-  width: 35vw;
-  width: clamp(30rem, 35vw, 40rem);
-  max-width: 85vw;
+  max-width: 20rem;
+  max-width: clamp(30rem, 35vw, 40rem);
+  width: 100%;
 }
 
 @media (max-width: 480px) {
+  .header {
+    padding: 0.8rem 1rem;
+  }
   /* Search */
   .headerCenter {
     margin-top: 0.5rem;
@@ -51,7 +57,8 @@
   }
 
   .headerLinkGithub {
-    width: 28px;
-    height: 28px;
+    width: 22px;
+    height: 22px;
+    margin-right: 0.5rem;
   }
 }

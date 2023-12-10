@@ -18,6 +18,10 @@
 .tagline {
   margin-bottom: 2rem;
   color: var(--font-color-subtext);
+
+  @media (max-width: 480px) {
+    margin-bottom: 1.5rem;
+  }
 }
 
 .searchContainer {

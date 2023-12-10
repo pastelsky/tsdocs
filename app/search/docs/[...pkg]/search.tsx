@@ -12,7 +12,7 @@ import { useSearchParams } from "next/navigation";
 
 export default function Search({ pkg }) {
   const pkgArray = Array.isArray(pkg) ? pkg : [pkg];
-  const pkgPath = pkgArray.map(decodeURIComponent).join("/");
+  const pkgPath = pkgArray.map(decodeURIComponent).join("/").split(/[#?]/)[0];
 
   const [status, setStatus] = useState<"loading" | "error">("loading");
   const [error, setError] = useState<{
@@ -70,7 +70,7 @@ export default function Search({ pkg }) {
 
   useEffect(() => {
     searchAndRedirect(packageName);
-  }, [packageName]);
+  }, []);
 
   return (
     <div className={styles.searchContainer}>

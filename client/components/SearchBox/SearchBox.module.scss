@@ -12,6 +12,10 @@
   padding: 0.8rem 1.2rem;
   border: var(--separator-size) solid var(--separator-color);
   cursor: text;
+
+  @media (max-width: 480px) {
+    padding: 0.5rem 1rem;
+  }
 }
 
 .searchBoxCompact .searchInput {
@@ -23,6 +27,10 @@
 
   &::placeholder {
     color: var(--font-color-subtext-dark);
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.3rem 0.8rem;
   }
 }
 
