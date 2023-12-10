@@ -46,6 +46,12 @@
   --header-height: 2rem;
 }
 
+@media (max-width: 480px) {
+  :root {
+    --font-size-xl: 1.4rem;
+  }
+}
+
 body {
   color: var(--primary-fg-color);
   background: var(--primary-bg-color);

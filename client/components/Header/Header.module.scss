@@ -4,6 +4,7 @@
   padding: 0.8rem 2rem;
   position: relative;
   z-index: 10;
+  flex-wrap: wrap;
 }
 
 .headerMinimal {
@@ -22,4 +23,35 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.headerSearchContainer {
+  width: 35vw;
+  width: clamp(30rem, 35vw, 40rem);
+  max-width: 85vw;
+}
+
+@media (max-width: 480px) {
+  /* Search */
+  .headerCenter {
+    margin-top: 0.5rem;
+    order: 3;
+  }
+
+  .headerLinks {
+    margin-left: auto;
+  }
+
+  .headerLogo {
+    order: 1;
+  }
+
+  .headerLinks {
+    order: 2;
+  }
+
+  .headerLinkGithub {
+    width: 28px;
+    height: 28px;
+  }
 }

@@ -22,4 +22,7 @@
 
 .searchContainer {
   margin-bottom: 2rem;
+  width: 35vw;
+  width: clamp(30rem, 35vw, 40rem);
+  max-width: 85vw;
 }
