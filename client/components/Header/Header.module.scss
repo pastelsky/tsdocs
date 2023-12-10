@@ -1,11 +1,12 @@
 .header {
-  display: flex;
   width: 100%;
   padding: 0.8rem 2rem;
   position: relative;
   z-index: 10;
-  flex-wrap: wrap;
-  align-items: center;
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* Adjust the ratio as needed */
+  grid-template-areas: "logo search links";
+  gap: 0.5rem;
 }
 
 .headerMinimal {
@@ -13,25 +14,40 @@
 }
 
 .headerLogo {
+  grid-area: logo;
+  display: flex;
+  align-items: center;
 }
 
 .headerLinks {
   margin-left: auto;
   display: flex;
   align-items: center;
+  grid-area: links;
 }
 
 .headerCenter {
-  flex-grow: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  grid-area: search;
 }
 
 .headerSearchContainer {
   max-width: 20rem;
   max-width: clamp(30rem, 35vw, 40rem);
   width: 100%;
+}
+
+@media (max-width: 768px) {
+  /* Adjust the breakpoint as needed */
+  .header {
+    grid-template-columns: 1fr; /* Stack elements in one column */
+    grid-template-rows: auto auto; /* Two rows */
+    grid-template-areas:
+      "logo links"
+      "search search";
+  }
 }
 
 @media (max-width: 480px) {
@@ -41,19 +57,10 @@
   /* Search */
   .headerCenter {
     margin-top: 0.5rem;
-    order: 3;
   }
 
   .headerLinks {
     margin-left: auto;
-  }
-
-  .headerLogo {
-    order: 1;
-  }
-
-  .headerLinks {
-    order: 2;
   }
 
   .headerLinkGithub {
