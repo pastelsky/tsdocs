@@ -35,7 +35,12 @@ const HeaderIframe = () => {
         initialSearchValue={initialPackageName}
         onSearchSubmit={handleSearchSubmit}
         linksSection={
-          <ToggleMenu onToggle={handleMenuToggle} menuSelector=".col-sidebar" />
+          <div className={styles.docsHeaderToggle}>
+            <ToggleMenu
+              onToggle={handleMenuToggle}
+              menuSelector=".col-sidebar"
+            />
+          </div>
         }
       />
     </div>

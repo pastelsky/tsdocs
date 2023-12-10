@@ -6,3 +6,11 @@
   background: var(--primary-bg-color-transparent);
   backdrop-filter: blur(10px);
 }
+
+.docsHeaderToggle {
+  display: none;
+
+  @media (max-width: 480px) {
+    display: block;
+  }
+}
