@@ -13,3 +13,11 @@
   color: var(--selected-text-color);
   text-shadow: 0 0 2px var(--primary-bg-color);
 }
+
+@mixin hideScrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

@@ -7,12 +7,16 @@ import cx from "classnames";
 const Header = ({
   minimal,
   initialSearchValue,
+  initialSearchVersion,
   onSearchSubmit,
+  onVersionChange,
   linksSection,
 }: {
   minimal: boolean;
   initialSearchValue: string;
+  initialSearchVersion?: string;
   onSearchSubmit: (pkg: string) => void;
+  onVersionChange?: (value: string) => void;
   linksSection?: React.ReactNode;
 }) => {
   return (
@@ -36,7 +40,10 @@ const Header = ({
             <SearchBox
               onSelect={onSearchSubmit}
               initialValue={initialSearchValue}
+              initialVersion={initialSearchVersion}
               compact={true}
+              showVersionDropdown={true}
+              onVersionChange={onVersionChange}
             />
           </div>
         )}

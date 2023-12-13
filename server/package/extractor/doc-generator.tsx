@@ -277,10 +277,7 @@ function setupApp(app: td.Application) {
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
-        <link
-          href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;1,300&display=swap"
-          rel="stylesheet"
-        />
+        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital@0;1&display=swap" rel="stylesheet">
       `,
     }),
   );

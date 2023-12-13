@@ -11,13 +11,22 @@ const HeaderIframe = () => {
 
   const force = !!searchParams.get("force");
 
-  const { packageName: initialPackageName } = packageFromPath(
-    window.location.pathname.split("/docs/")[1],
-  );
+  const {
+    packageName: initialPackageName,
+    packageVersion: initialPackageVersion,
+  } = packageFromPath(window.location.pathname.split("/docs/")[1]);
 
   const handleSearchSubmit = async (pkg: string) => {
     const withForce = force ? "?force=true" : "";
     window.location.pathname = `/search/docs/${pkg}${withForce}`;
+  };
+
+  const handleVersionChange = async (version: string) => {
+    const withForce = force ? "?force=true" : "";
+    window.location.pathname = `/search/docs/${[
+      initialPackageName,
+      version,
+    ].join("/")}${withForce}`;
   };
 
   const handleMenuToggle = (open: boolean) => {
@@ -33,7 +42,9 @@ const HeaderIframe = () => {
       <Header
         minimal={false}
         initialSearchValue={initialPackageName}
+        initialSearchVersion={initialPackageVersion}
         onSearchSubmit={handleSearchSubmit}
+        onVersionChange={handleVersionChange}
         linksSection={
           <div className={styles.docsHeaderToggle}>
             <ToggleMenu

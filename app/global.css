@@ -20,6 +20,7 @@
 
   --selected-text-color: #1064c9;
   --selected-text-color-subdued: #508dde;
+  --selected-text-color-subdued-more: #84b6f3;
   --font-color-subtext: #86868f;
   --font-color-subtext-dark: #536473;
 
@@ -27,7 +28,8 @@
     0px 3px 5px rgba(23, 26, 33, 0.1);
   --font-family-code: "JetBrains Mono", Menlo, Consolas, Monaco, Liberation Mono,
     Lucida Console, monospace;
-  --font-family-system: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+  --font-family-system: Inter, Roboto, "Helvetica Neue", "Arial Nova",
+    "Nimbus Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol";
 

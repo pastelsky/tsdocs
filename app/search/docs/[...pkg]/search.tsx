@@ -26,6 +26,7 @@ export default function Search({ pkg }) {
   const withForce = force ? "?force=true" : "";
 
   let packageName = "";
+  let packageVersion = "";
 
   if (!pkgArray.length) {
     setStatus("error");
@@ -37,13 +38,16 @@ export default function Search({ pkg }) {
 
   const pathFragments = packageFromPath(pkgPath);
   packageName = pathFragments.packageName;
+  packageVersion = pathFragments.packageVersion;
 
-  const searchAndRedirect = async (pkg: string) => {
+  const searchAndRedirect = async (pkg: string, version: string | null) => {
     try {
-      const result = await getPackageDocs(pkg, { force });
+      const result = await getPackageDocs(pkg, version, { force });
 
       if (result.status === "success") {
-        window.location.href = `/docs/${pkg}/index.html${withForce}`;
+        window.location.href = `/docs/${
+          version ? [pkg, version].join("/") : pkg
+        }/index.html${withForce}`;
       } else {
         console.error("Getting package docs failed", result);
         setStatus("error");
@@ -65,11 +69,18 @@ export default function Search({ pkg }) {
   const handleSearchSubmit = async (pkg: string) => {
     setStatus("loading");
     router.replace(`/search/docs/${pkg}${withForce}`);
-    searchAndRedirect(pkg);
+    searchAndRedirect(pkg, null);
+  };
+
+  const handleVersionChange = async (version: string) => {
+    router.replace(
+      `/search/docs/${[packageName, version].join("/")}${withForce}`,
+    );
+    searchAndRedirect(pkg, version);
   };
 
   useEffect(() => {
-    searchAndRedirect(packageName);
+    searchAndRedirect(packageName, packageVersion);
   }, []);
 
   return (
@@ -77,7 +88,9 @@ export default function Search({ pkg }) {
       <Header
         minimal={false}
         initialSearchValue={packageName}
+        initialSearchVersion={packageVersion}
         onSearchSubmit={handleSearchSubmit}
+        onVersionChange={handleVersionChange}
       />
       <div className={styles.searchPageLoaderContainer}>
         <Placeholder status={status} error={error} />

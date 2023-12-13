@@ -5,7 +5,8 @@ body {
 :root {
   --font-family-code: "JetBrains Mono", Menlo, Consolas, Monaco, Liberation Mono,
     Lucida Console, monospace;
-  --font-family-system: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+  --font-family-system: Inter, Roboto, "Helvetica Neue", "Arial Nova",
+    "Nimbus Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol";
   --shadow-overlay: 0px 10px 15px rgba(32, 37, 46, 0.15),
@@ -161,6 +162,10 @@ h4 {
   background: white;
 }
 
+.container-main {
+  min-height: calc(100vh - 4rem);
+}
+
 @media (min-width: 770px) {
   #docs-header {
     height: 61px;
@@ -174,12 +179,12 @@ h4 {
   }
 }
 
-@media (min-width: 770px) {
-  .container-main .col-content {
-    padding: 0 2rem;
-    margin-top: 2rem;
-  }
+.container-main .col-content {
+  padding: 0 2rem;
+  margin-top: 2rem;
+}
 
+@media (min-width: 770px) {
   .container-main {
     margin: 0;
   }

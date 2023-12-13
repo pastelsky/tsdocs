@@ -3,17 +3,24 @@ import { useCombobox } from "downshift";
 import { getPackageSuggestion } from "../../../common/api/algolia";
 import cx from "classnames";
 import styles from "./SearchBox.module.scss";
+import VersionDropdown from "./VersionDropdown";
 
 type SearchBoxProps = {
   onSelect: (value: string) => void;
+  onVersionChange?: (value: string) => void;
   initialValue?: string;
+  initialVersion?: string;
   compact?: boolean;
   autoFocus?: boolean;
+  showVersionDropdown?: boolean;
 };
 
 export default function SearchBox({
   onSelect,
+  onVersionChange,
+  showVersionDropdown,
   initialValue,
+  initialVersion,
   compact,
   autoFocus,
 }: SearchBoxProps) {
@@ -47,7 +54,6 @@ export default function SearchBox({
     onInputValueChange({ inputValue }) {
       getPackageSuggestion(inputValue, styles.searchHighlight).then(
         (suggestions) => {
-          console.log(suggestions);
           setSuggestions(suggestions);
         },
       );
@@ -63,7 +69,7 @@ export default function SearchBox({
       className={cx(styles.searchBox, { [styles.searchBoxCompact]: compact })}
     >
       <div className={styles.comboBoxContainer}>
-        <div>
+        <div className={styles.inputWrapper}>
           <input
             placeholder="Search npm packages"
             className={styles.searchInput}
@@ -71,6 +77,13 @@ export default function SearchBox({
             {...getInputProps()}
             autoFocus={autoFocus}
           />
+          {showVersionDropdown && initialVersion && (
+            <VersionDropdown
+              pkg={initialValue}
+              initialVersion={initialVersion}
+              onSelect={onVersionChange}
+            />
+          )}
         </div>
       </div>
       <ul {...getMenuProps()} className={styles.searchSuggestionMenu}>
