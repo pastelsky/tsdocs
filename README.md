@@ -1,12 +1,17 @@
 # tsdocs.dev
 
-![image](public/android-chrome-512x512.png)
+<p align="center">
+<img src="public/android-chrome-512x512.png" width="256" height="256" />
+</p>
 
-TSDocs.dev is a service that lets you browse type reference documentation
+[TSDocs.dev](tsdocs.dev) is a service that lets you browse type reference documentation
 for Javascript packages.
 
-It works even with packages that aren't written in Typescript (sourced from DefinetlyTyped)
+It works even with packages that aren't written in Typescript (sourced from DefinitelyTyped)
 or when packages re-export types from other packages.
+
+Its depends heavily on a customized version of [typedoc](https://github.com/TypeStrong/typedoc)
+for generating API docs documentation.
 
 ## Development
 
