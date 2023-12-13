@@ -9,6 +9,12 @@ const Footer = () => {
           tsdocs.dev helps you browse reference typescript documentation for any
           package or version of a library.
         </p>
+        <p>
+          Made with the help of{" "}
+          <a target="_blank" href="https://github.com/TypeStrong/typedoc">
+            typedoc
+          </a>
+        </p>
       </div>
       <div className={styles.footerCredits}>
         <div className={styles.footerCreditsInner}>
