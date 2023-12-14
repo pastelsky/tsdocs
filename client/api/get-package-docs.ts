@@ -26,7 +26,7 @@ type PollAPIResponse =
     };
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-const POLL_TIMEOUT = 80000;
+const POLL_TIMEOUT = 100_000;
 
 type PackageDocsResponse =
   | {
