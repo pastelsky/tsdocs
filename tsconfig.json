@@ -22,6 +22,7 @@
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "ts-node": {
+    "swc": true,
     "compilerOptions": {
       "module": "commonjs"
     }
