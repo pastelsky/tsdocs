@@ -235,7 +235,7 @@ export async function handlerDocsHTML(req, res) {
   const relativeDocsPath = path.relative(docsRootPath, resolvedAbsolutePath);
 
   if (relativeDocsPath.endsWith(".html")) {
-    res.header("Cache-Control", "public, max-age=30");
+    res.header("Cache-Control", "public, max-age=3600");
     const linkHeaderContent = extractPreloadResources(resolvedAbsolutePath)
       .map(
         ({ url, rel, as }) =>
