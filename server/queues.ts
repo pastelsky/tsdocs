@@ -69,24 +69,12 @@ const generateDocsWorker = new Worker<GenerateDocsWorkerOptions>(
   {
     concurrency: os.cpus().length - 1,
     connection: redisOptions,
-    useWorkerThreads: true,
+    useWorkerThreads: false,
   },
 );
 
 export const queues = [installQueue, generateDocsQueue];
 const workers = [installWorker, generateDocsWorker];
-
-setInterval(async () => {
-  for (let queue of queues) {
-    const failedJobs = await queue.getFailed();
-    for (const job of failedJobs) {
-      if (job.finishedOn < Date.now() - 10000) {
-        console.log("Removing all failed jobs");
-        await job.remove();
-      }
-    }
-  }
-}, 1000);
 
 async function shutdownWorkers(): Promise<void> {
   await Promise.all(workers.map((worker) => installWorker.close()));
@@ -104,8 +92,18 @@ async function handleSignal() {
 
 process.on("SIGTERM", handleSignal);
 process.on("SIGINT", handleSignal);
-// process.on('uncaughtException', handleSignal);
-// process.on('unhandledRejection', handleSignal);
+
+setInterval(async () => {
+  for (let queue of queues) {
+    const failedJobs = await queue.getFailed();
+    for (const job of failedJobs) {
+      if (job.finishedOn < Date.now() - 10000) {
+        console.log("Removing all failed jobs");
+        await job.remove();
+      }
+    }
+  }
+}, 1000);
 
 setInterval(async () => {
   queues.forEach(async (queue) => {
