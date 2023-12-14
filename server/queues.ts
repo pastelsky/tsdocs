@@ -106,3 +106,17 @@ process.on("SIGTERM", handleSignal);
 process.on("SIGINT", handleSignal);
 // process.on('uncaughtException', handleSignal);
 // process.on('unhandledRejection', handleSignal);
+
+setInterval(async () => {
+  queues.forEach(async (queue) => {
+    const jobs = await queue.getJobs(["active", "waiting", "delayed"]);
+
+    for (let job of jobs) {
+      // Older than 2 minutes
+      if (job.timestamp < Date.now() - 2 * 60 * 1000) {
+        console.log("Removing job because its too old", job.id);
+        await job.remove();
+      }
+    }
+  });
+}, 5000);
