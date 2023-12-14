@@ -69,7 +69,11 @@ const generateDocsWorker = new Worker<GenerateDocsWorkerOptions>(
   {
     concurrency: os.cpus().length - 1,
     connection: redisOptions,
-    useWorkerThreads: false,
+    useWorkerThreads: true,
+    limiter: {
+      max: 1,
+      duration: 10000,
+    },
   },
 );
 
@@ -107,7 +111,7 @@ setInterval(async () => {
 
 setInterval(async () => {
   queues.forEach(async (queue) => {
-    const jobs = await queue.getJobs(["active", "waiting", "delayed"]);
+    const jobs = await queue.getJobs(["active", "wait", "waiting", "delayed"]);
 
     for (let job of jobs) {
       // Older than 2 minutes
