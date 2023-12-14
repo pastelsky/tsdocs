@@ -25,13 +25,7 @@ const port = 3000;
 
 const fastify = fastifyStart({
   logger: {
-    transport: {
-      target: "pino-pretty",
-      options: {
-        translateTime: "HH:MM:ss Z",
-        ignore: "pid,hostname",
-      },
-    },
+    level: "warn",
   },
 });
 
