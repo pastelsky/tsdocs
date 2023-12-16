@@ -77,8 +77,31 @@ const generateDocsWorker = new Worker<GenerateDocsWorkerOptions>(
   },
 );
 
-export const queues = [installQueue, generateDocsQueue];
-const workers = [installWorker, generateDocsWorker];
+const repeat = { pattern: "0 * * * *" };
+
+const cleanupCacheQueue = new Queue("cleanup-cache");
+
+if (process.env.NODE_ENV === "production") {
+  cleanupCacheQueue.add("cleanup", null, {
+    repeat: {
+      // Every hour
+      pattern: "0 * * * *",
+    },
+  });
+}
+
+const cleanupCacheWorker = new Worker(
+  cleanupCacheQueue.name,
+  path.join(__dirname, "./workers/cleanup-cache.js"),
+  {
+    concurrency: 1,
+    connection: redisOptions,
+    useWorkerThreads: true,
+  },
+);
+
+export const appQueues = [installQueue, generateDocsQueue];
+const workers = [installWorker, generateDocsWorker, cleanupCacheWorker];
 
 async function shutdownWorkers(): Promise<void> {
   await Promise.all(workers.map((worker) => installWorker.close()));
@@ -100,7 +123,7 @@ process.on("SIGUSR2", handleSignal);
 process.on("SIGUSR1", handleSignal);
 
 setInterval(async () => {
-  for (const queue of queues) {
+  for (const queue of appQueues) {
     const finishedJobs = await queue.getJobs(["completed", "failed"]);
     const unfinishedJobs = await queue.getJobs([
       "active",
