@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "run-p --print-label 'shared:watch' 'next:watch'",
-    "next:watch": "NODE_ENV=development nodemon -w ./server -w ./server.ts --ignore .next server.ts",
+    "next:watch": "NODE_ENV=development node-dev --stack_trace_limit=100 -r trace server.ts",
     "shared:watch": "vite build --watch",
     "build": "NODE_ENV=production next build && NODE_ENV=production vite build --mode production",
     "start": "NODE_ENV=production ts-node server.ts",
@@ -83,8 +83,10 @@
     "@types/node": "18.7.18",
     "@types/react": "18.2.28",
     "@types/regenerator-runtime": "^0",
+    "fast-glob": "^3.3.2",
     "husky": "^8.0.3",
     "lint-staged": "^13.3.0",
+    "node-dev": "^8.0.0",
     "nodemon": "^3.0.1",
     "trace": "^3.1.1",
     "typescript": "5.2.2"

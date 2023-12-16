@@ -1,0 +1,6 @@
+{
+  "ignore": [".next", "shared/module.js"],
+  "extensions": {
+    "ts": "esbuild-register"
+  }
+}

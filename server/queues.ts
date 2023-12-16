@@ -96,6 +96,8 @@ async function handleSignal() {
 
 process.on("SIGTERM", handleSignal);
 process.on("SIGINT", handleSignal);
+process.on("SIGUSR2", handleSignal);
+process.on("SIGUSR1", handleSignal);
 
 setInterval(async () => {
   for (let queue of queues) {

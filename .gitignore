@@ -37,6 +37,8 @@ yarn-error.log*
 .yarn/install-state.gz
 .fleet
 
+docs-shared-assets
+
 combined.log
 error.log
 err.log

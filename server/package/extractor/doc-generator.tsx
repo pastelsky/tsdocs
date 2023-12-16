@@ -14,7 +14,7 @@ import {
 import path from "path";
 import logger from "../../../common/logger";
 import { generateTSConfig } from "./generate-tsconfig";
-import { getDocsPath } from "../utils";
+import { docsVersion, getDocsPath } from "../utils";
 import { TypeDefinitionResolveError, TypeDocBuildError } from "../CustomError";
 import InstallationUtils from "../installation.utils";
 import { JSX, Serializer } from "typedoc";
@@ -151,7 +151,7 @@ const generateDocsDefaultOptions = (
   theme: "tsdocs",
   lightHighlightTheme: "light-plus",
   darkHighlightTheme: "light-plus",
-  logLevel: "Info",
+  logLevel: "Warn",
   //    markedOptions: unknown;
   //    titleLink: string;
   //    navigationLinks: ManuallyValidatedOption<Record<string, string>>;
@@ -240,6 +240,7 @@ iconColors[ReflectionKind.TypeLiteral] = iconColors[ReflectionKind.TypeAlias];
 iconColors[ReflectionKind.TypeParameter] = iconColors[ReflectionKind.TypeAlias];
 iconColors[ReflectionKind.Module] = iconColors[ReflectionKind.Namespace];
 iconColors[ReflectionKind.Project] = iconColors[ReflectionKind.Namespace];
+iconColors[ReflectionKind.Method] = iconColors[ReflectionKind.Function];
 
 function setupApp(app: td.Application) {
   if (app["setupComplete"]) {
@@ -364,6 +365,47 @@ async function convertAndWriteDocs(
 
 const packumentCache = new Map();
 
+/**
+ * typedoc generates CSS / JS assets per package.
+ * This is a problem because a change in CSS overrides or global CSS
+ * will result in previously cached docs to use the CSS at the time of
+ * generation instead of the latest version. Here we delete common assets
+ * in package dirs, and symlink it to a shared directory.
+ *
+ * The last built asset overwrites previous ones
+ */
+async function copyAndSymlinkAssets(assetsDir: string, assetFiles: string[]) {
+  const sharedAssetsDir = path.join(
+    __dirname,
+    "..",
+    "..",
+    "..",
+    "docs-shared-assets",
+    docsVersion,
+  );
+  console.log({ sharedAssetsDir });
+  if (!fs.existsSync(sharedAssetsDir)) {
+    await fs.promises.mkdir(sharedAssetsDir);
+  }
+
+  const promises = assetFiles
+    .map((assetFile) => path.join(assetsDir, "assets", assetFile))
+    .map(async (assetPath) => {
+      if (!fs.existsSync(assetPath)) {
+        return Promise.resolve();
+      }
+      const assetName = path.basename(assetPath);
+      const sharedAssetPath = path.join(sharedAssetsDir, assetName);
+
+      await fs.promises.copyFile(assetPath, sharedAssetPath);
+
+      await fs.promises.unlink(assetPath);
+      await fs.promises.symlink(sharedAssetPath, assetPath);
+    });
+
+  await Promise.all(promises);
+}
+
 export async function generateDocsForPackage(
   packageJSON,
   { force },
@@ -454,7 +496,7 @@ export async function generateDocsForPackage(
     packageName: packageJSON.name,
     packageVersion: packageJSON.version,
     installPath,
-    resolveResult: typeResolveResult,
+    resolveResult: typeResolveResult.typePath,
     typeResolutionType,
   });
 
@@ -485,6 +527,12 @@ export async function generateDocsForPackage(
       packageName: packageJSON.name,
       packageVersion: packageJSON.version,
     });
+    await copyAndSymlinkAssets(docsPath, [
+      "style.css",
+      "custom.css",
+      "highlight.css",
+      "main.js",
+    ]);
   } catch (error) {
     logger.error("TypeDoc exiting with unexpected error:", error);
     throw new TypeDocBuildError(error);

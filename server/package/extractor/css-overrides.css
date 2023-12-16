@@ -124,6 +124,20 @@ body {
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --color-ts-function-background: var(--dark-color-ts-function-background);
+    --color-ts-class-background: var(--dark-color-ts-class-background);
+    --color-ts-variable-background: var(--dark-color-ts-variable-background);
+    --color-ts-interface-background: var(--dark-color-ts-interface-background);
+    --color-ts-enum-background: var(--dark-color-ts-enum-background);
+    --color-ts-type-alias-background: var(
+      --dark-color-ts-type-alias-background
+    );
+    --color-ts-namespace-background: var(--dark-color-ts-namespace-background);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
     color-scheme: light !important;
   }
 }

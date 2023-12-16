@@ -133,8 +133,7 @@ export async function handlerAPIDocsPoll(req, res) {
 
   if (!job) {
     logger.error(`Job ${jobId} not found in queue`);
-    res.status(404);
-    return;
+    return res.status(404);
   }
 
   if (await job.isCompleted()) {
@@ -198,8 +197,7 @@ export async function handlerDocsHTML(req, res) {
   const routePackageDetails = packageFromPath(paramsPath);
 
   if (!routePackageDetails) {
-    res.status(404);
-    return;
+    return res.status(404);
   }
 
   const { packageName, packageVersion, docsFragment } = routePackageDetails;
@@ -225,7 +223,7 @@ export async function handlerDocsHTML(req, res) {
   );
 
   if (paramsPath !== resolvedPath) {
-    res.redirect(`/docs/${resolvedPath}`);
+    return res.redirect(`/docs/${resolvedPath}`);
   }
 
   const resolvedAbsolutePath = path.join(
@@ -245,5 +243,5 @@ export async function handlerDocsHTML(req, res) {
     res.header("Link", linkHeaderContent);
   }
 
-  await res.sendFile(relativeDocsPath);
+  return res.sendFile(relativeDocsPath);
 }

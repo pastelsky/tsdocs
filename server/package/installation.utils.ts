@@ -3,12 +3,12 @@ import path from "path";
 import { promises as fs } from "fs";
 import sanitize from "sanitize-filename";
 
-const debug = require("debug")("bp:worker");
 import { InstallError, PackageNotFoundError } from "./CustomError";
 import { exec } from "./common.utils";
 import { InstallPackageOptions } from "./types";
 import { performance } from "perf_hooks";
 import { fileExists } from "next/dist/lib/file-exists";
+import logger from "../../common/logger";
 
 // When operating on a local directory, force npm to copy directory structure
 // and all dependencies instead of just symlinking files
@@ -134,13 +134,12 @@ const InstallationUtils = {
       ];
 
       command = `pnpm add ${packageStrings.join(" ")} --${flags.join(" --")}`;
-      console.log("command is ", command, "in ", installPath);
     } else {
       console.error("No valid client specified");
       process.exit(1);
     }
 
-    debug("install start %s", packageStrings.join(" "));
+    logger.info("install start %s", packageStrings.join(" "));
 
     try {
       await exec(
@@ -152,9 +151,9 @@ const InstallationUtils = {
         installTimeout,
       );
 
-      debug("install finish %s", packageStrings.join(" "));
+      logger.info("install finish %s", packageStrings.join(" "));
     } catch (err) {
-      console.log(err);
+      logger.error(err);
       if (typeof err === "string" && err.includes("code E404")) {
         throw new PackageNotFoundError(err);
       } else {

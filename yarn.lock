@@ -4513,6 +4513,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dateformat@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "dateformat@npm:3.0.3"
+  checksum: 0504baf50c3777ad333c96c37d1673d67efcb7dd071563832f70b5cbf7f3f4753f18981d44bfd8f665d5e5a511d2fc0af8e0ead8b585b9b3ddaa90067864d3f0
+  languageName: node
+  linkType: hard
+
 "dateformat@npm:^4.6.3":
   version: 4.6.3
   resolution: "dateformat@npm:4.6.3"
@@ -4534,7 +4541,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debounce@npm:^1.2.1":
+"debounce@npm:^1.0.0, debounce@npm:^1.2.1":
   version: 1.2.1
   resolution: "debounce@npm:1.2.1"
   checksum: 0b95b2a9d80ed69117d890f8dab8c0f2d6066f8d20edd1d810ae51f8f366a6d4c8b1d56e97dcb9304e93d57de4d5db440d34a03def7dad50403fc3f22bf16808
@@ -5278,7 +5285,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-glob@npm:^3.2.11, fast-glob@npm:^3.2.9":
+"fast-glob@npm:^3.2.11, fast-glob@npm:^3.2.9, fast-glob@npm:^3.3.2":
   version: 3.3.2
   resolution: "fast-glob@npm:3.3.2"
   dependencies:
@@ -5421,6 +5428,15 @@ __metadata:
   dependencies:
     minimatch: "npm:^5.0.1"
   checksum: 4b436fa944b1508b95cffdfc8176ae6947b92825483639ef1b9a89b27d82f3f8aa22b21eed471993f92709b431670d4e015b39c087d435a61e1bb04564cf51de
+  languageName: node
+  linkType: hard
+
+"filewatcher@npm:~3.0.0":
+  version: 3.0.1
+  resolution: "filewatcher@npm:3.0.1"
+  dependencies:
+    debounce: "npm:^1.0.0"
+  checksum: cf6013ef448a30bf8f1113e4d9aa48bdb0b68c93edc56ba499fa0095811243c982c76cdfe9ad0fde7d99566b99c26c3136193fc9f1aec955af386378fb1e8efa
   languageName: node
   linkType: hard
 
@@ -5658,6 +5674,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"get-package-type@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "get-package-type@npm:0.1.0"
+  checksum: bba0811116d11e56d702682ddef7c73ba3481f114590e705fc549f4d868972263896af313c57a25c076e3c0d567e11d919a64ba1b30c879be985fc9d44f96148
+  languageName: node
+  linkType: hard
+
 "get-stream@npm:^6.0.1":
   version: 6.0.1
   resolution: "get-stream@npm:6.0.1"
@@ -5802,6 +5825,13 @@ __metadata:
   version: 4.2.11
   resolution: "graceful-fs@npm:4.2.11"
   checksum: bf152d0ed1dc159239db1ba1f74fdbc40cb02f626770dcd5815c427ce0688c2635a06ed69af364396da4636d0408fcf7d4afdf7881724c3307e46aff30ca49e2
+  languageName: node
+  linkType: hard
+
+"growly@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "growly@npm:1.3.0"
+  checksum: 77f9abc3a854ec628580939f004ba8f05c677f9a6c957be817525f20f68f75368c4879c64d12551f262a9a00de33fbefc4deb24f8f2124429c906ef20ec3c678
   languageName: node
   linkType: hard
 
@@ -6227,6 +6257,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-docker@npm:^2.0.0":
+  version: 2.2.1
+  resolution: "is-docker@npm:2.2.1"
+  bin:
+    is-docker: cli.js
+  checksum: 3fef7ddbf0be25958e8991ad941901bf5922ab2753c46980b60b05c1bf9c9c2402d35e6dc32e4380b980ef5e1970a5d9d5e5aa2e02d77727c3b6b5e918474c56
+  languageName: node
+  linkType: hard
+
 "is-extglob@npm:^2.1.1":
   version: 2.1.1
   resolution: "is-extglob@npm:2.1.1"
@@ -6377,6 +6416,15 @@ __metadata:
   dependencies:
     call-bind: "npm:^1.0.2"
   checksum: 0023fd0e4bdf9c338438ffbe1eed7ebbbff7e7e18fb7cdc227caaf9d4bd024a2dcdf6a8c9f40c92192022eac8391243bb9e66cccebecbf6fe1d8a366108f8513
+  languageName: node
+  linkType: hard
+
+"is-wsl@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "is-wsl@npm:2.2.0"
+  dependencies:
+    is-docker: "npm:^2.0.0"
+  checksum: 20849846ae414997d290b75e16868e5261e86ff5047f104027026fd61d8b5a9b0b3ade16239f35e1a067b3c7cc02f70183cb661010ed16f4b6c7c93dad1b19d8
   languageName: node
   linkType: hard
 
@@ -7378,6 +7426,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-dev@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "node-dev@npm:8.0.0"
+  dependencies:
+    dateformat: "npm:^3.0.3"
+    dynamic-dedupe: "npm:^0.3.0"
+    filewatcher: "npm:~3.0.0"
+    get-package-type: "npm:^0.1.0"
+    minimist: "npm:^1.2.6"
+    node-notifier: "npm:^8.0.1"
+    resolve: "npm:^1.22.0"
+    semver: "npm:^7.3.7"
+  bin:
+    node-dev: bin/node-dev
+  checksum: 0e3ab2cc67a15c2209b5a701e8d1bde59f4e4c84a6a896cc8af06b968d04e425536ebe100dab5e5a5b71bf3a30a8b64f7e9126ceb370602e7c56c3cba28033f9
+  languageName: node
+  linkType: hard
+
 "node-fetch@npm:2.6.9":
   version: 2.6.9
   resolution: "node-fetch@npm:2.6.9"
@@ -7444,6 +7510,20 @@ __metadata:
     css-select: "npm:^5.1.0"
     he: "npm:1.2.0"
   checksum: 090be2781cbe6f9475a4ee9151a67af9635179ce9bccc77ec8218a455665078fa9ba939db073f750dd26eb94e0a907079b8ff9a3c1a90c406425e8ab42e448ce
+  languageName: node
+  linkType: hard
+
+"node-notifier@npm:^8.0.1":
+  version: 8.0.2
+  resolution: "node-notifier@npm:8.0.2"
+  dependencies:
+    growly: "npm:^1.3.0"
+    is-wsl: "npm:^2.2.0"
+    semver: "npm:^7.3.2"
+    shellwords: "npm:^0.1.1"
+    uuid: "npm:^8.3.0"
+    which: "npm:^2.0.2"
+  checksum: 34bf286d5def2d561a0d8eab7648a7e269bcf5a83d054e3810c254d841814ca99a934cfc9bf9b92aa6f4f053833968e8556d8f471a86fc0dc72a0060d3f7d6bf
   languageName: node
   linkType: hard
 
@@ -8657,7 +8737,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve@npm:^1.0.0, resolve@npm:^1.10.0, resolve@npm:^1.19.0, resolve@npm:^1.22.1, resolve@npm:~1.22.1":
+"resolve@npm:^1.0.0, resolve@npm:^1.10.0, resolve@npm:^1.19.0, resolve@npm:^1.22.0, resolve@npm:^1.22.1, resolve@npm:~1.22.1":
   version: 1.22.8
   resolution: "resolve@npm:1.22.8"
   dependencies:
@@ -8680,7 +8760,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve@patch:resolve@npm%3A^1.0.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.10.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.19.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.1#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A~1.22.1#optional!builtin<compat/resolve>":
+"resolve@patch:resolve@npm%3A^1.0.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.10.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.19.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.1#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A~1.22.1#optional!builtin<compat/resolve>":
   version: 1.22.8
   resolution: "resolve@patch:resolve@npm%3A1.22.8#optional!builtin<compat/resolve>::version=1.22.8&hash=c3c19d"
   dependencies:
@@ -8937,7 +9017,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.0.0, semver@npm:^7.1.1, semver@npm:^7.2, semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:~7.5.0, semver@npm:~7.5.4":
+"semver@npm:^7.0.0, semver@npm:^7.1.1, semver@npm:^7.2, semver@npm:^7.3.2, semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:~7.5.0, semver@npm:~7.5.4":
   version: 7.5.4
   resolution: "semver@npm:7.5.4"
   dependencies:
@@ -9132,6 +9212,13 @@ __metadata:
   version: 1.8.1
   resolution: "shell-quote@npm:1.8.1"
   checksum: af19ab5a1ec30cb4b2f91fd6df49a7442d5c4825a2e269b3712eded10eedd7f9efeaab96d57829880733fc55bcdd8e9b1d8589b4befb06667c731d08145e274d
+  languageName: node
+  linkType: hard
+
+"shellwords@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "shellwords@npm:0.1.1"
+  checksum: c122808ca53c828747ee69503755a5d35d8c1493e943d15ebfd6fe028517ec1af6f8a4c2dc9d995b0df75bd4246382c0dd2dc792a82ce5a6448307a643fc5a38
   languageName: node
   linkType: hard
 
@@ -9929,6 +10016,7 @@ __metadata:
     downshift: "npm:^8.2.3"
     enhanced-resolve: "npm:^5.15.0"
     esbuild-register: "npm:^3.5.0"
+    fast-glob: "npm:^3.3.2"
     fastify: "npm:^4.24.1"
     husky: "npm:^8.0.3"
     lint-staged: "npm:^13.3.0"
@@ -9937,6 +10025,7 @@ __metadata:
     monaco-editor: "npm:^0.44.0"
     mongodb: "npm:6.2"
     next: "npm:^14.0.3"
+    node-dev: "npm:^8.0.0"
     node-html-parser: "npm:^6.1.11"
     nodemon: "npm:^3.0.1"
     npm-run-all: "npm:^4.1.5"
@@ -10351,7 +10440,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:^8.3.2":
+"uuid@npm:^8.3.0, uuid@npm:^8.3.2":
   version: 8.3.2
   resolution: "uuid@npm:8.3.2"
   bin:
@@ -10607,7 +10696,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"which@npm:^2.0.1":
+"which@npm:^2.0.1, which@npm:^2.0.2":
   version: 2.0.2
   resolution: "which@npm:2.0.2"
   dependencies:

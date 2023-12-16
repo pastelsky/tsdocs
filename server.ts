@@ -25,6 +25,13 @@ const port = 3000;
 
 const fastify = fastifyStart({
   logger: {
+    transport: {
+      target: "pino-pretty",
+      options: {
+        translateTime: "HH:MM:ss Z",
+        ignore: "pid,hostname",
+      },
+    },
     level: "warn",
   },
 });
@@ -107,19 +114,6 @@ app
       decorateReply: false,
       cacheControl: false,
     });
-
-    // fastify.route({
-    //   method: "GET",
-    //   url: "/api/package",
-    //   schema: {
-    //     querystring: {
-    //       package: { type: "string" },
-    //     },
-    //   },
-    //   handler: async (request, reply) => {
-    //     return handlerAPI(request, reply);
-    //   },
-    // });
 
     queueDashboardAdapter.setBasePath("/queue/ui");
 

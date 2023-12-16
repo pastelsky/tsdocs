@@ -9,7 +9,7 @@ export function checkFileExists(file) {
     .catch(() => false);
 }
 
-const docsVersion = "1.0";
+export const docsVersion = "1.0";
 export const docsRootPath = path.join(
   __dirname,
   "..",

@@ -67,6 +67,7 @@ export class DocsCache {
       return docsFromDB;
     }
 
+    logger.warn("Docs cache miss for %s %s", packageName, packageVersion);
     return null;
   }
 
@@ -121,7 +122,5 @@ export class DocsCache {
           logger.error("Error writing docs cache to db", err);
         }),
     ]);
-
-    logger.info("Docs cache set for %s %s", packageName, packageVersion);
   }
 }
