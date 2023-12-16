@@ -1,7 +1,3 @@
-body {
-  font-size: 15px;
-}
-
 :root {
   --font-family-code: "JetBrains Mono", Menlo, Consolas, Monaco, Liberation Mono,
     Lucida Console, monospace;
@@ -11,6 +7,11 @@ body {
     "Segoe UI Symbol";
   --shadow-overlay: 0px 10px 15px rgba(32, 37, 46, 0.15),
     0px 3px 5px rgba(23, 26, 33, 0.21);
+}
+
+body {
+  font-size: 15px;
+  font-family: var(--font-family-system);
 }
 
 @media (prefers-color-scheme: light), (prefers-color-scheme: dark) {
