@@ -19,7 +19,6 @@ import { TypeDefinitionResolveError, TypeDocBuildError } from "../CustomError";
 import InstallationUtils from "../installation.utils";
 import { JSX, Serializer } from "typedoc";
 import { load as loadMissingExportsPlugin } from "./plugin-add-missing-exports";
-import { injectScript } from "@module-federation/nextjs-mf/utils";
 
 import {
   TypeResolveResult,
@@ -30,7 +29,6 @@ import fs from "fs";
 import { transformCommonJSExport } from "./augment-extract";
 import { DocsCache } from "../DocsCache";
 import { installQueue, installQueueEvents } from "../../queues";
-import { icons } from "./icon";
 
 class CustomThemeContext extends DefaultThemeRenderContext {
   _originalNav: any;
@@ -66,12 +64,12 @@ export class CustomTheme extends DefaultTheme {
   private _contextCache?: CustomThemeContext;
 
   public override getRenderContext(
-    page: PageEvent<Reflection>,
+    page: PageEvent<Reflection>
   ): CustomThemeContext {
     this._contextCache ||= new CustomThemeContext(
       this,
       page,
-      this.application.options,
+      this.application.options
     );
 
     return new CustomThemeContext(this, page, this.application.options);
@@ -91,7 +89,7 @@ const makeExternalsGlobPattern = (packageName) => {
   return [`**/node_modules/!(${packageName})/**`];
 };
 const generateDocsDefaultOptions = (
-  packageName: string,
+  packageName: string
 ): Partial<TypeDocOptions> => ({
   excludeExternals: false,
   externalPattern: makeExternalsGlobPattern(packageName),
@@ -184,7 +182,7 @@ const generateDocsDefaultOptions = (
 
 async function generateDocsHTML(
   app: td.Application,
-  project: ProjectReflection,
+  project: ProjectReflection
 ) {
   const generateTimer = logger.startTimer();
   await app.generateDocs(project, app.options.getValue("out"));
@@ -274,7 +272,7 @@ function setupApp(app: td.Application) {
         />
         <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital@0;1&display=swap" rel="stylesheet">
       `,
-    }),
+    })
   );
 
   app.renderer.hooks.on("body.begin", () =>
@@ -285,7 +283,7 @@ function setupApp(app: td.Application) {
           !function(t,e,n){if(!("Set"in window))return;const r="instantVaryAccept"in t.body.dataset||"Shopify"in window;let i;const o=navigator.userAgent.indexOf("Chrome/");if(o>-1&&(i=parseInt(navigator.userAgent.substring(o+7))),r&&i&&i<110)return;const s=t.createElement("link"),a=t.head;a.appendChild(s);const c=new Set;let l=0,d=0,u=s.relList;const f=void 0!==u&&void 0!==u.supports,h=f&&u.supports("prerender"),p=!f||u.supports("prefetch")?function(e,n,r){console.log("prefetch",e),c.add(e);const i=r?t.createElement("link"):s;n&&i.setAttribute("fetchPriority","high");i.href=e,i.rel="prefetch",i.as="document",r&&a.appendChild(i)}:!!u.supports("preload")&&H;if(!p&&!h)return;const v=navigator.connection||navigator.mozConnection||navigator.webkitConnection||{},m="string"==typeof v.effectiveType?v.effectiveType:"",w=-1!==m.indexOf("3g"),g=v.saveData||-1!==m.indexOf("2g");let b=t.body.dataset;const y="instantMousedownShortcut"in b,E="instantAllowQueryString"in b,A="instantAllowExternalLinks"in b,S=!("instantNoSpeculation"in b)&&HTMLScriptElement.supports&&HTMLScriptElement.supports("speculationrules"),L="instantWhitelist"in t.body.dataset,I=!g&&("instantViewport"in b||"instantViewportMobile"in b&&t.documentElement.clientWidth*t.documentElement.clientHeight<45e4),T=1111,C="instantIntensity"in b?+b.instantIntensity:65;p!==H&&t.addEventListener("touchstart",(function(t){O=!0,d=n.now();const e=x(t);if(!K(e))return;window.addEventListener("scroll",M,{once:!0}),l=setTimeout(D.bind(void 0,e,!0),C)}),{capture:!0,passive:!0});let k={capture:!0};if(t.addEventListener("mouseover",(function(t){if(n.now()-d<T)return;const e=x(t);if(!K(e))return;e.addEventListener("mouseout",M),l=setTimeout(D.bind(void 0,e,!1),C)}),k),y&&t.addEventListener("mousedown",(function(t){if(n.now()-d<T)return;if(t.which>1||t.metaKey||t.ctrlKey)return;const e=x(t);if(!e||"noInstant"in e.dataset||null!==e.getAttribute("download"))return;e.addEventListener("click",(t=>{1337!==t.detail&&t.preventDefault()}),{capture:!0,once:!0});const r=new MouseEvent("click",{bubbles:!0,cancelable:!0,detail:1337,view:window});e.dispatchEvent(r)}),k),h&&t.addEventListener("mousedown",(function(t){if(n.now()-d<T)return;if(t.which>1||t.metaKey||t.ctrlKey)return;const e=x(t);if(!K(e,!0))return;P(e.href,!0)}),k),I&&window.IntersectionObserver&&"isIntersecting"in IntersectionObserverEntry.prototype){const e=w?1:A?+b.instantLimit:1/0,n="instantScrollDelay"in b?+b.instantScrollDelay:1e3,r="instantThreshold"in b?+b.instantThreshold:.9,i="instantSelector"in b?b.instantSelector:"a",o=t=>{requestIdleCallback(t,{timeout:1500})},s=new Set;let a=0;o((()=>{const o=new IntersectionObserver((t=>{for(let r=0;r<t.length;++r){if(a>e)return;const i=t[r],c=i.target;i.isIntersecting?(s.add(c.href),++a,setTimeout((()=>{s.has(c.href)&&(o.unobserve(c),p(c.href,!1,!0))}),n)):(--a,s.delete(c.href))}}),{threshold:r}),c=t.querySelectorAll(i);for(let t=0;t<c.length;++t){const e=c[t];K(e)&&o.observe(e)}}))}b=u=k=null;let O=!1;function x(t,e){const n=e?t.relatedTarget:t.target;if(n&&"function"==typeof n.closest)return n.closest("a")}function D(t,e){h&&O?P(t.href,e):p(t.href,e,!(O&&(g||w))),l=void 0}function M(t){if(x(t)!==x(t,!0))return l?(clearTimeout(l),void(l=void 0)):(s.removeAttribute("rel"),s.removeAttribute("href"),s.removeAttribute("fetchPriority"),void s.removeAttribute("as"))}function K(t,n){let r;if(!t||!(r=t.href))return!1;if(!n&&c.has(r)||35===r.charCodeAt(0))return!1;const o=new URL(r);if(t.origin!=e.origin){if(!(A||"instant"in t.dataset)||!i)return!1}return("http:"===o.protocol||"https:"===o.protocol)&&(("http:"!==o.protocol||"https:"!==e.protocol)&&((!(L||!E&&o.search)||"instant"in t.dataset)&&((!o.hash||o.pathname+o.search!==e.pathname+e.search)&&(!("noInstant"in t.dataset)&&null===t.getAttribute("download")))))}function P(e,n){if(console.log("prerender",e),c.add(e),S){const n=t.createElement("script");return n.textContent=JSON.stringify({prerender:[{source:"list",urls:[e]}]}),n.type="speculationrules",void a.appendChild(n)}n&&s.setAttribute("fetchPriority","high"),s.href=e,s.rel="prerender"}function H(e,n,r){if(O)return;console.log("preload",e),c.add(e);const i=r?t.createElement("link"):s;n&&i.setAttribute("fetchPriority","high"),i.as="fetch",i.href=e,i.rel="preload",r&&a.appendChild(i)}}(document,location,Date);        
         </script>
         `,
-    }),
+    })
   );
 
   // Add "private" tag to all internal methods added by `typedoc-plugin-missing-exports`
@@ -327,7 +325,7 @@ async function convertAndWriteDocs(
   }: {
     packageName: string;
     packageVersion: string;
-  },
+  }
 ) {
   if (app.logger.hasErrors()) {
     throw new Error("Invalid options passed.");
@@ -344,7 +342,7 @@ async function convertAndWriteDocs(
 
   let serializedReflection = new Serializer().projectToObject(
     projectReflection,
-    process.cwd(),
+    process.cwd()
   );
 
   updateSourceFilename(serializedReflection);
@@ -378,7 +376,7 @@ async function copyAndSymlinkAssets(assetsDir: string, assetFiles: string[]) {
     "..",
     "..",
     "docs-shared-assets",
-    docsVersion,
+    docsVersion
   );
   if (!fs.existsSync(sharedAssetsDir)) {
     await fs.promises.mkdir(sharedAssetsDir, { recursive: true });
@@ -404,7 +402,7 @@ async function copyAndSymlinkAssets(assetsDir: string, assetFiles: string[]) {
 
 export async function generateDocsForPackage(
   packageJSON,
-  { force },
+  { force }
 ): Promise<{ docsPath: string }> {
   const docsPath = getDocsPath({
     packageName: packageJSON.name,
@@ -413,13 +411,13 @@ export async function generateDocsForPackage(
 
   const typeDocFromCache = await DocsCache.get(
     packageJSON.name,
-    packageJSON.version,
+    packageJSON.version
   );
 
   // Cache hit
   if (!force && typeDocFromCache) {
     logger.info(
-      `Typedoc cache hit for ${packageJSON.name}@${packageJSON.version}`,
+      `Typedoc cache hit for ${packageJSON.name}@${packageJSON.version}`
     );
     const cachedApp = await td.Application.bootstrapWithPlugins({
       ...generateDocsDefaultOptions(packageJSON.name),
@@ -431,7 +429,7 @@ export async function generateDocsForPackage(
 
     const projectFromCache = new td.Deserializer(cachedApp).reviveProject(
       typeDocFromCache,
-      `${packageJSON.name} — ${packageJSON.version}`,
+      `${packageJSON.name} — ${packageJSON.version}`
     );
 
     await generateDocsHTML(cachedApp, projectFromCache);
@@ -443,7 +441,7 @@ export async function generateDocsForPackage(
 
   const installPath = await InstallationUtils.preparePath(
     packageJSON.name,
-    packageJSON.version,
+    packageJSON.version
   );
 
   logger.info("Package will be installed in", { installPath });
@@ -459,7 +457,7 @@ export async function generateDocsForPackage(
     },
     {
       jobId: packageString + installPath,
-    },
+    }
   );
 
   await installJob.waitUntilFinished(installQueueEvents);
@@ -469,14 +467,14 @@ export async function generateDocsForPackage(
 
   typeResolveResult = await resolveTypePathInbuilt(
     installPath,
-    packageJSON.name,
+    packageJSON.name
   );
   if (typeResolveResult) {
     typeResolutionType = "inbuilt";
   } else {
     typeResolveResult = await resolveTypePathDefinitelyTyped(
       packageJSON,
-      packumentCache,
+      packumentCache
     );
     typeResolutionType = "definitely-typed";
   }
@@ -503,7 +501,7 @@ export async function generateDocsForPackage(
   try {
     let typesEntryContent = await fs.promises.readFile(
       typeResolveResult.typePath,
-      "utf-8",
+      "utf-8"
     );
     typesEntryContent = transformCommonJSExport(typesEntryContent);
     await fs.promises.writeFile(typeResolveResult.typePath, typesEntryContent);
