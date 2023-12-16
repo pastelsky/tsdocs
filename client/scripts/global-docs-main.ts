@@ -32,7 +32,10 @@ function scrollNavigationIntoView() {
     return new URL(a.href).pathname === location.pathname;
   });
 
-  matchedElement?.scrollIntoView();
+  matchedElement?.scrollIntoView({
+    block: "center",
+    inline: "center",
+  });
 }
 
 document.addEventListener(
