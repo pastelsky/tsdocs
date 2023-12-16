@@ -145,7 +145,7 @@ const generateDocsDefaultOptions = (
   theme: "tsdocs",
   lightHighlightTheme: "light-plus",
   darkHighlightTheme: "light-plus",
-  logLevel: "Warn",
+  logLevel: "Error",
   //    markedOptions: unknown;
   //    titleLink: string;
   //    navigationLinks: ManuallyValidatedOption<Record<string, string>>;
