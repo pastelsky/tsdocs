@@ -101,6 +101,8 @@ const cleanupCacheWorker = new Worker(
 );
 
 export const appQueues = [installQueue, generateDocsQueue];
+export const scheduledQueues = [cleanupCacheQueue];
+export const allQueues = [...scheduledQueues, ...appQueues];
 const workers = [installWorker, generateDocsWorker, cleanupCacheWorker];
 
 async function shutdownWorkers(): Promise<void> {

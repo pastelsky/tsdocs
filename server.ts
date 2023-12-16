@@ -11,7 +11,7 @@ import { docsRootPath } from "./server/package/utils";
 import { createBullBoard } from "@bull-board/api";
 import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
 import { FastifyAdapter } from "@bull-board/fastify";
-import { appQueues } from "./server/queues";
+import { allQueues } from "./server/queues";
 import {
   CustomError,
   PackageNotFoundError,
@@ -42,7 +42,7 @@ const nextHandle = app.getRequestHandler();
 const queueDashboardAdapter = new FastifyAdapter();
 
 createBullBoard({
-  queues: appQueues.map((queue) => new BullMQAdapter(queue)),
+  queues: allQueues.map((queue) => new BullMQAdapter(queue)),
   serverAdapter: queueDashboardAdapter,
 });
 
