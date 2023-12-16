@@ -109,12 +109,6 @@ const generateDocsDefaultOptions = (
   pretty: true,
   emit: "docs",
   githubPages: false,
-  /**
-   * When enabled, TypeDoc will include the generation time in <script>
-   * and <link> tags to JS/CSS assets to prevent assets from a previous build of
-   * the documentation from being used. This should generally not be necessary with a properly configured web server.
-   */
-  cacheBust: true,
   hideGenerator: true,
   hideParameterTypesInTitle: true,
   searchInComments: true,

@@ -149,7 +149,10 @@ export async function handlerAPIDocsPoll(req, res) {
   return { status: "queued" };
 }
 
-const preloadCache = new LRUCache({
+const preloadCache = new LRUCache<
+  string,
+  { url: string; rel: string; as: string }[]
+>({
   max: 500,
 });
 
@@ -273,6 +276,7 @@ export async function handlerDocsHTML(req, res) {
   const relativeDocsPath = path.relative(docsRootPath, resolvedAbsolutePath);
 
   if (relativeDocsPath.endsWith(".html")) {
+    // Cache HTML for 2 hours
     res.header("Cache-Control", "public, max-age=3600");
     const linkHeaderContent = extractPreloadResources(resolvedAbsolutePath)
       .map(
@@ -281,6 +285,9 @@ export async function handlerDocsHTML(req, res) {
       )
       .join(", ");
     res.header("Link", linkHeaderContent);
+  } else {
+    // Cache rest for 8 hours
+    res.header("Cache-Control", `public, max-age=${60 * 60 * 8}`);
   }
 
   return res.sendFile(relativeDocsPath);
