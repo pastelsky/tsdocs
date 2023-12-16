@@ -35,13 +35,13 @@ const installWorker = new Worker<InstallWorkerOptions>(
     await InstallationUtils.installPackage(
       [`${job.data.packageName}@${job.data.packageVersion}`],
       job.data.installPath,
-      { client: "npm" },
+      { client: "npm" }
     );
   },
   {
     concurrency: os.cpus().length - 1,
     connection: redisOptions,
-  },
+  }
 );
 
 type GenerateDocsWorkerOptions = {
@@ -53,7 +53,7 @@ export const generateDocsQueue = new Queue<GenerateDocsWorkerOptions>(
   "generate-docs-package",
   {
     connection: redisOptions,
-  },
+  }
 );
 export const generateDocsQueueEvents = new QueueEvents(generateDocsQueue.name, {
   connection: redisOptions,
@@ -74,12 +74,12 @@ const generateDocsWorker = new Worker<GenerateDocsWorkerOptions>(
       max: 1,
       duration: 10000,
     },
-  },
+  }
 );
 
-const repeat = { pattern: "0 * * * *" };
-
-const cleanupCacheQueue = new Queue("cleanup-cache");
+const cleanupCacheQueue = new Queue("cleanup-cache", {
+  connection: redisOptions,
+});
 
 if (process.env.NODE_ENV === "production") {
   cleanupCacheQueue.add("cleanup", null, {
@@ -97,7 +97,7 @@ const cleanupCacheWorker = new Worker(
     concurrency: 1,
     connection: redisOptions,
     useWorkerThreads: true,
-  },
+  }
 );
 
 export const appQueues = [installQueue, generateDocsQueue];
