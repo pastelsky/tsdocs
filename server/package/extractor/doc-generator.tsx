@@ -383,9 +383,8 @@ async function copyAndSymlinkAssets(assetsDir: string, assetFiles: string[]) {
     "docs-shared-assets",
     docsVersion,
   );
-  console.log({ sharedAssetsDir });
   if (!fs.existsSync(sharedAssetsDir)) {
-    await fs.promises.mkdir(sharedAssetsDir);
+    await fs.promises.mkdir(sharedAssetsDir, { recursive: true });
   }
 
   const promises = assetFiles
