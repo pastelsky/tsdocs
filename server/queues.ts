@@ -111,19 +111,22 @@ setInterval(async () => {
 
     for (let job of finishedJobs) {
       // Older than 10 seconds
-      if (job.finishedOn < Date.now() - 10 * 1000) {
+      const finishedExpiryAgo = Date.now() - 30 * 1000;
+      if (job.finishedOn < finishedExpiryAgo) {
         logger.info("Removing finished job because its too old", {
           job: job.id,
+          finishedOn: new Date(job.finishedOn),
         });
         await job.remove();
       }
     }
 
     for (let job of unfinishedJobs) {
-      // Older than 2 mins
-      if (job.timestamp < Date.now() - 2 * 60 * 1000) {
+      const unfinishedExpiryAgo = Date.now() - 3 * 60 * 1000;
+      if (job.timestamp < Date.now() - unfinishedExpiryAgo) {
         logger.info(`Removing ${job.getState()} job because its too old`, {
           job: job.id,
+          startedOn: new Date(job.timestamp),
         });
         await job.remove();
       }
