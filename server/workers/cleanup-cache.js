@@ -23,7 +23,6 @@ const cacheLocations = [
   ...glob.sync(`${path.join(__dirname, "..", "..", "docs")}/*/*`, {
     onlyDirectories: true,
   }),
-  // path.join("/tmp", "tmp-build", "cache"),
 ];
 
 async function getFileOrDirInfo(dirPath) {
@@ -112,6 +111,13 @@ async function cleanupSpaceWork() {
     " from ",
     removedDirs,
   );
+
+  if (await shouldFreeSpace()) {
+    console.log(
+      "Cleanup Space: Still need to free space, cleaning up node modules cache",
+    );
+    await fsExtra.remove(path.join("/tmp", "tmp-build", "cache"));
+  }
 }
 
 module.exports = async (job) => {
