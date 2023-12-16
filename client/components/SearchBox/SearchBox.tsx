@@ -51,11 +51,12 @@ export default function SearchBox({
       onSelect(selectedItem.name);
     },
     stateReducer,
+
     onInputValueChange({ inputValue }) {
       getPackageSuggestion(inputValue, styles.searchHighlight).then(
         (suggestions) => {
           setSuggestions(suggestions);
-        },
+        }
       );
     },
     items: suggestions,
@@ -75,6 +76,12 @@ export default function SearchBox({
             className={styles.searchInput}
             spellCheck={false}
             {...getInputProps()}
+            // prevent key hijack by typedoc search
+            // https://github.com/pastelsky/tsdocs/issues/2
+            onKeyDown={(...args) => {
+              args[0].stopPropagation();
+              return getInputProps().onKeyDown(...args);
+            }}
             autoFocus={autoFocus}
           />
           {showVersionDropdown && initialVersion && (
