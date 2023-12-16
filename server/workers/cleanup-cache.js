@@ -6,9 +6,6 @@ const glob = require("fast-glob");
 const fastFolderSizeSync = require("fast-folder-size/sync");
 const fsExtra = require("fs-extra");
 const prettyBytes = require("pretty-bytes");
-const {
-  generateDocsForPackage,
-} = require("../package/extractor/doc-generator");
 
 // Clean if disk space is less than this percentage
 const CLEAN_THRESHOLD = 20;
