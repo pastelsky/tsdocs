@@ -13,9 +13,6 @@ export default defineConfig({
     "process.env.NODE_ENV": JSON.stringify("production"),
   },
   build: {
-    rollupOptions: {
-      // external: ["react", "react-dom"],
-    },
     outDir: resolve(__dirname, "./shared-dist"),
     lib: {
       entry: resolve(__dirname, "./client/components/HeaderIframe/index.tsx"),
