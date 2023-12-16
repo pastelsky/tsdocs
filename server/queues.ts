@@ -100,27 +100,33 @@ process.on("SIGUSR2", handleSignal);
 process.on("SIGUSR1", handleSignal);
 
 setInterval(async () => {
-  for (let queue of queues) {
-    const failedJobs = await queue.getFailed();
-    for (const job of failedJobs) {
-      if (job.finishedOn < Date.now() - 10000) {
-        console.log("Removing all failed jobs");
+  for (const queue of queues) {
+    const finishedJobs = await queue.getJobs(["completed", "failed"], 0);
+    const unfinishedJobs = await queue.getJobs([
+      "active",
+      "wait",
+      "waiting",
+      "delayed",
+    ]);
+
+    for (let job of finishedJobs) {
+      // Older than 10 seconds
+      if (job.timestamp < Date.now() - 10 * 1000) {
+        logger.info("Removing finished job because its too old", {
+          job: job.id,
+        });
+        await job.remove();
+      }
+    }
+
+    for (let job of unfinishedJobs) {
+      // Older than 2 mins
+      if (job.timestamp < Date.now() - 2 * 60 * 1000) {
+        logger.info(`Removing ${job.getState()} job because its too old`, {
+          job: job.id,
+        });
         await job.remove();
       }
     }
   }
-}, 1000);
-
-setInterval(async () => {
-  queues.forEach(async (queue) => {
-    const jobs = await queue.getJobs(["active", "wait", "waiting", "delayed"]);
-
-    for (let job of jobs) {
-      // Older than 2 minutes
-      if (job.timestamp < Date.now() - 2 * 60 * 1000) {
-        console.log("Removing job because its too old", job.id);
-        await job.remove();
-      }
-    }
-  });
 }, 5000);

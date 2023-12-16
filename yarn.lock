@@ -6819,6 +6819,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lru-cache@npm:^10.1.0":
+  version: 10.1.0
+  resolution: "lru-cache@npm:10.1.0"
+  checksum: 207278d6fa711fb1f94a0835d4d4737441d2475302482a14785b10515e4c906a57ebf9f35bf060740c9560e91c7c1ad5a04fd7ed030972a9ba18bce2a228e95b
+  languageName: node
+  linkType: hard
+
 "lru-cache@npm:^5.1.1":
   version: 5.1.1
   resolution: "lru-cache@npm:5.1.1"
@@ -10020,7 +10027,7 @@ __metadata:
     fastify: "npm:^4.24.1"
     husky: "npm:^8.0.3"
     lint-staged: "npm:^13.3.0"
-    lru-cache: "npm:^10.0.1"
+    lru-cache: "npm:^10.1.0"
     minimatch: "npm:^9.0.3"
     monaco-editor: "npm:^0.44.0"
     mongodb: "npm:6.2"

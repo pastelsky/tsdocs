@@ -9,6 +9,7 @@ import { PackageNotFoundError } from "./CustomError";
 import logger from "../../common/logger";
 import { parse } from "node-html-parser";
 import fs from "fs";
+import { LRUCache } from "lru-cache";
 
 export async function resolveDocsRequest({
   packageName,
@@ -148,14 +149,51 @@ export async function handlerAPIDocsPoll(req, res) {
   return { status: "queued" };
 }
 
+const preloadCache = new LRUCache({
+  max: 500,
+});
+
 function extractPreloadResources(htmlPath: string) {
+  if (preloadCache.get(htmlPath)) {
+    return preloadCache.get(htmlPath);
+  }
+
   const htmlContent = fs.readFileSync(htmlPath, "utf8");
   const root = parse(htmlContent);
+  const scriptAssets = root
+    .querySelectorAll("script")
+    .map((script) => script.getAttribute("src"))
+    .filter(Boolean)
+    .map((src) => {
+      if (src.startsWith("/")) {
+        return {
+          url: src,
+          rel: "preload",
+          as: "script",
+        };
+      }
+
+      if (!src.startsWith("http") && !src.startsWith("//")) {
+        const relativeDocsPath = path.join(
+          "/docs",
+          path.relative(docsRootPath, path.join(path.dirname(htmlPath), src)),
+        );
+        return {
+          url: relativeDocsPath,
+          rel: "preload",
+          as: "script",
+        };
+      }
+      return null;
+    })
+    .filter(Boolean);
+
   const linkAssets = root
     .querySelectorAll("link")
     .map((link) => link.getAttribute("href"))
     .map((href) => {
-      if (href.split("?")[0].endsWith(".css")) {
+      const pathName = href.split("?")[0];
+      if (pathName.endsWith(".css")) {
         if (href.startsWith("/")) {
           return {
             url: href,
@@ -188,7 +226,9 @@ function extractPreloadResources(htmlPath: string) {
     rel: "preload",
     as: "script",
   };
-  return [...linkAssets, jsAssets];
+  const preloadAssets = [...linkAssets, ...scriptAssets, jsAssets];
+  preloadCache.set(htmlPath, preloadAssets);
+  return preloadAssets;
 }
 
 export async function handlerDocsHTML(req, res) {
