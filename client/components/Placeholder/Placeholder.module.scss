@@ -20,9 +20,15 @@
   animation: shimmer-light 0.5s alternate infinite;
 }
 
-.placeholderError .label code {
+.errorCode {
   font-size: var(--font-size-lg);
   font-weight: bold;
+}
+
+.errorMessage {
+  pre {
+    text-align: start;
+  }
 }
 
 .placeholderError .label p {

@@ -9,6 +9,7 @@ export class CustomError extends Error {
   constructor(name: string, originalError: Error, extra?: any) {
     super(name);
     this.name = name;
+    this.cause = originalError;
     this.originalError = originalError;
     this.extra = extra;
     Object.setPrototypeOf(this, CustomError.prototype);
@@ -88,6 +89,7 @@ export class MinifyError extends CustomError {
 
 export class MissingDependencyError extends CustomError {
   missingModules: Array<string>;
+
   constructor(originalError: any, extra: { missingModules: Array<string> }) {
     super("MissingDependencyError", originalError, extra);
     this.missingModules = extra.missingModules;

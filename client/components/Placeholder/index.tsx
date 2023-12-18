@@ -32,8 +32,11 @@ const Placeholder = ({
 
       {status === "error" && (
         <div className={styles.label}>
-          <code>{error.errorCode}</code>
-          <p>{error.errorMessage}</p>
+          <code className={styles.errorCode}>{error.errorCode}</code>
+          <p
+            className={styles.errorMessage}
+            dangerouslySetInnerHTML={{ __html: error.errorMessage }}
+          />
         </div>
       )}
     </div>

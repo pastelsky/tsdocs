@@ -63,6 +63,7 @@
     "semver": "^7.5.4",
     "sharp": "^0.33.0",
     "shortid": "^2.2.16",
+    "stacktrace-parser": "^0.1.10",
     "tempy": "2.0.0",
     "ts-morph": "^16.0.0",
     "ts-node": "^10.9.1",

@@ -9,6 +9,7 @@ import { PackageNotFoundError } from "./CustomError";
 import logger from "../../common/logger";
 import { parse } from "node-html-parser";
 import fs from "fs";
+import * as stackTraceParser from "stacktrace-parser";
 import { LRUCache } from "lru-cache";
 
 export async function resolveDocsRequest({
@@ -128,6 +129,28 @@ export async function handlerAPIDocsTrigger(req, res) {
   }
 }
 
+function cleanStackTrace(stackTrace: string | undefined) {
+  if (!stackTrace) return "";
+
+  let parsedStackTrace = [];
+  try {
+    const parsed = stackTraceParser.parse(stackTrace);
+    parsedStackTrace = parsed.map((stack) => ({
+      ...stack,
+      file: stack.file.split("node_modules/").pop().replace(process.cwd(), ""),
+    }));
+  } catch (err) {
+    logger.error("Failed to parse stack trace", err);
+    parsedStackTrace = [];
+  }
+
+  return parsedStackTrace
+    .map(
+      (stack) => `at ${stack.methodName} in ${stack.file}:${stack.lineNumber}`,
+    )
+    .join("\n");
+}
+
 export async function handlerAPIDocsPoll(req, res) {
   const jobId = req.params["*"];
   const job = await generateDocsQueue.getJob(jobId);
@@ -143,6 +166,8 @@ export async function handlerAPIDocsPoll(req, res) {
     return res.send({
       status: "failed",
       errorCode: job.failedReason,
+      errorMessage: job.data.originalError.message,
+      errorStack: cleanStackTrace(job.data.originalError.stacktrace),
     });
   }
 

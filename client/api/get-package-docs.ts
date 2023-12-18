@@ -3,6 +3,7 @@ import {
   PackageNotFoundError,
   PackageVersionMismatchError,
   TypeDefinitionResolveError,
+  TypeDocBuildError,
 } from "../../server/package/CustomError";
 
 type TriggerAPIResponse =
@@ -23,6 +24,7 @@ type PollAPIResponse =
       status: "failed";
       errorCode: string;
       errorMessage: string;
+      errorStack: string;
     };
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -100,6 +102,7 @@ async function pollQueue(
       errorMessage: getErrorMessage({
         name: pollResponse.data.errorCode,
         extra: pollResponse.data.errorMessage,
+        errorStack: pollResponse.data.errorStack,
       }),
     };
   }
@@ -112,7 +115,11 @@ async function pollQueue(
   };
 }
 
-export function getErrorMessage(error: { name: string; extra: any }) {
+export function getErrorMessage(error: {
+  name: string;
+  extra: any;
+  errorStack?: string;
+}) {
   switch (error.name) {
     case PackageNotFoundError.name:
       return "This package could not be found on the npm registry. Did you get the name right?";
@@ -128,6 +135,16 @@ export function getErrorMessage(error: { name: string; extra: any }) {
         "This package likely does not ship with types, and it does not have a corresponding package `@types` package " +
         "from which reference documentation for its APIs can be built."
       );
+    case TypeDocBuildError.name:
+      return `Failed to generate documentation for this package. <br /> 
+            <details>
+              <summary>See stack trace</summary>
+              <pre>
+                <code><b>${error.extra}</b>${
+                  "\n" + error.errorStack || ""
+                }</code>
+              </pre>
+            </details>`;
     default:
       console.warn("Could not get error message for error: ", error);
       return "";
