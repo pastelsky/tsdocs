@@ -122,21 +122,21 @@ export function getErrorMessage(error: {
   errorStack?: string;
 }) {
   switch (error.name) {
-    case PackageNotFoundError.name:
+    case "PackageNotFoundError":
       return "This package could not be found on the npm registry. Did you get the name right?";
 
-    case PackageVersionMismatchError.name:
+    case "PackageVersionMismatchError":
       return `The given version for this package was not found on the npm registry.\n Found versions: \n${error.extra.join(
         ", ",
       )}`;
 
-    case TypeDefinitionResolveError.name:
+    case "TypeDefinitionResolveError":
       return (
         "Failed to resolve types for this package. " +
         "This package likely does not ship with types, and it does not have a corresponding package `@types` package " +
         "from which reference documentation for its APIs can be built."
       );
-    case TypeDocBuildError.name:
+    case "TypeDocBuildError":
       return `Failed to generate documentation for this package. <br /> 
             <details>
               <summary>See stack trace</summary>
