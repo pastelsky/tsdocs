@@ -53,8 +53,9 @@ async function pollQueue(
   if (timeElapsed > POLL_TIMEOUT) {
     return {
       status: "failure",
-      errorCode: "DOCS_TIMEOUT",
-      errorMessage: "Building docs took longer than expected",
+      errorCode: "DocsBuildTimeout",
+      errorMessage:
+        "Building docs took longer than expected. Check back in sometime to see if the load on the server has reduced? If this persists, file an issue.",
     };
   }
 
