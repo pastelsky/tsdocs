@@ -171,7 +171,9 @@ setInterval(async () => {
       try {
         if (job.timestamp < unfinishedExpiryAgo) {
           logger.warn(
-            `Removing ${job.getState()} job ${job.id} because its too old`,
+            `Removing ${await job.getState()} job ${
+              job.id
+            } because its too old`,
             {
               job: job.id,
               startedOn: new Date(job.timestamp),

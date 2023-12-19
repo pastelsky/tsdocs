@@ -8,7 +8,7 @@ const fsExtra = require("fs-extra");
 const prettyBytes = require("pretty-bytes");
 
 // Clean if disk space is less than this percentage
-const CLEAN_THRESHOLD = 20;
+const CLEAN_THRESHOLD = 30;
 
 const cacheLocations = [
   ...glob.sync(`${path.join("/tmp", "tmp-build")}/packages/*`, {
@@ -60,15 +60,15 @@ async function shouldFreeSpace() {
   return freeSpace < CLEAN_THRESHOLD;
 }
 
-async function cleanupSpaceWork() {
+async function cleanupSpaceWork(job) {
   if (!(await shouldFreeSpace())) {
-    console.log(
+    job.log(
       `Cleanup space: Free disk space is greater than ${CLEAN_THRESHOLD}%, skipping.`,
     );
     return;
   }
 
-  console.log(
+  job.log(
     `Cleanup space: Free disk space is less than ${CLEAN_THRESHOLD}%, cleaning up`,
   );
   const locationsToClean = await Promise.all(
@@ -102,7 +102,7 @@ async function cleanupSpaceWork() {
     }
   }
 
-  console.log(
+  job.log(
     "Cleanup Space: Freed",
     prettyBytes(removedSize),
     " from ",
@@ -110,7 +110,7 @@ async function cleanupSpaceWork() {
   );
 
   if (await shouldFreeSpace()) {
-    console.log(
+    job.log(
       "Cleanup Space: Still need to free space, cleaning up node modules cache",
     );
     await fsExtra.remove(path.join("/tmp", "tmp-build", "cache"));
@@ -118,5 +118,5 @@ async function cleanupSpaceWork() {
 }
 
 module.exports = async (job) => {
-  cleanupSpaceWork();
+  cleanupSpaceWork(job);
 };
