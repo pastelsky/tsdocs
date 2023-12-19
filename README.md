@@ -13,6 +13,19 @@ or when packages re-export types from other packages.
 Its depends heavily on a customized version of [typedoc](https://github.com/TypeStrong/typedoc)
 for generating API docs documentation.
 
+## Writing good documentation for your library
+
+`tsdocs.dev` extracts documentation from the type definitions that ships with libraries. In case a type definition is 
+unavailable, it searches [DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped) for the closest equivalent.
+
+For an example, see documentation for d3 —
+https://tsdocs.dev/docs/d3/7.8.5/classes/FormatSpecifier.html
+
+Internally tsdocs.dev uses a customized version of typedoc to parse 
+and render documentation, which works on docstrings and markdown
+https://typedoc.org/guides/doccomments/
+
+
 ## Development
 
 1. Ensure that you have redis running locally
