@@ -10,6 +10,7 @@
       <excludeFolder url="file://$MODULE_DIR$/.yarn/releases" />
       <excludeFolder url="file://$MODULE_DIR$/shared-dist" />
       <excludeFolder url="file://$MODULE_DIR$/cf-tsdocs-worker/.wrangler" />
+      <excludeFolder url="file://$MODULE_DIR$/docs-shared-assets" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

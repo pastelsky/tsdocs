@@ -23,7 +23,7 @@
     "@vitejs/plugin-react": "^4.2.1",
     "animejs": "^3.2.2",
     "axios": "^1.6.2",
-    "bullmq": "^4.15.4",
+    "bullmq": "patch:bullmq@npm%3A4.15.4#~/.yarn/patches/bullmq-npm-4.15.4-b55917dd70.patch",
     "chalk": "^4.1.2",
     "check-disk-space": "^3.4.0",
     "classnames": "^2.3.2",

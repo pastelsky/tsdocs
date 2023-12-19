@@ -2567,7 +2567,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bullmq@npm:^4.15.4":
+"bullmq@npm:4.15.4":
   version: 4.15.4
   resolution: "bullmq@npm:4.15.4"
   dependencies:
@@ -2581,6 +2581,23 @@ __metadata:
     tslib: "npm:^2.0.0"
     uuid: "npm:^9.0.0"
   checksum: e18e8ef3973edbd393caa4d8681f694df1b9489de5a8cf748693da8d36398f2e7c5bb9fdba278b75d0fb4cdd1232bb50a14b2bbeee567adb10fa60a2cd4bee4e
+  languageName: node
+  linkType: hard
+
+"bullmq@patch:bullmq@npm%3A4.15.4#~/.yarn/patches/bullmq-npm-4.15.4-b55917dd70.patch":
+  version: 4.15.4
+  resolution: "bullmq@patch:bullmq@npm%3A4.15.4#~/.yarn/patches/bullmq-npm-4.15.4-b55917dd70.patch::version=4.15.4&hash=746f55"
+  dependencies:
+    cron-parser: "npm:^4.6.0"
+    glob: "npm:^8.0.3"
+    ioredis: "npm:^5.3.2"
+    lodash: "npm:^4.17.21"
+    msgpackr: "npm:^1.6.2"
+    node-abort-controller: "npm:^3.1.1"
+    semver: "npm:^7.5.4"
+    tslib: "npm:^2.0.0"
+    uuid: "npm:^9.0.0"
+  checksum: 4054f30fbda1a2a0e34f4f92e87c2623b7a7f4fb414aaa69bdb3db6a4cb8703e934835f9e875e0bed33a4b529e2d165d50d1b8ccfe001134fe4280ac93e23b51
   languageName: node
   linkType: hard
 
@@ -8478,7 +8495,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:^4.2.1"
     animejs: "npm:^3.2.2"
     axios: "npm:^1.6.2"
-    bullmq: "npm:^4.15.4"
+    bullmq: "patch:bullmq@npm%3A4.15.4#~/.yarn/patches/bullmq-npm-4.15.4-b55917dd70.patch"
     chalk: "npm:^4.1.2"
     check-disk-space: "npm:^3.4.0"
     classnames: "npm:^2.3.2"
