@@ -153,7 +153,7 @@ setInterval(async () => {
     }
 
     for (let job of unfinishedJobs) {
-      const unfinishedExpiryAgo = Date.now() - 3 * 60 * 1000;
+      const unfinishedExpiryAgo = Date.now() - 2 * 60 * 1000;
       if (job.timestamp < Date.now() - unfinishedExpiryAgo) {
         logger.info(`Removing ${job.getState()} job because its too old`, {
           job: job.id,

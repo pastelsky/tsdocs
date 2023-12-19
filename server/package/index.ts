@@ -96,10 +96,9 @@ export async function handlerAPIDocsTrigger(req, res) {
 
   if (!routePackageDetails) {
     logger.error("Route package details not found in " + paramsPath);
-    res.code(404).send({
+    return res.status(404).send({
       name: PackageNotFoundError.name,
     });
-    return;
   }
 
   const { packageName, packageVersion, docsFragment } = routePackageDetails;
@@ -118,6 +117,7 @@ export async function handlerAPIDocsTrigger(req, res) {
       { packageJSON: resolvedRequest.packageJSON, force },
       {
         jobId: `${resolvedRequest.packageJSON.name}@${resolvedRequest.packageJSON.version}`,
+        priority: 100,
       },
     );
 
@@ -154,6 +154,9 @@ function cleanStackTrace(stackTrace: string | undefined) {
 export async function handlerAPIDocsPoll(req, res) {
   const jobId = req.params["*"];
   const job = await generateDocsQueue.getJob(jobId);
+  // This needs to be decreased further on every run
+  // however there isn't a good way to fetch job priority
+  await job.changePriority({ priority: 90 });
 
   if (!job) {
     logger.error(`Job ${jobId} not found in queue`);
@@ -280,6 +283,10 @@ export async function handlerDocsHTML(req, res) {
     const generateJob = await generateDocsQueue.add(
       `generate docs ${packageName}`,
       { packageJSON: resolvedRequest.packageJSON, force },
+      {
+        jobId: `${resolvedRequest.packageJSON.name}@${resolvedRequest.packageJSON.version}`,
+        priority: 100,
+      },
     );
     await generateJob.waitUntilFinished(generateDocsQueueEvents);
   }
