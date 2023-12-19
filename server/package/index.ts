@@ -151,12 +151,27 @@ function cleanStackTrace(stackTrace: string | undefined) {
     .join("\n");
 }
 
+const priorityCache = new LRUCache<string, number>({
+  ttl: 1000 * 60 * 3,
+  max: 500,
+});
+
 export async function handlerAPIDocsPoll(req, res) {
   const jobId = req.params["*"];
   const job = await generateDocsQueue.getJob(jobId);
-  // This needs to be decreased further on every run
-  // however there isn't a good way to fetch job priority
-  await job.changePriority({ priority: 90 });
+
+  if (priorityCache.has(jobId)) {
+    await job.changePriority({
+      priority: priorityCache.has(jobId) ? priorityCache.get(jobId) - 1 : 99,
+    });
+
+    priorityCache.set(jobId, priorityCache.get(jobId) - 1);
+  } else {
+    await job.changePriority({
+      priority: 99,
+    });
+    priorityCache.set(jobId, 99);
+  }
 
   if (!job) {
     logger.error(`Job ${jobId} not found in queue`);
