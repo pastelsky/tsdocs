@@ -179,7 +179,7 @@ setInterval(async () => {
           await job.remove();
         }
       } catch (err) {
-        logger.error("Failed to remove job", err);
+        logger.error("Failed to remove job", { err, job });
       }
     }
   }
