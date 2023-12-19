@@ -10,4 +10,4 @@ apps:
     interpreter_args: "-r ts-node/register"
     wait_ready: true
     exec_mode: "cluster"
-    instances: 2
+    instances: 1
