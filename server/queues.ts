@@ -76,10 +76,6 @@ const generateDocsWorker = new Worker<GenerateDocsWorkerOptions>(
     concurrency: os.cpus().length - 1,
     connection: redisOptions,
     useWorkerThreads: false,
-    limiter: {
-      max: 1,
-      duration: 10000,
-    },
   },
 );
 
