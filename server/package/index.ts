@@ -164,19 +164,11 @@ export async function handlerAPIDocsPoll(req, res) {
     await job.changePriority({
       priority: priorityCache.get(jobId) - 1,
     });
-    logger.info(
-      "Set the priority of job " +
-        jobId +
-        " to " +
-        (priorityCache.get(jobId) - 1),
-    );
-
     priorityCache.set(jobId, priorityCache.get(jobId) - 1);
   } else {
     await job.changePriority({
       priority: 99,
     });
-    logger.info("Set the priority of job " + jobId + " to " + 99);
     priorityCache.set(jobId, 99);
   }
 
