@@ -14,8 +14,8 @@ module.exports = async (job) => {
       ...job.data,
       originalError: {
         code: err.message,
-        stacktrace: err?.originalError.stack,
-        message: err?.originalError.message,
+        stacktrace: err?.originalError?.stack,
+        message: err?.originalError?.message,
       },
     });
     throw err;
