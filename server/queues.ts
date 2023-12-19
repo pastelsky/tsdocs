@@ -168,21 +168,15 @@ setInterval(async () => {
 
     for (let job of unfinishedJobs.filter(Boolean)) {
       const unfinishedExpiryAgo = Date.now() - 2 * 60 * 1000;
-      try {
-        if (job.timestamp < unfinishedExpiryAgo) {
-          logger.warn(
-            `Removing ${await job.getState()} job ${
-              job.id
-            } because its too old`,
-            {
-              job: job.id,
-              startedOn: new Date(job.timestamp),
-            },
-          );
-          await job.remove();
-        }
-      } catch (err) {
-        logger.error("Failed to remove job", { err, job });
+      if (job.timestamp < unfinishedExpiryAgo) {
+        logger.warn(
+          `Removing ${await job.getState()} job ${job.id} because its too old`,
+          {
+            job: job.id,
+            startedOn: new Date(job.timestamp),
+          },
+        );
+        await job.remove();
       }
     }
   }
