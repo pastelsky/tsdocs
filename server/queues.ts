@@ -132,7 +132,8 @@ process.on("SIGUSR1", handleSignal);
 
 setInterval(async () => {
   for (const queue of appQueues) {
-    const finishedJobs = await queue.getJobs(["completed", "failed"]);
+    const finishedJobs = await queue.getJobs(["completed"]);
+    const failedJobs = await queue.getJobs(["failed"]);
     const unfinishedJobs = await queue.getJobs([
       "active",
       "wait",
@@ -145,6 +146,18 @@ setInterval(async () => {
       const finishedExpiryAgo = Date.now() - 30 * 1000;
       if (job.finishedOn < finishedExpiryAgo) {
         logger.info("Removing finished job because its too old", {
+          job: job.id,
+          finishedOn: new Date(job.finishedOn),
+        });
+        await job.remove();
+      }
+    }
+
+    for (let job of failedJobs) {
+      // Older than 10 seconds
+      const failedExpiryAgo = Date.now() - 60 * 3 * 1000;
+      if (job.finishedOn < failedExpiryAgo) {
+        logger.info("Removing failed job because its too old", {
           job: job.id,
           finishedOn: new Date(job.finishedOn),
         });
