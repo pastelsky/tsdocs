@@ -196,10 +196,14 @@ app
 // Set your memory limit (in bytes)
 const memoryLimit = 2 * 1024 * 1024 * 1024; // 2 GB
 
+let heapDumped = false;
 setInterval(function () {
-  var heapUsed = v8.getHeapStatistics().used_heap_size;
+  if (heapDumped) return;
+
+  const heapUsed = v8.getHeapStatistics().used_heap_size;
   if (heapUsed > memoryLimit) {
     console.log("Memory limit exceeded... writing heapdump");
     heapdump.writeSnapshot("./" + Date.now() + ".heapsnapshot");
+    heapDumped = true;
   }
-}, 1000);
+}, 5000);
