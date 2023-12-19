@@ -19,6 +19,10 @@ import {
 } from "./server/package/CustomError";
 import logger from "./common/logger";
 
+import heapdump from "heapdump";
+
+import v8 from "v8";
+
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
 const port = 3000;
@@ -188,3 +192,14 @@ app
   .catch((err) => {
     console.log("Failed to prepare app with error: ", err);
   });
+
+// Set your memory limit (in bytes)
+const memoryLimit = 2 * 1024 * 1024 * 1024; // 2 GB
+
+setInterval(function () {
+  var heapUsed = v8.getHeapStatistics().used_heap_size;
+  if (heapUsed > memoryLimit) {
+    console.log("Memory limit exceeded... writing heapdump");
+    heapdump.writeSnapshot("./" + Date.now() + ".heapsnapshot");
+  }
+}, 1000);

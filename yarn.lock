@@ -1706,6 +1706,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/heapdump@npm:^0":
+  version: 0.3.4
+  resolution: "@types/heapdump@npm:0.3.4"
+  checksum: a9c62274e4b0cf841811410275fb58c1d82af128e5ee61d6df94297819cc45b0c2d900b155377a734788f84f3d5b76f9de4e36682870d24b38dc414b787fe507
+  languageName: node
+  linkType: hard
+
 "@types/json-schema@npm:*, @types/json-schema@npm:^7.0.8":
   version: 7.0.15
   resolution: "@types/json-schema@npm:7.0.15"
@@ -4457,6 +4464,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"heapdump@npm:^0.3.15":
+  version: 0.3.15
+  resolution: "heapdump@npm:0.3.15"
+  dependencies:
+    nan: "npm:^2.13.2"
+    node-gyp: "npm:latest"
+  checksum: 0e042e4bdc5439a8d83bdc405a8a175add563cf135a0ae0347dbc7587b3a224765a4954e454a9ee087bde349bc426f2538adc8cc66270feb2bbd924d7aae3583
+  languageName: node
+  linkType: hard
+
 "help-me@npm:^4.0.1":
   version: 4.2.0
   resolution: "help-me@npm:4.2.0"
@@ -5754,6 +5771,15 @@ __metadata:
   version: 0.0.8
   resolution: "mute-stream@npm:0.0.8"
   checksum: a2d2e79dde87e3424ffc8c334472c7f3d17b072137734ca46e6f221131f1b014201cc593b69a38062e974fb2394d3d1cb4349f80f012bbf8b8ac1b28033e515f
+  languageName: node
+  linkType: hard
+
+"nan@npm:^2.13.2":
+  version: 2.18.0
+  resolution: "nan@npm:2.18.0"
+  dependencies:
+    node-gyp: "npm:latest"
+  checksum: 5520e22c64e2b5b495b1d765d6334c989b848bbe1502fec89c5857cabcc7f9f0474563377259e7574bff1c8a041d3b90e9ffa1f5e15502ffddee7b2550cc26a0
   languageName: node
   linkType: hard
 
@@ -8444,6 +8470,7 @@ __metadata:
     "@tanstack/react-query": "npm:^4.36.1"
     "@types/animejs": "npm:^3.1.12"
     "@types/fs-extra": "npm:^11.0.4"
+    "@types/heapdump": "npm:^0"
     "@types/node": "npm:20.10.4"
     "@types/react": "npm:18.2.45"
     "@types/regenerator-runtime": "npm:^0.13.5"
@@ -8463,6 +8490,7 @@ __metadata:
     fast-glob: "npm:^3.3.2"
     fastify: "npm:^4.25.1"
     fs-extra: "npm:^11.2.0"
+    heapdump: "npm:^0.3.15"
     husky: "npm:^8.0.3"
     lint-staged: "npm:^13.3.0"
     lru-cache: "npm:^10.1.0"
