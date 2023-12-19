@@ -155,7 +155,7 @@ setInterval(async () => {
 
     for (let job of failedJobs) {
       // Older than 10 seconds
-      const failedExpiryAgo = Date.now() - 60 * 3 * 1000;
+      const failedExpiryAgo = Date.now() - 60 * 5 * 1000;
       if (job.finishedOn < failedExpiryAgo) {
         logger.info("Removing failed job because its too old", {
           job: job.id,
