@@ -11,4 +11,3 @@ apps:
     wait_ready: true
     exec_mode: "cluster"
     instances: 2
-    max_memory_restart: "1G"
