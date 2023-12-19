@@ -28,6 +28,6 @@ https://typedoc.org/guides/doccomments/
 
 ## Development
 
-1. Ensure that you have redis running locally
+1. Ensure that you have [redis installed](https://redis.io/docs/install/install-redis/) and running locally
 2. Run `yarn install`
 3. Run `yarn dev`
