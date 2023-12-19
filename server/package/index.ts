@@ -183,8 +183,8 @@ export async function handlerAPIDocsPoll(req, res) {
     return res.send({
       status: "failed",
       errorCode: job.failedReason,
-      errorMessage: job.data.originalError.message,
-      errorStack: cleanStackTrace(job.data.originalError.stacktrace),
+      errorMessage: job.data.originalError?.message,
+      errorStack: cleanStackTrace(job.data.originalError?.stacktrace),
     });
   }
 
