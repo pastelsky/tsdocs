@@ -139,6 +139,7 @@ setInterval(async () => {
       "wait",
       "waiting",
       "delayed",
+      "prioritized",
     ]);
 
     for (let job of finishedJobs) {
