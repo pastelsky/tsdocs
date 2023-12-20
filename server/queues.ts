@@ -81,7 +81,7 @@ const generateDocsWorker = new Worker<GenerateDocsWorkerOptions>(
     useWorkerThreads: true,
     limiter: {
       max: 2,
-      duration: 1000,
+      duration: 10000,
     },
   },
 );
