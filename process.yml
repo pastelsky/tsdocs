@@ -10,4 +10,5 @@ apps:
     interpreter_args: "-r ts-node/register"
     wait_ready: true
     exec_mode: "cluster"
-    instances: 1
+    instances: 2
+    max_memory_restart: "1500M"
