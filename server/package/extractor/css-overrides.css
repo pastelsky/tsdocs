@@ -219,7 +219,25 @@ a.tsd-index-link {
 
 .tsd-nested-navigation {
   margin-left: 2.2rem;
+  margin-right: 2.2rem;
+  max-height: 300px;
+  overflow-y: auto;
 }
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.tsd-nested-navigation::-webkit-scrollbar {
+  display: block;
+}
+/* Hide scrollbar for Chrome, Safari and Opera */
+.tsd-nested-navigation::-webkit-scrollbar-track {
+  background: transparent;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+.tsd-nested-navigation {
+  -ms-overflow-style: block;  /* IE and Edge */
+  scrollbar-width: block;  /* Firefox */
+}
+
 
 .tsd-index-content > :not(:first-child) {
   padding: 0 1rem;
