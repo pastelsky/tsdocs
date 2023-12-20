@@ -18,7 +18,8 @@
 .tagline {
   margin-bottom: 2rem;
   color: var(--font-color-subtext);
-
+  text-align: center;
+  
   @media (max-width: 480px) {
     margin-bottom: 1.5rem;
   }
