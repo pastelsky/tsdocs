@@ -80,7 +80,7 @@ const generateDocsWorker = new Worker<GenerateDocsWorkerOptions>(
     connection: redisOptions,
     useWorkerThreads: true,
     limiter: {
-      max: 2,
+      max: 1,
       duration: 10000,
     },
   },
