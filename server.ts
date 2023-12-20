@@ -180,7 +180,7 @@ app
         console.log("Server started at ", `http://localhost:${port}`);
         console.log("Queue UI at ", `http://localhost:${port}/queue/ui`);
         // For PM2 to know that our server is up
-        process.send("ready");
+        if (process.send) process.send("ready");
       } catch (err) {
         console.error("server threw error on startup: ", err);
         fastify.log.error(err);
