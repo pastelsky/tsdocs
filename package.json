@@ -28,6 +28,7 @@
     "check-disk-space": "^3.4.0",
     "classnames": "^2.3.2",
     "debounce": "^1.2.1",
+    "dotenv": "^16.3.1",
     "downshift": "^8.2.3",
     "enhanced-resolve": "^5.15.0",
     "esbuild-register": "^3.5.0",

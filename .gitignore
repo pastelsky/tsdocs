@@ -12,6 +12,7 @@ node_modules
 /.next/
 /out/
 shared-dist
+.env
 
 # production
 /build

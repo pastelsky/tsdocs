@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import axios from "axios";
 import logger from "../../common/logger";
+import "dotenv/config";
 
 const baseDocsCachePathDisk = path.join(__dirname, "..", "..");
 
@@ -33,6 +34,11 @@ export class DocsCache {
 
       const response = await axios.get(
         `https://cf-tsdocs-worker.binalgo.workers.dev/${docsCachePath}`,
+        {
+          headers: {
+            "X-CF-WORKERS-KEY": process.env["X-CF-WORKERS-KEY"],
+          },
+        },
       );
 
       return JSON.parse(response.data);
@@ -91,7 +97,11 @@ export class DocsCache {
     await axios.put(
       `https://cf-tsdocs-worker.binalgo.workers.dev/${docsPath}`,
       data,
-      {},
+      {
+        headers: {
+          "X-CF-WORKERS-KEY": process.env["X-CF-WORKERS-KEY"],
+        },
+      },
     );
   }
 
