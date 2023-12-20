@@ -175,7 +175,6 @@ setInterval(async () => {
           logger.error(
             `Failed to remove ${await job.getState()} job ${job.id}`,
             err,
-            job,
           );
         }
       }
