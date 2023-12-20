@@ -79,6 +79,10 @@ const generateDocsWorker = new Worker<GenerateDocsWorkerOptions>(
     concurrency: os.cpus().length - 1,
     connection: redisOptions,
     useWorkerThreads: true,
+    limiter: {
+      max: 2,
+      duration: 1000,
+    },
   },
 );
 
@@ -165,7 +169,15 @@ setInterval(async () => {
         logger.warn(
           `Removing ${await job.getState()} job ${job.id} because its too old`,
         );
-        await job.remove();
+        try {
+          await job.remove();
+        } catch (err) {
+          logger.error(
+            `Failed to remove ${await job.getState()} job ${job.id}`,
+            err,
+            job,
+          );
+        }
       }
     }
   }

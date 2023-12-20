@@ -160,6 +160,11 @@ export async function handlerAPIDocsPoll(req, res) {
   const jobId = req.params["*"];
   const job = await generateDocsQueue.getJob(jobId);
 
+  if (!job) {
+    logger.error(`Job ${jobId} not found in queue`);
+    return res.status(404);
+  }
+
   if (priorityCache.has(jobId)) {
     await job.changePriority({
       priority: priorityCache.get(jobId) - 1,
@@ -170,11 +175,6 @@ export async function handlerAPIDocsPoll(req, res) {
       priority: 99,
     });
     priorityCache.set(jobId, 99);
-  }
-
-  if (!job) {
-    logger.error(`Job ${jobId} not found in queue`);
-    return res.status(404);
   }
 
   if (await job.isCompleted()) {
