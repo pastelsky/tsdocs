@@ -77,6 +77,10 @@ export default function SearchBox({
             spellCheck={false}
             {...getInputProps({
               onKeyDown: (event) => {
+                // prevent key hijack by typedoc search
+                // https://github.com/pastelsky/tsdocs/issues/2
+                event.stopPropagation();
+
                 // usable Home/End buttons
                 // https://github.com/pastelsky/tsdocs/issues/3
                 // reference: https://github.com/downshift-js/downshift#customizing-handlers
@@ -84,12 +88,6 @@ export default function SearchBox({
                   event.nativeEvent["preventDownshiftDefault"] = true;
               },
             })}
-            // prevent key hijack by typedoc search
-            // https://github.com/pastelsky/tsdocs/issues/2
-            onKeyDown={(...args) => {
-              args[0].stopPropagation();
-              return getInputProps().onKeyDown(...args);
-            }}
             autoFocus={autoFocus}
           />
           {showVersionDropdown && initialVersion && (
