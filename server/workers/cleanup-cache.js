@@ -61,16 +61,14 @@ async function shouldFreeSpace() {
 }
 
 async function cleanupSpaceWork(job) {
+  let result = "";
+
   if (!(await shouldFreeSpace())) {
-    job.log(
-      `Cleanup space: Free disk space is greater than ${CLEAN_THRESHOLD}%, skipping.`,
-    );
-    return;
+    result += `Cleanup space: Free disk space is greater than ${CLEAN_THRESHOLD}%, skipping.`;
+    return result;
   }
 
-  job.log(
-    `Cleanup space: Free disk space is less than ${CLEAN_THRESHOLD}%, cleaning up`,
-  );
+  result += `Cleanup space: Free disk space is less than ${CLEAN_THRESHOLD}%, cleaning up`;
   const locationsToClean = await Promise.all(
     cacheLocations.map(async (location) => {
       return {
@@ -102,21 +100,20 @@ async function cleanupSpaceWork(job) {
     }
   }
 
-  job.log(
-    "Cleanup Space: Freed",
-    prettyBytes(removedSize),
-    " from ",
-    removedDirs,
-  );
+  result +=
+    "Cleanup Space: Freed " +
+    prettyBytes(removedSize) +
+    " from " +
+    JSON.stringify(removedDirs);
 
   if (await shouldFreeSpace()) {
-    job.log(
-      "Cleanup Space: Still need to free space, cleaning up node modules cache",
-    );
+    result +=
+      "Cleanup Space: Still need to free space, cleaning up node modules cache";
     await fsExtra.remove(path.join("/tmp", "tmp-build", "cache"));
   }
+  return result;
 }
 
 module.exports = async (job) => {
-  cleanupSpaceWork(job);
+  return await cleanupSpaceWork(job);
 };
