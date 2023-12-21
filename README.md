@@ -4,7 +4,7 @@
 <img src="public/android-chrome-512x512.png" width="256" height="256" />
 </p>
 
-[TSDocs.dev](tsdocs.dev) is a service that lets you browse type reference documentation
+[TSDocs.dev](https://tsdocs.dev) is a service that lets you browse type reference documentation
 for Javascript packages.
 
 It works even with packages that aren't written in Typescript (sourced from DefinitelyTyped)
