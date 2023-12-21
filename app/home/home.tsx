@@ -10,8 +10,6 @@ import Footer from "../../client/components/Footer";
 import { useRouter } from "next/navigation";
 
 export default function Index() {
-  const [pkg, setPkg] = useState<string | null>(null);
-
   const router = useRouter();
 
   const handleSearchSubmit = async (pkg: string) => {
@@ -26,7 +24,7 @@ export default function Index() {
     <div className={styles.homePageContainer}>
       <Header
         minimal={true}
-        initialSearchValue={pkg}
+        initialSearchValue={null}
         onSearchSubmit={handleSearchSubmit}
       />
       <div className={styles.homePageContent}>
