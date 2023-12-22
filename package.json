@@ -81,6 +81,7 @@
     "winston-console-format": "^1.0.8"
   },
   "devDependencies": {
+    "@fastify/basic-auth": "^5.1.1",
     "@types/animejs": "^3.1.12",
     "@types/fs-extra": "^11.0.4",
     "@types/heapdump": "^0",

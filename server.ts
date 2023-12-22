@@ -18,6 +18,8 @@ import {
   PackageVersionMismatchError,
 } from "./server/package/CustomError";
 import logger from "./common/logger";
+import fastifyBasicAuth from "@fastify/basic-auth";
+import "dotenv/config";
 
 import heapdump from "heapdump";
 
@@ -102,6 +104,20 @@ app
       serve: false,
     });
 
+    fastify.register(fastifyBasicAuth, {
+      validate(username, password, _req, reply, done) {
+        if (
+          username === "tsdocs" &&
+          password === process.env["TSDOCS_PASSWORD"]
+        ) {
+          done();
+        } else {
+          reply.status(401).send("Unauthorized");
+        }
+      },
+      authenticate: true,
+    });
+
     fastify.register(fastifyStatic, {
       root: path.join(__dirname, "shared-dist"),
       redirect: true,
@@ -172,6 +188,22 @@ app
     fastify.setNotFoundHandler((request, reply) =>
       nextHandle(request.raw, reply.raw),
     );
+
+    fastify.addHook("onRequest", (req, reply, next) => {
+      if (!req.url.startsWith("/queue/ui") || !process.env["TSDOCS_PASSWORD"]) {
+        return next();
+      }
+      fastify.basicAuth(req, reply, function (error) {
+        if (!error) {
+          return next();
+        }
+
+        if (error.name === "FastifyError") {
+          reply.redirect(401, "/queue/ui");
+        }
+        reply.code(500).send({ error: error.message });
+      });
+    });
 
     // Run the server!
     const start = async () => {

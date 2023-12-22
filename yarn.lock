@@ -585,6 +585,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fastify/basic-auth@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "@fastify/basic-auth@npm:5.1.1"
+  dependencies:
+    "@fastify/error": "npm:^3.0.0"
+    fastify-plugin: "npm:^4.0.0"
+  checksum: cb3d2c5eb98cb5be15e6a1d46e58c8e912de1ce021dd630e41cd21e8a3a210ae5658cfb1b42ec93bdca29432a812d7eeedd6b9ce4aeb54943df7f85c026ff6fb
+  languageName: node
+  linkType: hard
+
 "@fastify/deepmerge@npm:^1.0.0":
   version: 1.3.0
   resolution: "@fastify/deepmerge@npm:1.3.0"
@@ -592,7 +602,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fastify/error@npm:^3.4.0":
+"@fastify/error@npm:^3.0.0, @fastify/error@npm:^3.4.0":
   version: 3.4.1
   resolution: "@fastify/error@npm:3.4.1"
   checksum: 4d63660f7d4a0d6091abf869208d30898bde82f513ca7be542243d9d740df743dd4be293e7db30858fca612dd512d28a818ea06dc674e06b445278fcefcdda92
@@ -8487,6 +8497,7 @@ __metadata:
     "@bull-board/api": "npm:^5.10.2"
     "@bull-board/fastify": "npm:^5.10.2"
     "@definitelytyped/header-parser": "npm:^0.0.178"
+    "@fastify/basic-auth": "npm:^5.1.1"
     "@fastify/static": "npm:^6.12.0"
     "@monaco-editor/react": "npm:^4.6.0"
     "@swc/core": "npm:^1.3.100"
