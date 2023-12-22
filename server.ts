@@ -190,7 +190,7 @@ app
     );
 
     fastify.addHook("onRequest", (req, reply, next) => {
-      if (!req.url.startsWith("/queue/ui")) {
+      if (!req.url.startsWith("/queue/ui") || !process.env["TSDOCS_PASSWORD"]) {
         return next();
       }
       fastify.basicAuth(req, reply, function (error) {
