@@ -88,21 +88,29 @@ export class DocsCache {
   }
 
   static async setToDB(packageName: string, packageVersion: string, data) {
-    const docsPath = getDocsCachePath({
-      packageName,
-      packageVersion,
-      basePath: "",
-    });
+    try {
+      const docsPath = getDocsCachePath({
+        packageName,
+        packageVersion,
+        basePath: "",
+      });
 
-    await axios.put(
-      `https://cf-tsdocs-worker.binalgo.workers.dev/${docsPath}`,
-      data,
-      {
-        headers: {
-          "X-CF-WORKERS-KEY": process.env["X-CF-WORKERS-KEY"],
+      await axios.put(
+        `https://cf-tsdocs-worker.binalgo.workers.dev/${docsPath}`,
+        data,
+        {
+          headers: {
+            "X-CF-WORKERS-KEY": process.env["X-CF-WORKERS-KEY"],
+          },
         },
-      },
-    );
+      );
+    } catch (error) {
+      if (process.env["X-CF-WORKERS-KEY"]) {
+        throw error;
+      } else {
+        throw new Error("X-CF-WORKERS-KEY is not set");
+      }
+    }
   }
 
   static async set(packageName: string, packageVersion: string, typedoc) {
