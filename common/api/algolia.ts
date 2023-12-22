@@ -1,8 +1,9 @@
 import axios from "axios";
 import semver from "semver";
+import "dotenv/config";
 
-const ALGOLIA_APP_ID = "OFCNCOG2CU";
-const ALGOLIA_API_KEY = "1fb64b9fde1959aacbe82000a34dd717";
+const ALGOLIA_APP_ID = process.env.ALGOLIA_APP_ID;
+const ALGOLIA_API_KEY = process.env.ALGOLIA_API_KEY;
 
 export async function getPackageVersions(packageName) {
   const packageDetails = await axios.get(
