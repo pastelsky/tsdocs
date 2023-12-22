@@ -56,7 +56,7 @@ export default function SearchBox({
       getPackageSuggestion(inputValue, styles.searchHighlight).then(
         (suggestions) => {
           setSuggestions(suggestions);
-        }
+        },
       );
     },
     items: suggestions,
@@ -75,13 +75,19 @@ export default function SearchBox({
             placeholder="Search npm packages"
             className={styles.searchInput}
             spellCheck={false}
-            {...getInputProps()}
-            // prevent key hijack by typedoc search
-            // https://github.com/pastelsky/tsdocs/issues/2
-            onKeyDown={(...args) => {
-              args[0].stopPropagation();
-              return getInputProps().onKeyDown(...args);
-            }}
+            {...getInputProps({
+              onKeyDown: (event) => {
+                // prevent key hijack by typedoc search
+                // https://github.com/pastelsky/tsdocs/issues/2
+                event.stopPropagation();
+
+                // usable Home/End buttons
+                // https://github.com/pastelsky/tsdocs/issues/3
+                // reference: https://github.com/downshift-js/downshift#customizing-handlers
+                if (event.key == "Home" || event.key == "End")
+                  event.nativeEvent["preventDownshiftDefault"] = true;
+              },
+            })}
             autoFocus={autoFocus}
           />
           {showVersionDropdown && initialVersion && (
