@@ -1,0 +1,31 @@
+diff --git a/dist/lib/converter/types.js b/dist/lib/converter/types.js
+index fa58425b488ceaf858e4ccd9403dcd08e027dec3..168083ad848f1dbf8d7615d074ee3899225d92cb 100644
+--- a/dist/lib/converter/types.js
++++ b/dist/lib/converter/types.js
+@@ -229,7 +229,7 @@ const importType = {
+     convert(context, node) {
+         const name = node.qualifier?.getText() ?? "__module";
+         const symbol = context.checker.getSymbolAtLocation(node);
+-        (0, assert_1.default)(symbol, "Missing symbol when converting import type node");
++        (0, assert_1.default)(symbol, "Missing symbol when converting import type node at: " + node.getText());
+         return models_1.ReferenceType.createSymbolReference(context.resolveAliasedSymbol(symbol), context, name);
+     },
+     convertType(context, type) {
+diff --git a/dist/lib/output/plugins/JavascriptIndexPlugin.js b/dist/lib/output/plugins/JavascriptIndexPlugin.js
+index 0ee1c2b1656c17ef69c5f8af4f5e45b37182cc9c..17a5ac8a35c84dcb26991d05723ab4c8153d65f1 100644
+--- a/dist/lib/output/plugins/JavascriptIndexPlugin.js
++++ b/dist/lib/output/plugins/JavascriptIndexPlugin.js
+@@ -131,8 +131,11 @@ let JavascriptIndexPlugin = (() => {
+             const initialSearchResults = Object.values(event.project.reflections).filter((refl) => {
+                 return (refl instanceof models_1.DeclarationReflection &&
+                     refl.url &&
+-                    refl.name &&
+-                    !refl.flags.isExternal);
++                    refl.name 
++                    // Include externals in search because they include re-exports for e.g.
++                    // &&
++                    // !refl.flags.isExternal
++                );
+             });
+             const indexEvent = new events_1.IndexEvent(events_1.IndexEvent.PREPARE_INDEX, initialSearchResults);
+             this.owner.trigger(indexEvent);
