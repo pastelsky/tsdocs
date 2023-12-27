@@ -190,7 +190,10 @@ app
     );
 
     fastify.addHook("onRequest", (req, reply, next) => {
-      if (!req.url.startsWith("/queue/ui") || !process.env["TSDOCS_PASSWORD"]) {
+      if (
+        !req.url.startsWith("/queue/ui") ||
+        !process.env["BULL_MQ_DASHBOARD_KEY"]
+      ) {
         return next();
       }
       fastify.basicAuth(req, reply, function (error) {
