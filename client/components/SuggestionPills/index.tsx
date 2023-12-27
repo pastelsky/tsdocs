@@ -16,6 +16,7 @@ const allSuggestions = [
   "react-router-dom",
   "d3",
   "lodash-es",
+  "@angular/core",
 ];
 
 function getRandomElements(array: string[], n: number) {
