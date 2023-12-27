@@ -241,7 +241,7 @@ setInterval(function () {
     heapUsed: heapUsed / (1024 * 1024),
     rssUsed: rssUsed / (1024 * 1024),
   });
-  if (heapUsed > memoryLimit) {
+  if (rssUsed > memoryLimit) {
     console.log("Memory limit exceeded... writing heapdump");
     require("fs").mkdirSync("./heapdumps", { recursive: true });
     heapdump.writeSnapshot("./heapdumps/" + Date.now() + ".heapsnapshot");
