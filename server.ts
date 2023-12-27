@@ -229,16 +229,17 @@ app
   });
 
 // Set your memory limit (in bytes)
-const memoryLimit = 2 * 1024 * 1024 * 1024; // 2 GB
+const memoryLimit = 1 * 1024 * 1024 * 1024; // 1 GB
 
 let heapDumped = false;
 setInterval(function () {
   if (heapDumped) return;
 
-  const heapUsed = v8.getHeapStatistics().used_heap_size;
+  const heapUsed = process.memoryUsage().heapUsed;
   if (heapUsed > memoryLimit) {
     console.log("Memory limit exceeded... writing heapdump");
-    heapdump.writeSnapshot("./" + Date.now() + ".heapsnapshot");
+    require("fs").mkdirSync("./heapdumps", { recursive: true });
+    heapdump.writeSnapshot("./heapdumps/" + Date.now() + ".heapsnapshot");
     heapDumped = true;
   }
 }, 5000);
