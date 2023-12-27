@@ -358,8 +358,6 @@ async function convertAndWriteDocs(
   }
 }
 
-const packumentCache = new Map();
-
 /**
  * typedoc generates CSS / JS assets per package.
  * This is a problem because a change in CSS overrides or global CSS
@@ -465,6 +463,7 @@ export async function generateDocsForPackage(
     },
     {
       jobId: packageString + installPath,
+      attempts: 1,
     },
   );
 
@@ -480,10 +479,7 @@ export async function generateDocsForPackage(
   if (typeResolveResult) {
     typeResolutionType = "inbuilt";
   } else {
-    typeResolveResult = await resolveTypePathDefinitelyTyped(
-      packageJSON,
-      packumentCache,
-    );
+    typeResolveResult = await resolveTypePathDefinitelyTyped(packageJSON);
     typeResolutionType = "definitely-typed";
   }
 

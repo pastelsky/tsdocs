@@ -6,9 +6,10 @@ apps:
     name: "server"
     env:
       NODE_ENV: "production"
+      TS_NODE_TRANSPILE_ONLY: "true"
     interpreter: "node"
-    interpreter_args: "-r ts-node/register"
+    interpreter_args: "-r ts-node/register --trace-warnings"
     wait_ready: true
     exec_mode: "cluster"
     instances: 2
-    max_memory_restart: "1500M"
+    max_memory_restart: "500M"

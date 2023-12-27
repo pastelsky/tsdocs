@@ -118,6 +118,7 @@ export async function handlerAPIDocsTrigger(req, res) {
       {
         jobId: `${resolvedRequest.packageJSON.name}@${resolvedRequest.packageJSON.version}`,
         priority: 100,
+        attempts: 1,
       },
     );
 
@@ -300,6 +301,7 @@ export async function handlerDocsHTML(req, res) {
       {
         jobId: `${resolvedRequest.packageJSON.name}@${resolvedRequest.packageJSON.version}`,
         priority: 100,
+        attempts: 1,
       },
     );
     await generateJob.waitUntilFinished(generateDocsQueueEvents);

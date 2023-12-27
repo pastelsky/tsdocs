@@ -134,10 +134,23 @@ async function getPackageJSON(packagePath: string) {
   return JSON.parse(packageJSONContents);
 }
 
-export async function resolveTypePathDefinitelyTyped(
-  packageJSON: PackageJSON,
-  packumentCache,
-) {
+const packageVersionsCache = new LRUCache({
+  max: 100,
+  ttl: 1000 * 60 * 60,
+});
+
+async function getPackageVersions(packageName: string) {
+  if (packageVersionsCache.has(packageName)) {
+    return packageVersionsCache.get(packageName);
+  }
+  const { versions } = await pacote.packument(packageName, {
+    fullMetadata: false,
+  });
+  packageVersionsCache.set(packageName, versions);
+  return versions;
+}
+
+export async function resolveTypePathDefinitelyTyped(packageJSON: PackageJSON) {
   let typeVersions = [];
   if (!packageJSON.name) {
     throw new Error("No name!");
@@ -145,10 +158,7 @@ export async function resolveTypePathDefinitelyTyped(
   const typesPackageName = `@types/${packageJSON.name}`;
   const parsedPackageVersion = semver.parse(packageJSON.version);
   try {
-    const { versions } = await pacote.packument(typesPackageName, {
-      fullMetadata: false,
-      packumentCache,
-    });
+    const versions = await getPackageVersions(typesPackageName);
     typeVersions = Object.keys(versions);
   } catch (err) {
     logger.warn(

@@ -235,16 +235,11 @@ let heapDumped = false;
 setInterval(function () {
   if (heapDumped) return;
 
-  const rssUsed = process.memoryUsage().rss;
   const heapUsed = process.memoryUsage().heapUsed;
-  console.log({
-    heapUsed: heapUsed / (1024 * 1024),
-    rssUsed: rssUsed / (1024 * 1024),
-  });
-  if (rssUsed > memoryLimit) {
-    console.log("Memory limit exceeded... writing heapdump");
+  if (heapUsed > memoryLimit) {
     require("fs").mkdirSync("./heapdumps", { recursive: true });
     heapdump.writeSnapshot("./heapdumps/" + Date.now() + ".heapsnapshot");
+    console.log("Memory limit exceeded... writing heapdump");
     heapDumped = true;
   }
-}, 1000);
+}, 5000);

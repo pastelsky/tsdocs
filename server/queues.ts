@@ -18,12 +18,9 @@ type InstallWorkerOptions = {
   additionalTypePackages: string;
 };
 
-export const installQueue = new Queue<InstallWorkerOptions>(
-  "install-package-p1",
-  {
-    connection: redisOptions,
-  },
-);
+export const installQueue = new Queue<InstallWorkerOptions>("install-package", {
+  connection: redisOptions,
+});
 
 export const installQueueEvents = new QueueEvents(installQueue.name, {
   connection: redisOptions,
@@ -63,7 +60,7 @@ type GenerateDocsWorkerOptions = {
 };
 
 export const generateDocsQueue = new Queue<GenerateDocsWorkerOptions>(
-  "generate-docs-package-p1",
+  "generate-docs-package",
   {
     connection: redisOptions,
   },
@@ -82,7 +79,7 @@ const generateDocsWorker = new Worker<GenerateDocsWorkerOptions>(
   {
     concurrency: os.cpus().length - 1,
     connection: redisOptions,
-    useWorkerThreads: true,
+    useWorkerThreads: false,
     limiter: {
       max: 1,
       duration: 10000,
@@ -90,7 +87,7 @@ const generateDocsWorker = new Worker<GenerateDocsWorkerOptions>(
   },
 );
 
-const cleanupCacheQueue = new Queue("cleanup-cache-p1", {
+const cleanupCacheQueue = new Queue("cleanup-cache", {
   connection: redisOptions,
 });
 
@@ -109,7 +106,7 @@ const cleanupCacheWorker = new Worker(
   {
     concurrency: 1,
     connection: redisOptions,
-    useWorkerThreads: true,
+    useWorkerThreads: false,
   },
 );
 
@@ -119,7 +116,7 @@ export const allQueues = [...scheduledQueues, ...appQueues];
 const workers = [installWorker, generateDocsWorker, cleanupCacheWorker];
 
 async function shutdownWorkers(): Promise<void> {
-  await Promise.all(workers.map((worker) => installWorker.close()));
+  await Promise.all(workers.map((worker) => worker.close()));
   process.exit(0);
 }
 

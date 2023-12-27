@@ -73,7 +73,8 @@
     "vite": "^5.0.10",
     "vite-plugin-externalize-dependencies": "^0.11.0",
     "winston": "^3.11.0",
-    "winston-console-format": "^1.0.8"
+    "winston-console-format": "^1.0.8",
+    "workerpool": "^9.0.4"
   },
   "devDependencies": {
     "@fastify/basic-auth": "^5.1.1",

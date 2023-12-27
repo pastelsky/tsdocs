@@ -21,7 +21,8 @@ export default function VersionDropdown({
       setVersions(
         versions
           .filter((v) => semver.valid(v) && !semver.prerelease(v))
-          .map((v) => v.version),
+          .map((v) => v.version)
+          .sort(semver.compare),
       );
     });
   }, []);
