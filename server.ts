@@ -235,8 +235,12 @@ let heapDumped = false;
 setInterval(function () {
   if (heapDumped) return;
 
+  const rssUsed = process.memoryUsage().rss;
   const heapUsed = process.memoryUsage().heapUsed;
-  console.log({ heapUsed: heapUsed / (1024 * 1024) });
+  console.log({
+    heapUsed: heapUsed / (1024 * 1024),
+    rssUsed: rssUsed / (1024 * 1024),
+  });
   if (heapUsed > memoryLimit) {
     console.log("Memory limit exceeded... writing heapdump");
     require("fs").mkdirSync("./heapdumps", { recursive: true });
