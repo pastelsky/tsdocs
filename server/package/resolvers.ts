@@ -8,7 +8,6 @@ import InstallationUtils from "./installation.utils";
 import pacote from "pacote";
 import { LRUCache } from "lru-cache";
 import {
-  BuildError,
   PackageNotFoundError,
   PackageVersionMismatchError,
   ResolutionError,

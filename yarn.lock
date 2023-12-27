@@ -7884,7 +7884,7 @@ __metadata:
     ts-morph: "npm:^16.0.0"
     ts-node: "npm:^10.9.2"
     ts-node-dev: "npm:^2.0.0"
-    typedoc: "npm:^0.25.4"
+    typedoc: "patch:typedoc@npm%3A0.25.4#~/.yarn/patches/typedoc-npm-0.25.4-19cf6708e5.patch"
     typedoc-plugin-mdn-links: "npm:^3.1.9"
     typedoc-plugin-missing-exports: "npm:^2.1.0"
     typedoc-plugin-rename-defaults: "npm:^0.7.0"
@@ -8042,7 +8042,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:^0.25.4":
+"typedoc@npm:0.25.4":
   version: 0.25.4
   resolution: "typedoc@npm:0.25.4"
   dependencies:
@@ -8055,6 +8055,22 @@ __metadata:
   bin:
     typedoc: bin/typedoc
   checksum: 638f63d751ba86f1b0e04a303501b88b6e97ba093f82c3fa72a555c207e16fd316ec76c13f7d628e9ee26296f80fddc45b87d4b13714925c5e726047adb76d22
+  languageName: node
+  linkType: hard
+
+"typedoc@patch:typedoc@npm%3A0.25.4#~/.yarn/patches/typedoc-npm-0.25.4-19cf6708e5.patch":
+  version: 0.25.4
+  resolution: "typedoc@patch:typedoc@npm%3A0.25.4#~/.yarn/patches/typedoc-npm-0.25.4-19cf6708e5.patch::version=0.25.4&hash=09c587"
+  dependencies:
+    lunr: "npm:^2.3.9"
+    marked: "npm:^4.3.0"
+    minimatch: "npm:^9.0.3"
+    shiki: "npm:^0.14.1"
+  peerDependencies:
+    typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x || 5.3.x
+  bin:
+    typedoc: bin/typedoc
+  checksum: ae1dadaff6fdbff2942dafcfbd4b92c8b55eabb18e28fcca9ca29e74c26327f5b00cb56c744f1ff2a32ee59574e8ea403b75d8e2c3bc4c8cc81149aba7e52784
   languageName: node
   linkType: hard
 
