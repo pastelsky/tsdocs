@@ -154,7 +154,7 @@ export async function resolveTypePathDefinitelyTyped(packageJSON: PackageJSON) {
   if (!packageJSON.name) {
     throw new Error("No name!");
   }
-  const typesPackageName = `@types/${packageJSON.name}`;
+  const typesPackageName = `@types/${packageJSON.name.replace("/", "__")}`;
   const parsedPackageVersion = semver.parse(packageJSON.version);
   try {
     const versions = await getPackageVersions(typesPackageName);
