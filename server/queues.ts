@@ -15,6 +15,7 @@ type InstallWorkerOptions = {
   packageName: string;
   packageVersion: string;
   installPath: string;
+  additionalTypePackages: string;
 };
 
 export const installQueue = new Queue<InstallWorkerOptions>(
@@ -36,7 +37,10 @@ const installWorker = new Worker<InstallWorkerOptions>(
   installQueue.name,
   async (job: Job) => {
     await InstallationUtils.installPackage(
-      [`${job.data.packageName}@${job.data.packageVersion}`],
+      [
+        `${job.data.packageName}@${job.data.packageVersion}`,
+        job.data.additionalTypePackages,
+      ].filter(Boolean),
       job.data.installPath,
       { client: "npm" },
     );
@@ -122,6 +126,7 @@ async function shutdownWorkers(): Promise<void> {
 async function handleSignal() {
   try {
     await shutdownWorkers();
+    process.exit(0);
   } catch (err) {
     console.error("Error during shutdown", err);
     process.exit(1);
@@ -132,6 +137,12 @@ process.on("SIGTERM", handleSignal);
 process.on("SIGINT", handleSignal);
 process.on("SIGUSR2", handleSignal);
 process.on("SIGUSR1", handleSignal);
+process.on("beforeExit", handleSignal);
+
+const FINISHED_JOB_EXPIRY = 30 * 1000;
+const FAILED_JOB_EXPIRY =
+  process.env.NODE_ENV === "development" ? 1000 : 5 * 60 * 1000;
+const UNFINISHED_JOB_EXPIRY = 2 * 60 * 1000;
 
 setInterval(async () => {
   for (const queue of appQueues) {
@@ -146,8 +157,7 @@ setInterval(async () => {
     ]);
 
     for (let job of finishedJobs) {
-      // Older than 10 seconds
-      const finishedExpiryAgo = Date.now() - 30 * 1000;
+      const finishedExpiryAgo = Date.now() - FINISHED_JOB_EXPIRY;
       if (job.finishedOn < finishedExpiryAgo) {
         logger.warn(`Removing finished job ${job.id} because its too old`);
         await job.remove();
@@ -155,8 +165,7 @@ setInterval(async () => {
     }
 
     for (let job of failedJobs) {
-      // Older than 10 seconds
-      const failedExpiryAgo = Date.now() - 60 * 5 * 1000;
+      const failedExpiryAgo = Date.now() - FAILED_JOB_EXPIRY;
       if (job.finishedOn < failedExpiryAgo) {
         logger.warn(`Removing failed job ${job.id} because its too old`);
         await job.remove();
@@ -164,7 +173,7 @@ setInterval(async () => {
     }
 
     for (let job of unfinishedJobs.filter(Boolean)) {
-      const unfinishedExpiryAgo = Date.now() - 2 * 60 * 1000;
+      const unfinishedExpiryAgo = Date.now() - UNFINISHED_JOB_EXPIRY;
       if (job.timestamp < unfinishedExpiryAgo) {
         logger.warn(
           `Removing ${await job.getState()} job ${job.id} because its too old`,

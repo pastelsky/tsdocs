@@ -78,7 +78,7 @@ const InstallationUtils = {
       client = "npm",
       limitConcurrency,
       networkConcurrency,
-      installTimeout = 45000,
+      installTimeout = 600000,
     } = installOptions;
 
     if (client === "yarn") {
@@ -110,7 +110,6 @@ const InstallationUtils = {
         `cache=${path.join(tmpFolder, "cache")}`,
         "no-package-lock",
         "no-shrinkwrap",
-        "legacy-peer-deps",
         "no-optional",
         "no-bin-links",
         "progress false",

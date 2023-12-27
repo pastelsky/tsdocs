@@ -34,8 +34,8 @@ yarn-error.log*
 /docs-cache
 /docs
 
-.yarn/cache
-.yarn/install-state.gz
+**/.yarn/cache
+**/.yarn/install-state.gz
 .fleet
 
 docs-shared-assets

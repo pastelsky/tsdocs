@@ -447,12 +447,20 @@ export async function generateDocsForPackage(
   logger.info("Package will be installed in", { installPath });
 
   const packageString = `${packageJSON.name}@${packageJSON.version}`;
+  // A package can refer to `@types` packages in its own types. By default
+  // we don't install any dev dependencies, but we need to install these types
+  // for resolving the type tree
+
+  const devDependencyTypes = Object.entries(packageJSON.devDependencies || {})
+    .filter(([depName]) => depName.startsWith("@types/"))
+    .map(([depName, depVersion]) => `${depName}@${depVersion}`);
 
   const installJob = await installQueue.add(
     `install ${packageString}`,
     {
       packageName: packageJSON.name,
       packageVersion: packageJSON.version,
+      additionalTypePackages: devDependencyTypes.join(" "),
       installPath,
     },
     {
