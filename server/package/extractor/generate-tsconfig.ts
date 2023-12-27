@@ -3,7 +3,7 @@ import fs from "fs";
 
 const extractorTSConfig = {
   compilerOptions: {
-    target: "es5",
+    target: "es2020",
     lib: ["dom", "dom.iterable", "esnext"],
     allowJs: true,
     skipLibCheck: true,

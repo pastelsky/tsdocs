@@ -449,9 +449,14 @@ export async function generateDocsForPackage(
   // we don't install any dev dependencies, but we need to install these types
   // for resolving the type tree
 
-  const devDependencyTypes = Object.entries(packageJSON.devDependencies || {})
+  let devDependencyTypes = Object.entries(packageJSON.devDependencies || {})
     .filter(([depName]) => depName.startsWith("@types/"))
     .map(([depName, depVersion]) => `${depName}@${depVersion}`);
+
+  // Include node inbuilt types for packages targeting node
+  if (!devDependencyTypes.some((type) => type.startsWith("@types/node"))) {
+    devDependencyTypes.push("@types/node@20.10.5");
+  }
 
   const installJob = await installQueue.add(
     `install ${packageString}`,
