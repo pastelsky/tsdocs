@@ -9,6 +9,7 @@ import { InstallPackageOptions } from "./types";
 import { performance } from "perf_hooks";
 import { fileExists } from "next/dist/lib/file-exists";
 import logger from "../../common/logger";
+import "dotenv/config";
 
 // When operating on a local directory, force npm to copy directory structure
 // and all dependencies instead of just symlinking files
