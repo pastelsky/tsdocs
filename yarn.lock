@@ -8060,7 +8060,7 @@ __metadata:
 
 "typedoc@patch:typedoc@npm%3A0.25.4#~/.yarn/patches/typedoc-npm-0.25.4-19cf6708e5.patch":
   version: 0.25.4
-  resolution: "typedoc@patch:typedoc@npm%3A0.25.4#~/.yarn/patches/typedoc-npm-0.25.4-19cf6708e5.patch::version=0.25.4&hash=09c587"
+  resolution: "typedoc@patch:typedoc@npm%3A0.25.4#~/.yarn/patches/typedoc-npm-0.25.4-19cf6708e5.patch::version=0.25.4&hash=e2f5b0"
   dependencies:
     lunr: "npm:^2.3.9"
     marked: "npm:^4.3.0"
@@ -8070,7 +8070,7 @@ __metadata:
     typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x || 5.3.x
   bin:
     typedoc: bin/typedoc
-  checksum: ae1dadaff6fdbff2942dafcfbd4b92c8b55eabb18e28fcca9ca29e74c26327f5b00cb56c744f1ff2a32ee59574e8ea403b75d8e2c3bc4c8cc81149aba7e52784
+  checksum: 6dedfb1d62d6be775712806fc92f870f540960a740cce0d05e840c0672f850deeac72b0fdeb27de9234b3bf5517198680cfd2b3798ad636226d68170a77f0c8d
   languageName: node
   linkType: hard
 
