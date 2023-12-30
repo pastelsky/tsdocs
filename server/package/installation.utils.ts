@@ -149,7 +149,7 @@ const InstallationUtils = {
       process.exit(1);
     }
 
-    logger.info("install start %s", packageStrings.join(" "));
+    logger.info("install start %s using %s", packageStrings.join(" "), client);
 
     try {
       await exec(
