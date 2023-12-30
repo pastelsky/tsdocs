@@ -4,6 +4,12 @@ import InstallationUtils from "./package/installation.utils";
 import os from "os";
 import path from "path";
 import logger from "../common/logger";
+import { config } from "dotenv";
+import { InstallPackageOptions } from "./package/types";
+
+config({
+  path: path.join(__dirname, "../.env"),
+});
 
 const redisOptions = {
   port: 6379,
@@ -39,7 +45,11 @@ const installWorker = new Worker<InstallWorkerOptions>(
         job.data.additionalTypePackages,
       ].filter(Boolean),
       job.data.installPath,
-      { client: "npm" },
+      {
+        client:
+          (process.env.INSTALL_CLIENT as InstallPackageOptions["client"]) ||
+          "npm",
+      },
     );
   },
   {
