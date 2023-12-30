@@ -133,6 +133,17 @@ const InstallationUtils = {
       ];
 
       command = `pnpm add ${packageStrings.join(" ")} --${flags.join(" --")}`;
+    } else if (client === "bun") {
+      flags = [
+        "no-save",
+        "exact",
+        "no-progress",
+        `cache-dir ${path.join(tmpFolder, "cache")}`,
+      ];
+
+      command = `bun install ${packageStrings.join(" ")} --${flags.join(
+        " --",
+      )}`;
     } else {
       console.error("No valid client specified");
       process.exit(1);
@@ -153,7 +164,7 @@ const InstallationUtils = {
       logger.info("install finish %s", packageStrings.join(" "));
     } catch (err) {
       logger.error(err);
-      if (typeof err === "string" && err.includes("code E404")) {
+      if (typeof err === "string" && err.includes("404")) {
         throw new PackageNotFoundError(err);
       } else {
         throw new InstallError(err);

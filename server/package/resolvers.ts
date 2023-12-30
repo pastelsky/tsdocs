@@ -12,6 +12,7 @@ import {
   PackageVersionMismatchError,
   ResolutionError,
 } from "./CustomError";
+import { InstallPackageOptions } from "./types";
 
 const getTypeResolver = () =>
   resolve.create({
@@ -210,7 +211,11 @@ export async function resolveTypePathDefinitelyTyped(packageJSON: PackageJSON) {
   await InstallationUtils.installPackage(
     [`${typesPackageName}@${matchingTypeVersion}`],
     installPath,
-    { client: "npm" },
+    {
+      client:
+        (process.env.INSTALL_CLIENT as InstallPackageOptions["client"]) ||
+        "npm",
+    },
   );
 
   const typeResolveResult = await resolveTypePathInbuilt(
