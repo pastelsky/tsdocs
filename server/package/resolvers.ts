@@ -13,6 +13,7 @@ import {
   ResolutionError,
 } from "./CustomError";
 import { InstallPackageOptions } from "./types";
+import "dotenv/config";
 
 const getTypeResolver = () =>
   resolve.create({
