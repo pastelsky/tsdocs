@@ -116,6 +116,7 @@ app
           // (This function is slow because of file I/O, consider manually adding additional integrations instead)
           ...Sentry.autoDiscoverNodePerformanceMonitoringIntegrations(),
         ],
+        tracesSampleRate: 1.0,
       });
     }
 
