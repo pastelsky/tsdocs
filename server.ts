@@ -102,7 +102,7 @@ app
       serve: false,
     });
 
-    if (process.env.SENTERY_DSN) {
+    if (process.env.SENTRY_DSN) {
       logger.info("Sentry integration is enabled");
       fastify.register(require("@immobiliarelabs/fastify-sentry"), {
         dsn: process.env.SENTRY_DSN,
