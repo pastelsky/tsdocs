@@ -22,7 +22,7 @@ import fastifyBasicAuth from "@fastify/basic-auth";
 import "dotenv/config";
 import heapdump from "heapdump";
 
-import Sentry from "@sentry/node";
+import * as Sentry from "@sentry/node";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
