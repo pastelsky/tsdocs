@@ -6,6 +6,7 @@ const validTypeDocFragmentPaths: string[] = [
   "functions",
   "interfaces",
   "modules",
+  "modules.html",
   "types",
   "variables",
 ];
