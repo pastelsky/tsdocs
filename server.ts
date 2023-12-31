@@ -20,8 +20,9 @@ import {
 import logger from "./common/logger";
 import fastifyBasicAuth from "@fastify/basic-auth";
 import "dotenv/config";
-
 import heapdump from "heapdump";
+
+import Sentry from "@sentry/node";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
@@ -108,6 +109,13 @@ app
         dsn: process.env.SENTRY_DSN,
         environment: "production",
         release: "1.0.0",
+        integrations: [
+          // enable HTTP calls tracing
+          new Sentry.Integrations.Http({ tracing: true }),
+          // Automatically instrument Node.js libraries and frameworks
+          // (This function is slow because of file I/O, consider manually adding additional integrations instead)
+          ...Sentry.autoDiscoverNodePerformanceMonitoringIntegrations(),
+        ],
       });
     }
 
