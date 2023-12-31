@@ -23,8 +23,6 @@ import "dotenv/config";
 
 import heapdump from "heapdump";
 
-import v8 from "v8";
-
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
 const port = 3000;
@@ -103,6 +101,14 @@ app
       // },
       serve: false,
     });
+
+    if (process.env.SENTERY_DSN) {
+      fastify.register(require("@immobiliarelabs/fastify-sentry"), {
+        dsn: process.env.SENTRY_DSN,
+        environment: "production",
+        release: "1.0.0",
+      });
+    }
 
     fastify.register(fastifyBasicAuth, {
       validate(username, password, _req, reply, done) {
