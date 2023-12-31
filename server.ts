@@ -103,6 +103,7 @@ app
     });
 
     if (process.env.SENTERY_DSN) {
+      logger.info("Sentry integration is enabled");
       fastify.register(require("@immobiliarelabs/fastify-sentry"), {
         dsn: process.env.SENTRY_DSN,
         environment: "production",
