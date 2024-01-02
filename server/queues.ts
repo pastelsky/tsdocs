@@ -19,7 +19,8 @@ config({
 function killAllBullMQProcesses(processName: string) {
   if (process.env.NODE_ENV !== "production") return;
 
-  const command = `ps aux | grep '${processName}' | grep -v grep | awk '{print $2}' | xargs -r kill -9`;
+  const ageInSeconds = 30;
+  const command = `ps aux | grep '${processName}' | grep -v grep | awk '{split($10,a,":"); if (a[1] * 60 + a[2] > ${ageInSeconds}) print $2}' | xargs -r kill -9`;
   try {
     execSync(command);
     console.log(`Killed processes with name containing '${processName}'`);
