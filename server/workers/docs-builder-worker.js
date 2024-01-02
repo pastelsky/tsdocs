@@ -10,10 +10,17 @@ let workerActiveTime = Date.now();
 
 setInterval(() => {
   if (Date.now() - workerActiveTime > 1000 * 60 * 5) {
-    console.log("Worker remained idle for too long, dying.");
-    process.exit(1);
+    console.log(
+      "Worker remained idle for too long without doing much...",
+      process.pid,
+      " alive for ",
+      process.uptime(),
+      "s. Without work for ",
+      Date.now() - workerActiveTime,
+      "s",
+    );
   }
-});
+}, 5000);
 
 module.exports = async (job) => {
   try {
