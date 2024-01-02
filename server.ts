@@ -1,3 +1,4 @@
+import "./server/init-sentry.js";
 import fastifyStart from "fastify";
 import fastifyStatic from "@fastify/static";
 import next from "next";
@@ -21,8 +22,6 @@ import logger from "./common/logger";
 import fastifyBasicAuth from "@fastify/basic-auth";
 import "dotenv/config";
 import heapdump from "heapdump";
-
-import * as Sentry from "@sentry/node";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
@@ -102,23 +101,6 @@ app
       // },
       serve: false,
     });
-
-    if (process.env.SENTRY_DSN) {
-      logger.info("Sentry integration is enabled");
-      fastify.register(require("@immobiliarelabs/fastify-sentry"), {
-        dsn: process.env.SENTRY_DSN,
-        environment: "production",
-        release: "1.0.0",
-        integrations: [
-          // enable HTTP calls tracing
-          new Sentry.Integrations.Http({ tracing: true }),
-          // Automatically instrument Node.js libraries and frameworks
-          // (This function is slow because of file I/O, consider manually adding additional integrations instead)
-          ...Sentry.autoDiscoverNodePerformanceMonitoringIntegrations(),
-        ],
-        tracesSampleRate: 1.0,
-      });
-    }
 
     fastify.register(fastifyBasicAuth, {
       validate(username, password, _req, reply, done) {

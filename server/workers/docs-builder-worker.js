@@ -1,4 +1,5 @@
 require("esbuild-register/dist/node").register();
+require("../init-sentry");
 
 const {
   generateDocsForPackage,
