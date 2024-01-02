@@ -6,10 +6,29 @@ import path from "path";
 import logger from "../common/logger";
 import { config } from "dotenv";
 import { InstallPackageOptions } from "./package/types";
+import { execSync } from "node:child_process";
 
 config({
   path: path.join(__dirname, "../.env"),
 });
+
+/**
+ * When pm2 restarts the server, its possible for worker processes to be left behind.
+ * Here we force kill all such processes
+ */
+function killAllBullMQProcesses(processName: string) {
+  if (process.env.NODE_ENV !== "production") return;
+
+  const command = `ps aux | grep '${processName}' | grep -v grep | awk '{print $2}' | xargs -r kill -9`;
+  try {
+    execSync(command);
+    console.log(`Killed processes with name containing '${processName}'`);
+  } catch (error) {
+    console.error(`Error killing processes: ${error}`);
+  }
+}
+
+killAllBullMQProcesses("bullmq");
 
 const redisOptions = {
   port: 6379,
