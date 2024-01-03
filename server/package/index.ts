@@ -326,8 +326,8 @@ export async function handlerDocsHTML(req, res) {
         attempts: 1,
       },
     );
-    await generateJob.waitUntilFinished(generateDocsQueueEvents);
-    console.log("Now generation was finished");
+    const result = await generateJob.waitUntilFinished(generateDocsQueueEvents);
+    console.log("Now generation was finished" + result);
   }
 
   const resolvedPath = path.join(

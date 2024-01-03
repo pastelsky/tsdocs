@@ -38,6 +38,7 @@ function promiseTimeout(promise, timeout) {
 
 module.exports = async (job) => {
   try {
+    console.log("Starting job", job);
     workerActiveTime = Date.now();
     const results = await promiseTimeout(
       generateDocsForPackage(job.data.packageJSON, {
@@ -45,6 +46,8 @@ module.exports = async (job) => {
       }),
       120,
     );
+    console.log("Finished job", job);
+
     return results;
   } catch (err) {
     const isWorkerTimeout = err.message.includes("PROMISE_TIMEOUT");
