@@ -125,8 +125,8 @@ export async function handlerAPIDocsTrigger(req, res) {
   } else {
     logger.info(
       'Docs job for "%s" at version %s queued for building',
-      packageName,
-      packageVersion,
+      resolvedRequest.packageJSON,
+      resolvedRequest.packageVersion,
     );
     const generateJob = await generateDocsQueue.add(
       `generate docs ${packageName}`,
