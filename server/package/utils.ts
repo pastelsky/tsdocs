@@ -2,13 +2,6 @@ import fs from "fs";
 import path from "path";
 import sanitize from "sanitize-filename";
 
-export function checkFileExists(file) {
-  return fs.promises
-    .access(file, fs.constants.F_OK)
-    .then(() => true)
-    .catch(() => false);
-}
-
 export const docsVersion = "1.0";
 export const docsRootPath = path.join(
   __dirname,

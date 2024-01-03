@@ -2,7 +2,6 @@ import resolve, { CachedInputFileSystem } from "enhanced-resolve";
 import fs from "fs";
 import path from "path";
 import logger from "../../common/logger";
-import { checkFileExists } from "./utils";
 import semver from "semver";
 import InstallationUtils from "./installation.utils";
 import pacote from "pacote";
@@ -102,21 +101,21 @@ export async function resolveTypePathInbuilt(
               typePath: resolvedPath,
             });
           } else {
-            checkFileExists(definitionPath(resolvedPath)).then((exists) => {
-              if (exists) {
-                return resolve({
-                  packagePath: packagePath,
-                  packageName: packageJSON.name,
-                  typePath: definitionPath(resolvedPath),
-                });
-              } else {
-                logger.warn(
-                  "Failed to resolve inbuilt types for %s",
-                  packageJSON.name,
-                );
-                return resolve(null);
-              }
-            });
+            const exists = fs.existsSync(definitionPath(resolvedPath));
+
+            if (exists) {
+              return resolve({
+                packagePath: packagePath,
+                packageName: packageJSON.name,
+                typePath: definitionPath(resolvedPath),
+              });
+            } else {
+              logger.warn(
+                "Failed to resolve inbuilt types for %s",
+                packageJSON.name,
+              );
+              return resolve(null);
+            }
           }
         }
       },

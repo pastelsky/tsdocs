@@ -1,6 +1,6 @@
 import path from "path";
 
-import { checkFileExists, docsRootPath, getDocsPath } from "./utils";
+import { docsRootPath, getDocsPath } from "./utils";
 import { resolvePackageJSON } from "./resolvers";
 import semver from "semver";
 import { generateDocsQueue, generateDocsQueueEvents } from "../queues";
@@ -41,7 +41,7 @@ export async function resolveDocsRequest({
       packageVersion: packageVersion,
     });
 
-    if (await checkFileExists(path.join(docsPathDisk, "index.html")))
+    if (fs.existsSync(path.join(docsPathDisk, "index.html")))
       return {
         type: "hit",
         packageName,
@@ -70,7 +70,7 @@ export async function resolveDocsRequest({
     };
   }
 
-  if (await checkFileExists(path.join(docsPathDisk, "index.html"))) {
+  if (fs.existsSync(path.join(docsPathDisk, "index.html"))) {
     return {
       type: "hit",
       packageName: packageJSON.name,
