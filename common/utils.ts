@@ -1,3 +1,6 @@
+import validatePackageName from "validate-npm-package-name";
+import { PackageNotFoundError } from "../server/package/CustomError";
+
 const validTypeDocFragmentPaths: string[] = [
   "index",
   "index.html",
@@ -70,6 +73,16 @@ export function packageFromPath(pathFragments: string) {
       packageVersion = defaultPackageVersion;
       docsFragment = "";
     }
+  }
+
+  const packageValidity = validatePackageName(packageName);
+  if (
+    !packageValidity.validForNewPackages &&
+    !packageValidity.validForOldPackages
+  ) {
+    throw new PackageNotFoundError(
+      new Error(`Package name ${packageName} is invalid`),
+    );
   }
 
   return {
