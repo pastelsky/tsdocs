@@ -316,6 +316,7 @@ export async function handlerDocsHTML(req, res) {
   });
 
   if (resolvedRequest.type === "miss") {
+    console.log("Was a miss, so starting generation");
     const generateJob = await generateDocsQueue.add(
       `generate docs ${packageName}`,
       { packageJSON: resolvedRequest.packageJSON, force },
@@ -326,6 +327,7 @@ export async function handlerDocsHTML(req, res) {
       },
     );
     await generateJob.waitUntilFinished(generateDocsQueueEvents);
+    console.log("Now generation was finished");
   }
 
   const resolvedPath = path.join(
@@ -346,6 +348,8 @@ export async function handlerDocsHTML(req, res) {
 
   if (relativeDocsPath.endsWith(".html")) {
     // Cache HTML for 2 hours
+    console.log("Beginning preload extraction");
+
     res.header("Cache-Control", "public, max-age=3600");
     const linkHeaderContent = extractPreloadResources(resolvedAbsolutePath)
       .map(
