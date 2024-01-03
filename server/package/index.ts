@@ -123,6 +123,11 @@ export async function handlerAPIDocsTrigger(req, res) {
   if (resolvedRequest.type === "hit") {
     return res.send({ status: "success" });
   } else {
+    logger.info(
+      'Docs job for "%s" at version %s queued for building',
+      packageName,
+      packageVersion,
+    );
     const generateJob = await generateDocsQueue.add(
       `generate docs ${packageName}`,
       { packageJSON: resolvedRequest.packageJSON, force },
