@@ -36,6 +36,10 @@ function promiseTimeout(promise, ms = 10000) {
   );
 }
 
+process.on("unhandledRejection", (error) => {
+  throw error;
+});
+
 module.exports = async (job) => {
   try {
     logger.info(
