@@ -316,7 +316,7 @@ export async function handlerDocsHTML(req, res) {
       },
     );
     await generateJob.waitUntilFinished(generateDocsQueueEvents);
-  } else {
+  } else if (docsFragment.endsWith("index.html")) {
     logger.info(
       'Hit cache for "%s" at version %s since HTML already exists',
       packageName,

@@ -498,8 +498,6 @@ export async function generateDocsForPackage(
   }
 
   logger.info("Resolved type path", {
-    packageName: packageJSON.name,
-    packageVersion: packageJSON.version,
     installPath,
     resolveResult: typeResolveResult.typePath,
     typeResolutionType,

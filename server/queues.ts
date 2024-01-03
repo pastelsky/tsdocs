@@ -147,6 +147,7 @@ const workers = [installWorker, generateDocsWorker, cleanupCacheWorker];
 
 async function shutdownWorkers(): Promise<void> {
   await Promise.all(workers.map((worker) => worker.close()));
+  logger.warn("Shutdown all workers complete");
   process.exit(0);
 }
 

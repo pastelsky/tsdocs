@@ -13,3 +13,5 @@ apps:
     exec_mode: "cluster"
     instances: 2
     max_memory_restart: "500M"
+    kill_timeout: 5000
+    listen_timeout: 5000
