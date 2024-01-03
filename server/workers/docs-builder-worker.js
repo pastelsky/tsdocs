@@ -22,6 +22,22 @@ setInterval(() => {
 
     throw new Error("Worker exited because it was jobless for too long.");
   }
+
+  const gbInBytes = 1024 * 1024 * 1024;
+
+  if (process.memoryUsage.rss() > gbInBytes) {
+    console.log(
+      "Worker memory usage is too high, exiting...",
+      process.pid,
+      " alive for ",
+      process.uptime(),
+      "s. Memory usage ",
+      process.memoryUsage.rss(),
+      " bytes",
+    );
+
+    throw new Error("Worker exited because it was taking up too much memory.");
+  }
 }, 5000);
 
 function promiseTimeout(promise, ms = 10000) {
