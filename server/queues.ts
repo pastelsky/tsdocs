@@ -44,9 +44,12 @@ type InstallWorkerOptions = {
   additionalTypePackages: string;
 };
 
-export const installQueue = new Queue<InstallWorkerOptions>("install-package", {
-  connection: redisOptions,
-});
+export const installQueue = new Queue<InstallWorkerOptions>(
+  "install-package-q",
+  {
+    connection: redisOptions,
+  },
+);
 
 export const installQueueEvents = new QueueEvents(installQueue.name, {
   connection: redisOptions,
@@ -90,7 +93,7 @@ type GenerateDocsWorkerOptions = {
 };
 
 export const generateDocsQueue = new Queue<GenerateDocsWorkerOptions>(
-  "generate-docs-package",
+  "generate-docs-package-q",
   {
     connection: redisOptions,
   },
@@ -117,7 +120,7 @@ const generateDocsWorker = new Worker<GenerateDocsWorkerOptions>(
   },
 );
 
-const cleanupCacheQueue = new Queue("cleanup-cache", {
+const cleanupCacheQueue = new Queue("cleanup-cache-q", {
   connection: redisOptions,
 });
 
