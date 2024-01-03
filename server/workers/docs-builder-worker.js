@@ -20,8 +20,6 @@ setInterval(() => {
       "s",
     );
   }
-
-  process.exit(0);
 }, 5000);
 
 function promiseTimeout(promise, ms = 10000) {
@@ -41,9 +39,10 @@ function promiseTimeout(promise, ms = 10000) {
 module.exports = async (job) => {
   try {
     logger.info(
-      "Docs Worker: Starting to build in worker %s %s",
+      "Docs Worker: Starting to build in worker %s %s %o",
       job.data.packageJSON.name,
       job.data.packageJSON.version,
+      { pid: process.pid },
     );
     workerActiveTime = Date.now();
     const results = await promiseTimeout(
