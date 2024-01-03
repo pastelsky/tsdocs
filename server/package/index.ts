@@ -46,7 +46,6 @@ export async function resolveDocsRequest({
       packageVersion: packageVersion,
     });
 
-    console.log("Force true, returning miss");
     return {
       type: "miss",
       packageName: packageJSON.name,
@@ -63,8 +62,6 @@ export async function resolveDocsRequest({
     });
 
     if (fs.existsSync(path.join(docsPathDisk, "index.html"))) {
-      console.log("Index.html exists at docsPathDisk", docsPathDisk, "HIT");
-
       return {
         type: "hit",
         packageName,
@@ -85,11 +82,6 @@ export async function resolveDocsRequest({
   });
 
   if (fs.existsSync(path.join(docsPathDisk, "index.html"))) {
-    console.log(
-      "Index.html exists at docsPathDisk after resolving version",
-      docsPathDisk,
-    );
-
     return {
       type: "hit",
       packageName: packageJSON.name,
@@ -97,8 +89,6 @@ export async function resolveDocsRequest({
       docsPathDisk,
     };
   }
-
-  console.log("No hits, hence miss", docsPathDisk);
 
   return {
     type: "miss",
@@ -316,7 +306,6 @@ export async function handlerDocsHTML(req, res) {
   });
 
   if (resolvedRequest.type === "miss") {
-    console.log("Was a miss, so starting generation");
     const generateJob = await generateDocsQueue.add(
       `generate docs ${packageName}`,
       { packageJSON: resolvedRequest.packageJSON, force },
@@ -326,8 +315,13 @@ export async function handlerDocsHTML(req, res) {
         attempts: 1,
       },
     );
-    const result = await generateJob.waitUntilFinished(generateDocsQueueEvents);
-    console.log("Now generation was finished" + result);
+    await generateJob.waitUntilFinished(generateDocsQueueEvents);
+  } else {
+    logger.info(
+      'Hit cache for "%s" at version %s since HTML already exists',
+      packageName,
+      packageVersion,
+    );
   }
 
   const resolvedPath = path.join(
@@ -348,7 +342,6 @@ export async function handlerDocsHTML(req, res) {
 
   if (relativeDocsPath.endsWith(".html")) {
     // Cache HTML for 2 hours
-    console.log("Beginning preload extraction");
 
     res.header("Cache-Control", "public, max-age=3600");
     const linkHeaderContent = extractPreloadResources(resolvedAbsolutePath)

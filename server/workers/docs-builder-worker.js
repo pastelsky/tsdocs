@@ -38,7 +38,11 @@ function promiseTimeout(promise, ms = 10000) {
 
 module.exports = async (job) => {
   try {
-    console.log("Starting job", job);
+    logger.info(
+      "Docs Worker: Starting to build in worker %s %s",
+      job.data.packageJSON.name,
+      job.data.packageJSON.version,
+    );
     workerActiveTime = Date.now();
     const results = await promiseTimeout(
       generateDocsForPackage(job.data.packageJSON, {
@@ -46,13 +50,17 @@ module.exports = async (job) => {
       }),
       120 * 1000,
     );
-    console.log("Finished job", job);
-
     return results;
   } catch (err) {
-    const isWorkerTimeout = err.message.includes("PROMISE_TIMEOUT");
+    const isWorkerTimeout = err?.message?.includes("PROMISE_TIMEOUT");
 
     const errorCode = isWorkerTimeout ? "DOCS_BUILD_TIMEOUT" : err.message;
+
+    logger.error("Docs Worker: Error building docs %o", {
+      errorCode,
+      stack: err.stack,
+      message: err.message,
+    });
 
     job.updateData({
       ...job.data,

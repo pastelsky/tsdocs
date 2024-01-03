@@ -442,8 +442,6 @@ export async function generateDocsForPackage(
     packageJSON.version,
   );
 
-  logger.info("Package will be installed in", { installPath });
-
   const packageString = `${packageJSON.name}@${packageJSON.version}`;
   // A package can refer to `@types` packages in its own types. By default
   // we don't install any dev dependencies, but we need to install these types
@@ -457,6 +455,8 @@ export async function generateDocsForPackage(
   if (!devDependencyTypes.some((type) => type.startsWith("@types/node"))) {
     devDependencyTypes.push("@types/node@20.10.5");
   }
+
+  logger.info("Package will be installed in", { installPath });
 
   const installJob = await installQueue.add(
     `install ${packageString}`,
@@ -473,6 +473,8 @@ export async function generateDocsForPackage(
   );
 
   await installJob.waitUntilFinished(installQueueEvents);
+
+  logger.info("Package completed for:", { installPath });
 
   let typeResolveResult: TypeResolveResult,
     typeResolutionType: "inbuilt" | "definitely-typed";
