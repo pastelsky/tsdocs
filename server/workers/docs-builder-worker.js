@@ -23,7 +23,7 @@ setInterval(() => {
     throw new Error("Worker exited because it was jobless for too long.");
   }
 
-  const gbInBytes = 1024 * 1024 * 1024;
+  const gbInBytes = 1.5 * 1024 * 1024 * 1024;
 
   if (process.memoryUsage.rss() > gbInBytes) {
     console.log(
