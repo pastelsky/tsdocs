@@ -29,7 +29,7 @@ function killAllBullMQProcesses(processName: string) {
   }
 }
 
-killAllBullMQProcesses("bullmq");
+// killAllBullMQProcesses("bullmq");
 
 const redisOptions = {
   port: 6379,
