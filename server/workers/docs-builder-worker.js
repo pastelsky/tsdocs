@@ -22,18 +22,18 @@ setInterval(() => {
   }
 }, 5000);
 
-function promiseTimeout(promise, timeout) {
-  const timeoutPromise = new Promise((resolve, reject) => {
-    setTimeout(() => {
-      reject(
-        new Error(
-          `PROMISE_TIMEOUT: Promise timed out after ${timeout} seconds`,
-        ),
-      );
-    }, timeout);
+function promiseTimeout(promise, ms = 10000) {
+  let timeout = new Promise((resolve, reject) => {
+    let id = setTimeout(() => {
+      clearTimeout(id);
+      reject("Promise timed out in " + ms + "ms.");
+    }, ms);
   });
 
-  return Promise.race([timeoutPromise, timeout]);
+  return Promise.race([promise, timeout]).then(
+    (result) => result,
+    (error) => Promise.reject(error),
+  );
 }
 
 module.exports = async (job) => {
@@ -44,7 +44,7 @@ module.exports = async (job) => {
       generateDocsForPackage(job.data.packageJSON, {
         force: job.data.force,
       }),
-      120,
+      120 * 1000,
     );
     console.log("Finished job", job);
 
