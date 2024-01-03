@@ -474,8 +474,6 @@ export async function generateDocsForPackage(
 
   await installJob.waitUntilFinished(installQueueEvents);
 
-  logger.info("Package completed for:", { installPath });
-
   let typeResolveResult: TypeResolveResult,
     typeResolutionType: "inbuilt" | "definitely-typed";
 

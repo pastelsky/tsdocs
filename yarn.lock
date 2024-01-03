@@ -1869,6 +1869,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/validate-npm-package-name@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "@types/validate-npm-package-name@npm:4.0.2"
+  checksum: 3f35a3cc8ddd919b456843f36d55a4f1df5f03d5d9b6494b4d8f5f3b24e3f24a11c922772d9970a67f1249214da18c157776e9c6d2e72227799459849dfd9c76
+  languageName: node
+  linkType: hard
+
 "@types/webidl-conversions@npm:*":
   version: 7.0.3
   resolution: "@types/webidl-conversions@npm:7.0.3"
@@ -7935,6 +7942,7 @@ __metadata:
     "@types/react": "npm:18.2.45"
     "@types/regenerator-runtime": "npm:^0.13.5"
     "@types/semver": "npm:^7.5.6"
+    "@types/validate-npm-package-name": "npm:^4.0.2"
     "@vitejs/plugin-react": "npm:^4.2.1"
     animejs: "npm:^3.2.2"
     axios: "npm:^1.6.3"
@@ -7989,6 +7997,7 @@ __metadata:
     typedoc-plugin-missing-exports: "npm:^2.1.0"
     typedoc-plugin-rename-defaults: "npm:^0.7.0"
     typescript: "npm:5.3.3"
+    validate-npm-package-name: "npm:^5.0.0"
     vite: "npm:^5.0.10"
     vite-plugin-externalize-dependencies: "npm:^0.11.0"
     winston: "npm:^3.11.0"
