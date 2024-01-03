@@ -19,6 +19,8 @@ setInterval(() => {
       Date.now() - workerActiveTime,
       "s",
     );
+
+    throw new Error("Worker exited because it was jobless for too long.");
   }
 }, 5000);
 
