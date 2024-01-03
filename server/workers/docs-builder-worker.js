@@ -4,7 +4,7 @@ require("../init-sentry");
 const {
   generateDocsForPackage,
 } = require("../package/extractor/doc-generator");
-const logger = require("../../common/logger");
+const logger = require("../../common/logger").default;
 
 let workerActiveTime = Date.now();
 
