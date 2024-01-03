@@ -20,6 +20,8 @@ setInterval(() => {
       "s",
     );
   }
+
+  process.exit(0);
 }, 5000);
 
 function promiseTimeout(promise, ms = 10000) {
