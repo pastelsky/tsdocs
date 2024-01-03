@@ -35,19 +35,43 @@ export async function resolveDocsRequest({
       docsPathDisk: string;
     }
 > {
-  if (!force && semver.valid(packageVersion)) {
+  if (force) {
+    const packageJSON = await resolvePackageJSON({
+      packageName,
+      packageVersion,
+    });
+
     const docsPathDisk = getDocsPath({
       packageName: packageName,
       packageVersion: packageVersion,
     });
 
-    if (fs.existsSync(path.join(docsPathDisk, "index.html")))
+    console.log("Force true, returning miss");
+    return {
+      type: "miss",
+      packageName: packageJSON.name,
+      packageVersion: packageJSON.version,
+      packageJSON,
+      docsPathDisk,
+    };
+  }
+
+  if (semver.valid(packageVersion)) {
+    const docsPathDisk = getDocsPath({
+      packageName: packageName,
+      packageVersion: packageVersion,
+    });
+
+    if (fs.existsSync(path.join(docsPathDisk, "index.html"))) {
+      console.log("Index.html exists at docsPathDisk", docsPathDisk, "HIT");
+
       return {
         type: "hit",
         packageName,
         packageVersion,
         docsPathDisk,
       };
+    }
   }
 
   const packageJSON = await resolvePackageJSON({
@@ -60,17 +84,12 @@ export async function resolveDocsRequest({
     packageVersion: packageJSON.version,
   });
 
-  if (force) {
-    return {
-      type: "miss",
-      packageName: packageJSON.name,
-      packageVersion: packageJSON.version,
-      packageJSON,
-      docsPathDisk,
-    };
-  }
-
   if (fs.existsSync(path.join(docsPathDisk, "index.html"))) {
+    console.log(
+      "Index.html exists at docsPathDisk after resolving version",
+      docsPathDisk,
+    );
+
     return {
       type: "hit",
       packageName: packageJSON.name,
@@ -78,6 +97,8 @@ export async function resolveDocsRequest({
       docsPathDisk,
     };
   }
+
+  console.log("No hits, hence miss", docsPathDisk);
 
   return {
     type: "miss",
