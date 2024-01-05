@@ -2427,7 +2427,7 @@ __metadata:
 
 "bullmq@patch:bullmq@npm%3A4.15.4#~/.yarn/patches/bullmq-npm-4.15.4-b55917dd70.patch":
   version: 4.15.4
-  resolution: "bullmq@patch:bullmq@npm%3A4.15.4#~/.yarn/patches/bullmq-npm-4.15.4-b55917dd70.patch::version=4.15.4&hash=746f55"
+  resolution: "bullmq@patch:bullmq@npm%3A4.15.4#~/.yarn/patches/bullmq-npm-4.15.4-b55917dd70.patch::version=4.15.4&hash=ec6fcf"
   dependencies:
     cron-parser: "npm:^4.6.0"
     glob: "npm:^8.0.3"
@@ -2438,7 +2438,7 @@ __metadata:
     semver: "npm:^7.5.4"
     tslib: "npm:^2.0.0"
     uuid: "npm:^9.0.0"
-  checksum: 4054f30fbda1a2a0e34f4f92e87c2623b7a7f4fb414aaa69bdb3db6a4cb8703e934835f9e875e0bed33a4b529e2d165d50d1b8ccfe001134fe4280ac93e23b51
+  checksum: de58e6519951b5583ea616d6623869da51792cc1d89bf46f1d4ddbf7c64127f6e2f657f28be251a26bce85153f3bc201351c65b51763d9e7cdf5fb1cefb2932a
   languageName: node
   linkType: hard
 
