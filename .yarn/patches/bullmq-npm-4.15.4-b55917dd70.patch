@@ -1,15 +1,21 @@
 diff --git a/dist/cjs/classes/child.js b/dist/cjs/classes/child.js
-index d47d14bbf5762a2412b842e183fa7ada157df7c8..4ac02ffcbbf9ee6214e0f1067228a74e342558ef 100644
+index d47d14bbf5762a2412b842e183fa7ada157df7c8..fddbe1383a7fb8172d58c6d2dfc7367f0e185195 100644
 --- a/dist/cjs/classes/child.js
 +++ b/dist/cjs/classes/child.js
-@@ -74,6 +74,10 @@ class Child extends events_1.EventEmitter {
+@@ -74,11 +74,15 @@ class Child extends events_1.EventEmitter {
                  stdin: true,
                  stdout: true,
                  stderr: true,
-+                // Limit worker memory to not blow up the machine
++                 // Limit worker memory to not blow up the machine
 +                resourceLimits: {
 +                    maxOldGenerationSizeMb: 1500,
 +                }
              });
          }
          else {
+             this.childProcess = parent = (0, child_process_1.fork)(this.mainFile, [], {
+-                execArgv,
++                execArgv: [...execArgv, '--max-old-space-size=1200'],
+                 stdio: 'pipe',
+             });
+         }
