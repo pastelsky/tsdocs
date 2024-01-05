@@ -1,4 +1,5 @@
 const Sentry = require("@sentry/node");
+const { ProfilingIntegration } = require("@sentry/profiling-node");
 const path = require("path");
 
 require("dotenv").config({
@@ -18,7 +19,9 @@ if (process.env.SENTRY_DSN) {
       new Sentry.Integrations.LocalVariables(),
       new Sentry.Integrations.Undici(),
       new Sentry.Integrations.RequestData(),
+      new ProfilingIntegration(),
     ],
     tracesSampleRate: 1.0,
+    profilesSampleRate: 1.0,
   });
 }
