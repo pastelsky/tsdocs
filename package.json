@@ -25,7 +25,7 @@
     "@types/validate-npm-package-name": "^4.0.2",
     "@vitejs/plugin-react": "^4.2.1",
     "animejs": "^3.2.2",
-    "axios": "^1.6.3",
+    "axios": "^1.6.4",
     "bullmq": "patch:bullmq@npm%3A4.15.4#~/.yarn/patches/bullmq-npm-4.15.4-b55917dd70.patch",
     "chalk": "^4.1.2",
     "check-disk-space": "^3.4.0",
