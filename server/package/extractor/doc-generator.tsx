@@ -29,6 +29,7 @@ import fs from "fs";
 import { transformCommonJSExport } from "./augment-extract";
 import { DocsCache } from "../DocsCache";
 import { installQueue, installQueueEvents } from "../../queues";
+import { getRepoInfo, getTagsData } from "../../../common/api/repoDetails";
 
 class CustomThemeContext extends DefaultThemeRenderContext {
   _originalNav: any;
@@ -303,6 +304,139 @@ function setupApp(app: td.Application) {
   app.renderer.defineTheme("tsdocs", CustomTheme);
 }
 
+async function getMatchingTag(userName = "", repoName = "", version = "") {
+  const allTags = await getTagsData(userName, repoName);
+  const tag = allTags?.find(r => new RegExp(`((${repoName})|(v))[\\\-\\\_\\\@]{0,1}(${version})`, "i").test(r.ref))
+  return tag?.ref?.replace("refs/tags/", "");
+}
+
+const getReplacementText = (
+  key: string,
+  userName: string,
+  repoName: string,
+  tag: string,
+  packageRoot: string,
+  regexLeftSection = "",
+  regexRightSection = "",
+  type = "blob",
+) => {
+  if (
+    new RegExp(
+      `^[${regexLeftSection}](((\\\.\\\/){0,1}|(\\\.\\\.\\\/)+|([\\\w-_]+\\\/)+)([\\\w-_]+\\\/)*[\\\w-_]+\\\.[\\\w]{1,5})[${regexRightSection}]$`,
+    ).test(key)
+  ) {
+    let replacement = key.replace(
+      new RegExp(`(^[${regexLeftSection}]|[${regexRightSection}]$)`, "g"),
+      "",
+    );
+    if (replacement.startsWith("./")) {
+      replacement = replacement.replace(
+        /^\.\//,
+        `https://github.com/${userName}/${repoName}/${type}/${tag}/${packageRoot}${
+          packageRoot ? "/" : ""
+        }`,
+      );
+      return replacement;
+    }
+    if (/^(\.\.\/)+/.test(replacement)) {
+      const [relativePath] = Array.from(/^(\.\.\/)+/.exec(replacement));
+      let root = path.normalize(`${packageRoot}/${relativePath}`);
+      root = root === ".\\" ? "" : root;
+      replacement = replacement.replace(
+        /^(\.\.\/)+/,
+        `https://github.com/${userName}/${repoName}/${type}/${tag}/${root}`,
+      );
+      return replacement;
+    }
+    if (/^([\w-_]+\/)+/.test(replacement)) {
+      replacement = `https://github.com/${userName}/${repoName}/${type}/${tag}/${replacement}`;
+      return replacement;
+    }
+
+    return null;
+  }
+  return null;
+};
+
+async function updateReadmeRelativeLinks(
+  obj: td.Models.ProjectReflection,
+  packageName = "",
+  packageVersion = "",
+) {
+  try {
+    const relativeUrlRegex = new RegExp(
+      /(["|'|\()](((\.\/){0,1}|(\.\.\/)+|([\w-_]+\/)+)([\w-_]+\/)*[\w-_]+\.[\w]{1,5})["|'|\)])/g,
+    );
+    let { readme } = obj;
+    const matcheDict = new Map<string, string>();
+
+    const {
+      userName = "",
+      repoName = "",
+      directory: packageRoot = "",
+      domain,
+    } = (await getRepoInfo(packageName, packageVersion)) || {};
+
+    if (domain === "github.com" && userName && repoName) {
+      const tag = await getMatchingTag(userName, repoName, packageVersion);
+
+      for (let i = 0; i < readme.length; i++) {
+        const element = readme[i];
+        if (element.kind === "text") {
+          const matches = element?.text?.match(relativeUrlRegex) ?? [];
+          for (let key of matches) {
+            let replacement = getReplacementText(
+              key,
+              userName,
+              repoName,
+              tag || "HEAD",
+              packageRoot,
+              "\\\"|\\'",
+              "\\\"|\\'",
+              "raw",
+            );
+            if (replacement) matcheDict.set(key, replacement);
+            replacement = getReplacementText(
+              key,
+              userName,
+              repoName,
+              tag || "HEAD",
+              packageRoot,
+              "\\(",
+              "\\)",
+              "blob",
+            );
+            if (replacement) matcheDict.set(key, replacement);
+          }
+          for (let [stringToReplace, replaceWith] of matcheDict.entries()) {
+            element.text = element?.text?.replaceAll(
+              stringToReplace,
+              stringToReplace.startsWith("(")
+                ? `(${replaceWith})`
+                : stringToReplace.startsWith('"')
+                  ? `"${replaceWith}"`
+                  : `'${replaceWith}'`,
+            );
+          }
+          readme[i] = element;
+        }
+      }
+      obj["readme"] = readme;
+    } else {
+      logger.info(
+        `Couldn't generate relative links because of the following reasons:\n1. the repository is not in 'github.com'\n2. 'userName' is empty\n3. 'repoName' is empty`,
+        domain,
+        userName,
+        repoName,
+      );
+    }
+  } catch (error) {
+    logger.error(
+      `Couldn't convert relative links: ${error.message}`,
+      error.stack,
+    );
+  }
+}
 function updateSourceFilename(obj) {
   for (let key in obj) {
     if (typeof obj[key] === "object" && obj[key] !== null) {
@@ -338,6 +472,11 @@ async function convertAndWriteDocs(
     throw new Error("Compile error");
   }
 
+  await updateReadmeRelativeLinks(
+    projectReflection,
+    packageName,
+    packageVersion,
+  );
   convertTimer.done({ message: `created typedoc for ${packageName}` });
 
   let serializedReflection = new Serializer().projectToObject(
