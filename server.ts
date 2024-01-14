@@ -3,6 +3,7 @@ import fastifyStart from "fastify";
 import fastifyStatic from "@fastify/static";
 import next from "next";
 import {
+  handlerAPIDocsBuild,
   handlerAPIDocsPoll,
   handlerAPIDocsTrigger,
   handlerDocsHTML,
@@ -144,6 +145,12 @@ app
       method: "POST",
       url: `/api/docs/trigger/*`,
       handler: handlerAPIDocsTrigger,
+    });
+
+    fastify.route({
+      method: "POST",
+      url: `/api/docs/build/*`,
+      handler: handlerAPIDocsBuild,
     });
 
     fastify.setErrorHandler(function (error, request, reply) {
