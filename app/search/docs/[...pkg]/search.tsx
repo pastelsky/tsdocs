@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import styles from "./search.module.scss";
-import { getPackageDocs } from "../../../../client/api/get-package-docs";
+import {
+  getPackageDocs,
+  getPackageDocsSync,
+} from "../../../../client/api/get-package-docs";
 import Placeholder from "../../../../client/components/Placeholder";
 import Header from "../../../../client/components/Header";
 import Footer from "../../../../client/components/Footer";
@@ -42,7 +45,7 @@ export default function Search({ pkg }) {
 
   const searchAndRedirect = async (pkg: string, version: string | null) => {
     try {
-      const result = await getPackageDocs(pkg, version, { force });
+      const result = await getPackageDocsSync(pkg, version, { force });
 
       if (result.status === "success") {
         window.location.href = `/docs/${

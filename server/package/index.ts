@@ -11,6 +11,19 @@ import { parse } from "node-html-parser";
 import fs from "fs";
 import * as stackTraceParser from "stacktrace-parser";
 import { LRUCache } from "lru-cache";
+import workerpool from "workerpool";
+
+const docsWorkerPool = workerpool.pool(
+  path.join(__dirname, "..", "workers", "docs-builder-worker-pool.js"),
+  {
+    workerType: "process",
+    maxQueueSize: 10,
+    forkOpts: {
+      stdio: "inherit",
+    },
+    forkArgs: ["--max-old-space-size=1024"],
+  },
+);
 
 export async function resolveDocsRequest({
   packageName,
@@ -143,6 +156,55 @@ export async function handlerAPIDocsTrigger(req, res) {
       jobId: generateJob.id,
       pollInterval: 2000,
     });
+  }
+}
+
+export async function handlerAPIDocsBuild(req, res) {
+  const paramsPath = req.params["*"];
+  const { force } = req.query;
+  const routePackageDetails = packageFromPath(paramsPath);
+  logger.info("routePackageDetails is ", routePackageDetails);
+
+  if (!routePackageDetails) {
+    logger.error("Route package details not found in " + paramsPath);
+    return res.status(404).send({
+      name: PackageNotFoundError.name,
+    });
+  }
+
+  const { packageName, packageVersion, docsFragment } = routePackageDetails;
+
+  const resolvedRequest = await resolveDocsRequest({
+    packageName,
+    packageVersion,
+    force,
+  });
+
+  if (resolvedRequest.type === "hit") {
+    return res.send({ status: "success" });
+  } else {
+    logger.info(
+      'Docs job for "%s" at version %s queued for building',
+      resolvedRequest.packageName,
+      resolvedRequest.packageVersion,
+    );
+
+    try {
+      await docsWorkerPool.exec("generateDocs", [
+        { packageJSON: resolvedRequest.packageJSON, force },
+      ]);
+
+      return res.send({ status: "success" });
+    } catch (err) {
+      return res.send({
+        status: "failed",
+        errorCode: err.message,
+        errorMessage: err.originalError?.message,
+        errorStack:
+          cleanStackTrace(err.originalError?.stacktrace) ||
+          err.originalError?.message,
+      });
+    }
   }
 }
 
