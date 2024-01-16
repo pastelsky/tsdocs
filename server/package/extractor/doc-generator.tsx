@@ -14,7 +14,7 @@ import {
 import path from "path";
 import logger from "../../../common/logger";
 import { generateTSConfig } from "./generate-tsconfig";
-import { docsVersion, getDocsPath } from "../utils";
+import { docsVersion, getDocsPath, getPackageRepoInfo, getTagsData } from "../utils";
 import { TypeDefinitionResolveError, TypeDocBuildError } from "../CustomError";
 import InstallationUtils from "../installation.utils";
 import { JSX, Serializer } from "typedoc";
@@ -29,7 +29,6 @@ import fs from "fs";
 import { transformCommonJSExport } from "./augment-extract";
 import { DocsCache } from "../DocsCache";
 import { installQueue, installQueueEvents } from "../../queues";
-import { getRepoInfo, getTagsData } from "../../../common/api/repoDetails";
 
 class CustomThemeContext extends DefaultThemeRenderContext {
   _originalNav: any;
@@ -306,7 +305,7 @@ function setupApp(app: td.Application) {
 
 async function getMatchingTag(userName = "", repoName = "", version = "") {
   const allTags = await getTagsData(userName, repoName);
-  const tag = allTags?.find(r => new RegExp(`((${repoName})|(v))[\\\-\\\_\\\@]{0,1}(${version})`, "i").test(r.ref))
+  const tag = allTags?.find(r => new RegExp(`((${repoName})|(v))[\\\-\\\_\\\@]{0,1}(${version})$`, "i").test(r.ref))
   return tag?.ref?.replace("refs/tags/", "");
 }
 
@@ -375,7 +374,7 @@ async function updateReadmeRelativeLinks(
       repoName = "",
       directory: packageRoot = "",
       domain,
-    } = (await getRepoInfo(packageName, packageVersion)) || {};
+    } = (await getPackageRepoInfo(packageName, packageVersion)) || {};
 
     if (domain === "github.com" && userName && repoName) {
       const tag = await getMatchingTag(userName, repoName, packageVersion);
