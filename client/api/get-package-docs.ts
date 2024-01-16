@@ -16,6 +16,17 @@ type TriggerAPIResponse =
       pollInterval: number;
     };
 
+type BuildAPIResponse =
+  | {
+      status: "success";
+    }
+  | {
+      status: "failed";
+      errorCode: string;
+      errorMessage: string;
+      errorStack: string;
+    };
+
 type PollAPIResponse =
   | {
       status: "success" | "queued";
@@ -204,5 +215,56 @@ export async function getPackageDocs(
     errorCode: "UNEXPECTED_DOCS_TRIGGER_STATUS",
     errorMessage:
       "Failed because the polling API returned an unknown status: " + status,
+  };
+}
+
+export async function getPackageDocsSync(
+  pkg: string,
+  pkgVersion: string,
+  { force }: { force: boolean },
+): Promise<PackageDocsResponse> {
+  let triggerResponse: AxiosResponse<BuildAPIResponse> = null;
+  const withForce = force ? "?force=true" : "";
+
+  try {
+    triggerResponse = await axios.post(
+      `/api/docs/build/${
+        pkgVersion ? [pkg, pkgVersion].join("/") : pkg
+      }${withForce}`,
+    );
+  } catch (err) {
+    let errorMessage = "";
+    if (err.response?.data) {
+      return {
+        status: "failure",
+        errorCode: err.response.data.name,
+        errorMessage: getErrorMessage(err.response.data),
+      };
+    }
+
+    return {
+      status: "failure",
+      errorCode: "UNEXPECTED_DOCS_TRIGGER_FAILURE",
+      errorMessage: errorMessage,
+    };
+  }
+
+  let triggerResult = triggerResponse.data;
+  const { status } = triggerResult;
+
+  if (status === "success") {
+    return {
+      status: "success",
+    };
+  }
+
+  return {
+    status: "failure",
+    errorCode: triggerResult.errorCode,
+    errorMessage: getErrorMessage({
+      name: triggerResult.errorCode,
+      extra: triggerResult.errorMessage,
+      errorStack: triggerResult.errorStack,
+    }),
   };
 }
