@@ -14,7 +14,12 @@ import {
 import path from "path";
 import logger from "../../../common/logger";
 import { generateTSConfig } from "./generate-tsconfig";
-import { docsVersion, getDocsPath, getPackageRepoInfo, getTagsData } from "../utils";
+import {
+  docsVersion,
+  getDocsPath,
+  getPackageRepoInfo,
+  getTagsData,
+} from "../utils";
 import { TypeDefinitionResolveError, TypeDocBuildError } from "../CustomError";
 import InstallationUtils from "../installation.utils";
 import { JSX, Serializer } from "typedoc";
@@ -305,7 +310,11 @@ function setupApp(app: td.Application) {
 
 async function getMatchingTag(userName = "", repoName = "", version = "") {
   const allTags = await getTagsData(userName, repoName);
-  const tag = allTags?.find(r => new RegExp(`((${repoName})|(v))[\\\-\\\_\\\@]{0,1}(${version})$`, "i").test(r.ref))
+  const tag = allTags?.find((r) =>
+    new RegExp(`((${repoName})|(v))[\\-\\_\\@]{0,1}(${version})$`, "i").test(
+      r.ref,
+    ),
+  );
   return tag?.ref?.replace("refs/tags/", "");
 }
 
@@ -315,34 +324,26 @@ const getReplacementText = (
   repoName: string,
   tag: string,
   packageRoot: string,
+  relPathSection = "",
   regexLeftSection = "",
   regexRightSection = "",
   type = "blob",
 ) => {
   if (
     new RegExp(
-      `^[${regexLeftSection}](((\\\.\\\/){0,1}|(\\\.\\\.\\\/)+|([\\\w-_]+\\\/)+)([\\\w-_]+\\\/)*[\\\w-_]+\\\.[\\\w]{1,5})[${regexRightSection}]$`,
+      `^[${regexLeftSection}]${relPathSection}[${regexRightSection}]$`,
     ).test(key)
   ) {
     let replacement = key.replace(
       new RegExp(`(^[${regexLeftSection}]|[${regexRightSection}]$)`, "g"),
       "",
     );
-    if (replacement.startsWith("./")) {
-      replacement = replacement.replace(
-        /^\.\//,
-        `https://github.com/${userName}/${repoName}/${type}/${tag}/${packageRoot}${
-          packageRoot ? "/" : ""
-        }`,
-      );
-      return replacement;
-    }
-    if (/^(\.\.\/)+/.test(replacement)) {
-      const [relativePath] = Array.from(/^(\.\.\/)+/.exec(replacement));
+    if (/^(\.\/){0,1}(\.\.\/)*/.test(replacement)) {
+      const [relativePath] = Array.from(/^(\.\/){0,1}(\.\.\/)*/.exec(replacement));
       let root = path.normalize(`${packageRoot}/${relativePath}`);
-      root = root === ".\\" ? "" : root;
+      root = (root === "\.\/" || root === "\/") ? "" : root?.replaceAll("\\", "/");
       replacement = replacement.replace(
-        /^(\.\.\/)+/,
+        /^(\.\/){0,1}(\.\.\/)*/,
         `https://github.com/${userName}/${repoName}/${type}/${tag}/${root}`,
       );
       return replacement;
@@ -363,8 +364,11 @@ async function updateReadmeRelativeLinks(
   packageVersion = "",
 ) {
   try {
+    // supported relative path (Eg: ./file.md, ./../file.md , ../../file.md, file.md, path/file.md)
+    const relPathRegex = `(((\\.\\/){0,1}(\\.\\.\\/)*|([\\w-_]+\\/)+)([\\w-_]+\\/)*[\\w-_]+\\.[\\w]{1,5})`;
     const relativeUrlRegex = new RegExp(
-      /(["|'|\()](((\.\/){0,1}|(\.\.\/)+|([\w-_]+\/)+)([\w-_]+\/)*[\w-_]+\.[\w]{1,5})["|'|\)])/g,
+      `([\\"|\\'|\\(]${relPathRegex}[\\"|\\'|\\)])`,
+      "g",
     );
     let { readme } = obj;
     const matcheDict = new Map<string, string>();
@@ -390,8 +394,9 @@ async function updateReadmeRelativeLinks(
               repoName,
               tag || "HEAD",
               packageRoot,
-              "\\\"|\\'",
-              "\\\"|\\'",
+              relPathRegex,
+              `\\"|\\'`,
+              `\\"|\\'`,
               "raw",
             );
             if (replacement) matcheDict.set(key, replacement);
@@ -401,8 +406,9 @@ async function updateReadmeRelativeLinks(
               repoName,
               tag || "HEAD",
               packageRoot,
-              "\\(",
-              "\\)",
+              relPathRegex,
+              `\\(`,
+              `\\)`,
               "blob",
             );
             if (replacement) matcheDict.set(key, replacement);
