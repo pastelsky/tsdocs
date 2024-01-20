@@ -11,7 +11,12 @@
 @mixin selectedLabel {
   background: var(--selected-bg);
   color: var(--selected-text-color);
+
   text-shadow: 0 0 2px var(--primary-bg-color);
+
+  @media (prefers-color-scheme: dark) {
+    text-shadow: none;
+  }
 }
 
 @mixin hideScrollbar {
