@@ -68,6 +68,12 @@ export const viewport: Viewport = {
 function Layout({ children }) {
   return (
     <html className={jetbrainsMono.className}>
+      <link
+        rel="search"
+        type="application/opensearchdescription+xml"
+        href="/opensearch.xml"
+        title="tsdocs"
+      />
       <body suppressHydrationWarning={true}>{children}</body>
     </html>
   );
