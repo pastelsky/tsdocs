@@ -11,7 +11,7 @@ import {
   PackageVersionMismatchError,
   ResolutionError,
 } from "./CustomError";
-import { InstallPackageOptions } from "./types";
+import { CachedPackageInfo, InstallPackageOptions, VersionData } from "./types";
 import { config } from "dotenv";
 
 config({
@@ -138,7 +138,7 @@ async function getPackageJSON(packagePath: string) {
   return JSON.parse(packageJSONContents);
 }
 
-const packageVersionsCache = new LRUCache({
+const packageVersionsCache = new LRUCache<string, Record<string, VersionData>>({
   max: 100,
   ttl: 1000 * 60 * 60,
 });
@@ -147,7 +147,7 @@ async function getPackageVersions(packageName: string) {
   if (packageVersionsCache.has(packageName)) {
     return packageVersionsCache.get(packageName);
   }
-  const { versions } = await pacote.packument(packageName, {
+  const { versions }: CachedPackageInfo = await pacote.packument(packageName, {
     fullMetadata: false,
   });
   packageVersionsCache.set(packageName, versions);
