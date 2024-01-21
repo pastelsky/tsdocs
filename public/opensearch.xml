@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
+    <ShortName>tsdocs</ShortName>
+    <Description>show tsdocs for</Description>
+    <Image width="32" height="32" type="image/png">https://tsdocs.dev/favicon-32x32.png</Image>
+    <Tags>tsdocs</Tags>
+    <Url type="text/html" template="https://tsdocs.dev/search/docs/{searchTerms}"/>
+    <Url type="application/opensearchdescription+xml" rel="self" template="https://tsdocs.dev/opensearch.xml" />
+    <moz:SearchForm>https://tsdocs.dev</moz:SearchForm>
+</OpenSearchDescription>
