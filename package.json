@@ -75,7 +75,7 @@
     "typedoc-plugin-missing-exports": "^2.1.0",
     "typedoc-plugin-rename-defaults": "^0.7.0",
     "validate-npm-package-name": "^5.0.0",
-    "vite": "^5.0.10",
+    "vite": "^5.0.12",
     "vite-plugin-externalize-dependencies": "^0.11.0",
     "winston": "^3.11.0",
     "winston-console-format": "^1.0.8",
