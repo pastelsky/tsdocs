@@ -24,11 +24,25 @@ import {
   TypeResolveResult,
   resolveTypePathDefinitelyTyped,
   resolveTypePathInbuilt,
+  resolvePackageJSON,
 } from "../resolvers";
 import fs from "fs";
 import { transformCommonJSExport } from "./augment-extract";
 import { DocsCache } from "../DocsCache";
-import { installQueue, installQueueEvents } from "../../queues";
+import { InstallPackageOptions } from "../types";
+import workerpool from "workerpool";
+
+const installWorkerPool = workerpool.pool(
+  path.join(__dirname, "..", "..", "workers", "install-worker-pool.js"),
+  {
+    workerType: "process",
+    maxQueueSize: 5,
+    forkOpts: {
+      stdio: "inherit",
+    },
+    forkArgs: ["--max-old-space-size=1024"],
+  },
+);
 
 class CustomThemeContext extends DefaultThemeRenderContext {
   _originalNav: any;
@@ -398,6 +412,106 @@ async function copyAndSymlinkAssets(assetsDir: string, assetFiles: string[]) {
   await Promise.all(promises);
 }
 
+export async function buildPackageFn({
+  packageName,
+  packageVersion,
+}: {
+  packageName: string;
+  packageVersion: string;
+}) {
+  const packageJSON = await resolvePackageJSON({
+    packageName,
+    packageVersion,
+  });
+
+  const installPath = await InstallationUtils.preparePath(
+    packageJSON.name,
+    packageJSON.version,
+  );
+
+  const packageString = `${packageJSON.name}@${packageJSON.version}`;
+  // A package can refer to `@types` packages in its own types. By default
+  // we don't install any dev dependencies, but we need to install these types
+  // for resolving the type tree
+
+  let devDependencyTypes = Object.entries(packageJSON.devDependencies || {})
+    .filter(([depName]) => depName.startsWith("@types/"))
+    .map(([depName, depVersion]) => `${depName}@${depVersion}`);
+
+  // Include node inbuilt types for packages targeting node
+  if (!devDependencyTypes.some((type) => type.startsWith("@types/node"))) {
+    devDependencyTypes.push("@types/node@20.10.5");
+  }
+
+  logger.info("Package will be installed in", { installPath });
+
+  await InstallationUtils.installPackage(
+    [`${packageName}@${packageVersion}`, ...devDependencyTypes].filter(Boolean),
+    installPath,
+    {
+      client:
+        (process.env.INSTALL_CLIENT as InstallPackageOptions["client"]) ||
+        "npm",
+    },
+  );
+
+  let typeResolveResult: TypeResolveResult,
+    typeResolutionType: "inbuilt" | "definitely-typed";
+
+  typeResolveResult = await resolveTypePathInbuilt(
+    installPath,
+    packageJSON.name,
+  );
+  if (typeResolveResult) {
+    typeResolutionType = "inbuilt";
+  } else {
+    typeResolveResult = await resolveTypePathDefinitelyTyped(packageJSON);
+    typeResolutionType = "definitely-typed";
+  }
+
+  if (!typeResolveResult) {
+    throw new TypeDefinitionResolveError({
+      packageName: packageJSON.name,
+      packageVersion: packageJSON.version,
+    });
+  }
+
+  logger.info("Resolved type path", {
+    installPath,
+    resolveResult: typeResolveResult.typePath,
+    typeResolutionType,
+  });
+
+  const tsConfigPath = await generateTSConfig(typeResolveResult.packagePath);
+
+  let app: td.Application | undefined;
+
+  try {
+    let typesEntryContent = await fs.promises.readFile(
+      typeResolveResult.typePath,
+      "utf-8",
+    );
+    typesEntryContent = transformCommonJSExport(typesEntryContent);
+    await fs.promises.writeFile(typeResolveResult.typePath, typesEntryContent);
+
+    const docsPath = getDocsPath({
+      packageName: packageJSON.name,
+      packageVersion: packageJSON.version,
+    });
+
+    app = await td.Application.bootstrapWithPlugins({
+      ...generateDocsDefaultOptions(packageJSON.name),
+      plugin: ["typedoc-plugin-mdn-links", "typedoc-plugin-rename-defaults"],
+      tsconfig: tsConfigPath,
+      entryPoints: [typeResolveResult.typePath],
+      out: docsPath,
+      basePath: typeResolveResult.packagePath,
+    });
+
+    setupApp(app);
+  } catch (err) {}
+}
+
 export async function generateDocsForPackage(
   packageJSON,
   { force },
@@ -458,21 +572,14 @@ export async function generateDocsForPackage(
 
   logger.info("Package will be installed in", { installPath });
 
-  const installJob = await installQueue.add(
-    `install ${packageString}`,
+  const installJob = await installWorkerPool.exec("installPackage", [
     {
       packageName: packageJSON.name,
       packageVersion: packageJSON.version,
       additionalTypePackages: devDependencyTypes.join(" "),
       installPath,
     },
-    {
-      jobId: packageString + installPath,
-      attempts: 1,
-    },
-  );
-
-  await installJob.waitUntilFinished(installQueueEvents);
+  ]);
 
   let typeResolveResult: TypeResolveResult,
     typeResolutionType: "inbuilt" | "definitely-typed";
