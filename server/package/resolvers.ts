@@ -74,6 +74,14 @@ export async function resolveTypePathInbuilt(
 
   const packageJSON = await getPackageJSON(packagePath);
 
+  if (typeof packageJSON.main == "string" && packageJSON.main.endsWith(".ts")) {
+    return {
+      packagePath: packagePath,
+      packageName: packageName,
+      typePath: path.resolve(packagePath, packageJSON.main),
+    };
+  }
+
   if (packageJSON.types) {
     return {
       packagePath: packagePath,
