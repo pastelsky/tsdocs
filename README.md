@@ -31,3 +31,7 @@ https://typedoc.org/guides/doccomments/
 1. Ensure that you have [redis installed](https://redis.io/docs/install/install-redis/) and running locally
 2. Run `yarn install`
 3. Run `yarn dev`
+
+## Sponsors
+
+<a href="https://www.digitalocean.com?utm_medium=opensource&utm_source=tsdocs"><img width="100px" src="https://upload.wikimedia.org/wikipedia/commons/f/ff/DigitalOcean_logo.svg"/></a>
