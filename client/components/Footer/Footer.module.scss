@@ -72,3 +72,16 @@
   align-items: center;
   justify-content: center;
 }
+
+.footerHostingCredits {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.footerSponsorLogo {
+  margin-top: 1rem;
+}
