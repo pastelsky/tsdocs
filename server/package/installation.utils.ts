@@ -135,13 +135,17 @@ const InstallationUtils = {
 
       command = `pnpm add ${packageStrings.join(" ")} --${flags.join(" --")}`;
     } else if (client === "bun") {
+      const cacheDir = path.join(tmpFolder, "cache")
       flags = [
         "no-save",
         "exact",
         "no-progress",
-        `cache-dir ${path.join(tmpFolder, "cache")}`,
+        `cache-dir ${cacheDir}`,
       ];
 
+      // Set the BUN_INSTALL_CACHE_DIR environment variable
+      // See https://github.com/oven-sh/bun/issues/6423
+      process.env.BUN_INSTALL_CACHE_DIR = cacheDir;
       command = `bun install ${packageStrings.join(" ")} --${flags.join(
         " --",
       )}`;
