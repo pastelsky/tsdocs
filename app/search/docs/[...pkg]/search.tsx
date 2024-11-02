@@ -9,7 +9,7 @@ import {
 import Placeholder from "../../../../client/components/Placeholder";
 import Header from "../../../../client/components/Header";
 import Footer from "../../../../client/components/Footer";
-import { packageFromPath } from "../../../../common/utils";
+import { packageFromPath } from "../../../../common/client-utils";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 

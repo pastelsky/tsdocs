@@ -4,6 +4,13 @@ import react from "@vitejs/plugin-react";
 import externalize from "vite-plugin-externalize-dependencies";
 
 export default defineConfig({
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: "modern-compiler", // or "modern"
+      },
+    },
+  },
   plugins: [
     react(),
     // externalize({ externals: ["react", "react-dom"] })

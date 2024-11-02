@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import Header from "../Header";
 import "../../../app/global.css";
 import styles from "./HeaderIframe.module.scss";
-import { packageFromPath } from "../../../common/utils";
+import { packageFromPath } from "../../../common/client-utils";
 import ToggleMenu from "../ToggleMenu";
 import "../../scripts/global-docs-main";
 

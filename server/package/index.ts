@@ -4,7 +4,7 @@ import { docsRootPath, getDocsPath } from "./utils";
 import { resolvePackageJSON } from "./resolvers";
 import semver from "semver";
 import { generateDocsQueue, generateDocsQueueEvents } from "../queues";
-import { packageFromPath } from "../../common/utils";
+import { packageFromPath } from "../../common/client-utils";
 import { PackageNotFoundError } from "./CustomError";
 import logger from "../../common/logger";
 import { parse } from "node-html-parser";

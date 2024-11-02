@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import sanitize from "sanitize-filename";
 
-export const docsVersion = "1.0";
+export const docsVersion = "1.1";
 export const docsRootPath = path.join(
   __dirname,
   "..",

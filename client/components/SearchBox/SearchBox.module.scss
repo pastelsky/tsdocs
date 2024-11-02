@@ -1,4 +1,4 @@
-@import "../../../stylesheets/mixins";
+@use "../../../stylesheets/mixins";
 
 .searchBox {
   z-index: 1;
@@ -50,8 +50,8 @@
 
 .searchSuggestionMenu,
 .versionMenu {
-  @include popup;
-  @include hideScrollbar;
+  @include mixins.popup;
+  @include mixins.hideScrollbar;
   border-radius: 0 0 4px 4px;
   list-style: none;
   box-shadow: var(--shadow-overlay);
@@ -154,7 +154,7 @@
   font-weight: var(--font-weight-bold);
 
   .searchHighlight {
-    @include selectedLabel;
+    @include mixins.selectedLabel;
   }
 }
 

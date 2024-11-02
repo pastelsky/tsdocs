@@ -1,8 +1,8 @@
 diff --git a/dist/lib/converter/types.js b/dist/lib/converter/types.js
-index fa58425b488ceaf858e4ccd9403dcd08e027dec3..168083ad848f1dbf8d7615d074ee3899225d92cb 100644
+index cc8beef359a61cfc0e05c73db612eca27173e3aa..8e1b9242853f0af19e2bbaff676061d838cc9da2 100644
 --- a/dist/lib/converter/types.js
 +++ b/dist/lib/converter/types.js
-@@ -229,7 +229,7 @@ const importType = {
+@@ -239,7 +239,7 @@ const importType = {
      convert(context, node) {
          const name = node.qualifier?.getText() ?? "__module";
          const symbol = context.checker.getSymbolAtLocation(node);
@@ -12,20 +12,20 @@ index fa58425b488ceaf858e4ccd9403dcd08e027dec3..168083ad848f1dbf8d7615d074ee3899
      },
      convertType(context, type) {
 diff --git a/dist/lib/output/plugins/JavascriptIndexPlugin.js b/dist/lib/output/plugins/JavascriptIndexPlugin.js
-index 0ee1c2b1656c17ef69c5f8af4f5e45b37182cc9c..17a5ac8a35c84dcb26991d05723ab4c8153d65f1 100644
+index 1b5dcd6abe289f6c5a0df6237c5ec2799137b02b..a88ff111f4c3614e8cb0ff040631160ceda045fb 100644
 --- a/dist/lib/output/plugins/JavascriptIndexPlugin.js
 +++ b/dist/lib/output/plugins/JavascriptIndexPlugin.js
-@@ -131,8 +131,11 @@ let JavascriptIndexPlugin = (() => {
-             const initialSearchResults = Object.values(event.project.reflections).filter((refl) => {
-                 return (refl instanceof models_1.DeclarationReflection &&
+@@ -122,8 +122,11 @@ let JavascriptIndexPlugin = (() => {
+                 return ((refl instanceof models_1.DeclarationReflection ||
+                     refl instanceof models_1.DocumentReflection) &&
                      refl.url &&
 -                    refl.name &&
 -                    !refl.flags.isExternal);
-+                    refl.name 
++                    refl.name
 +                    // Include externals in search because they include re-exports for e.g.
-+                    // &&
++                   // &&
 +                    // !refl.flags.isExternal
-+                );
++                    );
              });
-             const indexEvent = new events_1.IndexEvent(events_1.IndexEvent.PREPARE_INDEX, initialSearchResults);
-             this.owner.trigger(indexEvent);
+             const indexEvent = new events_1.IndexEvent(initialSearchResults);
+             this.owner.trigger(events_1.IndexEvent.PREPARE_INDEX, indexEvent);

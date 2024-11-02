@@ -10,6 +10,7 @@ import {
   ReflectionSymbolId,
   Renderer,
   TypeDocOptions,
+  FileRegistry
 } from "typedoc";
 import path from "path";
 import logger from "../../../common/logger";
@@ -117,7 +118,6 @@ const generateDocsDefaultOptions = (
   disableSources: true,
   disableGit: true,
   //  readme: "none",
-  stripYamlFrontmatter: true,
   pretty: true,
   emit: "docs",
   githubPages: false,
@@ -542,6 +542,8 @@ export async function generateDocsForPackage(
     const projectFromCache = new td.Deserializer(cachedApp).reviveProject(
       typeDocFromCache,
       `${packageJSON.name} — ${packageJSON.version}`,
+      process.cwd(),
+      new FileRegistry(),
     );
 
     await generateDocsHTML(cachedApp, projectFromCache);

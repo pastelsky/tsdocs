@@ -22,8 +22,8 @@ import {
 import logger from "./common/logger";
 import fastifyBasicAuth from "@fastify/basic-auth";
 import "dotenv/config";
-import heapdump from "heapdump";
 
+console.log("Starting server...");
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
 const port = 3000;
@@ -41,7 +41,7 @@ const fastify = fastifyStart({
   },
 });
 
-const app = next({ dev, hostname, port });
+const app = next({ dev, hostname, port, turbopack: true });
 const nextHandle = app.getRequestHandler();
 
 const queueDashboardAdapter = new FastifyAdapter();
@@ -53,6 +53,7 @@ createBullBoard({
 
 queueDashboardAdapter.setBasePath("/queue/ui");
 
+console.log("Preparing next app...");
 app
   .prepare()
   .then(() => {
@@ -207,7 +208,7 @@ app
         }
 
         if (error.name === "FastifyError") {
-          reply.redirect(401, "/queue/ui");
+          reply.redirect("/queue/ui", 401);
         }
         reply.code(500).send({ error: error.message });
       });
@@ -232,19 +233,3 @@ app
   .catch((err) => {
     console.log("Failed to prepare app with error: ", err);
   });
-
-// Set your memory limit (in bytes)
-const memoryLimit = 1 * 1024 * 1024 * 1024; // 1 GB
-
-let heapDumped = false;
-setInterval(function () {
-  if (heapDumped) return;
-
-  const heapUsed = process.memoryUsage().heapUsed;
-  if (heapUsed > memoryLimit) {
-    require("fs").mkdirSync("./heapdumps", { recursive: true });
-    heapdump.writeSnapshot("./heapdumps/" + Date.now() + ".heapsnapshot");
-    console.log("Memory limit exceeded... writing heapdump");
-    heapDumped = true;
-  }
-}, 5000);
