@@ -11,6 +11,10 @@ import {
   Reflection,
   DeclarationReflection,
   ProjectReflection,
+  ParameterType,
+  JSX,
+	Renderer,
+  ContainerReflection,
 } from "typedoc";
 import fs from "fs";
 import logger from "../../../common/logger";
@@ -18,10 +22,19 @@ import logger from "../../../common/logger";
 declare module "typedoc" {
   export interface TypeDocOptionMap {
     internalModule: string;
+    collapseInternalModule: boolean;
+    placeInternalsInOwningModule: boolean;
   }
+
+  export interface Reflection {
+		[InternalModule]?: boolean;
+	}
 }
 
 let hasMonkeyPatched = false;
+const InternalModule = Symbol();
+const ModuleLike: ReflectionKind =
+	ReflectionKind.Project | ReflectionKind.Module;
 
 // https://github.com/Gerrit0/typedoc-plugin-missing-exports/issues/12
 function patchEscapedName(escapedName: string) {
@@ -40,15 +53,20 @@ function patchEscapedName(escapedName: string) {
   return escapedName;
 }
 
+const HOOK_JS = `
+<script>for (let k in localStorage) if (k.includes("tsd-accordion-") && k.includes(NAME)) localStorage.setItem(k, "false");</script>
+`.trim();
+
 export function load(app: Application) {
   app["missingExportsPlugin"] = {
     activeReflection: undefined,
     referencedSymbols: new Map<ts.Program, Set<ts.Symbol>>(),
-    symbolToActiveRefl: new Map<ts.Symbol, Reflection>(),
+    symbolToOwningModule: new Map<ts.Symbol, Reflection>(),
     knownPrograms: new Map<Reflection, ts.Program>(),
   };
 
   function discoverMissingExports(
+    owningModule: Reflection,
     context: Context,
     program: ts.Program,
   ): Set<ts.Symbol> {
@@ -69,8 +87,8 @@ export function load(app: Application) {
       if (context.project.getReflectionFromSymbol(s)) {
         referenced.delete(s);
       } else if (
-        app["missingExportsPlugin"].symbolToActiveRefl.get(s) !==
-        app["missingExportsPlugin"].activeReflection
+        app["missingExportsPlugin"].symbolToOwningModule.get(s) !==
+        owningModule
       ) {
         referenced.delete(s);
         ownedByOther.add(s);
@@ -87,6 +105,14 @@ export function load(app: Application) {
     context,
     name,
   ) {
+    const owningModule = getOwningModule(context);
+		console.log(
+			"Created ref",
+			symbol.name,
+			"owner",
+			owningModule.getFullName(),
+		);
+
     if (!app["missingExportsPlugin"].activeReflection) {
       logger.error(
         "active reflection has not been set for " + symbol.escapedName,
@@ -96,9 +122,9 @@ export function load(app: Application) {
     const set = app["missingExportsPlugin"].referencedSymbols.get(
       context.program,
     );
-    app["missingExportsPlugin"].symbolToActiveRefl.set(
+    app["missingExportsPlugin"].symbolToOwningModule.set(
       symbol,
-      app["missingExportsPlugin"].activeReflection,
+      app["missingExportsPlugin"].owningModule,
     );
     if (set) {
       set.add(symbol);
@@ -120,15 +146,46 @@ export function load(app: Application) {
   };
 
   app.options.addDeclaration({
-    name: "internalModule",
-    help: "Define the name of the module that internal symbols which are not exported should be placed into.",
-    defaultValue: "<internal>",
-  });
+		name: "internalModule",
+		help: "[typedoc-plugin-missing-exports] Define the name of the module that internal symbols which are not exported should be placed into.",
+		defaultValue: "<internal>",
+	});
+
+  app.options.addDeclaration({
+		name: "placeInternalsInOwningModule",
+		help: "[typedoc-plugin-missing-exports] If set internal symbols will not be placed into an internals module, but directly into the module which references them.",
+		defaultValue: false,
+		type: ParameterType.Boolean,
+	});
+	app.converter.on(Converter.EVENT_BEGIN, () => {
+		if (
+			app.options.getValue("placeInternalsInOwningModule") &&
+			app.options.isSet("internalModule")
+		) {
+			app.logger.warn(
+				`[typedoc-plugin-missing-exports] Both placeInternalsInOwningModule and internalModule are set, the internalModule option will be ignored.`,
+			);
+		}
+	});
+
+  app.options.addDeclaration({
+		name: "collapseInternalModule",
+		help: "[typedoc-plugin-missing-exports] Include JS in the page to collapse all <internal> entries in the navigation on page load.",
+		defaultValue: false,
+		type: ParameterType.Boolean,
+	});
 
   app.converter.on(
     Converter.EVENT_CREATE_DECLARATION,
     (context: Context, refl: Reflection) => {
-      if (refl.kindOf(ReflectionKind.Project | ReflectionKind.Module)) {
+      	// TypeDoc 0.26 doesn't fire EVENT_CREATE_DECLARATION for project
+			// We need to ensure the project has a program attached to it, so
+			// do that when the first declaration is created.
+			if (app["missingExportsPlugin"].knownPrograms.size === 0) {
+				app["missingExportsPlugin"].knownPrograms.set(refl.project, context.program);
+			}
+
+      if (refl.kindOf(ModuleLike)) {
         app["missingExportsPlugin"].knownPrograms.set(refl, context.program);
         app["missingExportsPlugin"].activeReflection = refl;
       }
@@ -148,15 +205,31 @@ export function load(app: Application) {
       }
 
       for (const mod of modules) {
-        app["missingExportsPlugin"].activeReflection = mod;
-
         const program = app["missingExportsPlugin"].knownPrograms.get(mod);
         if (!program) continue;
-        let missing = discoverMissingExports(context, program);
-        if (!missing || !missing.size) continue;
+        let missing = discoverMissingExports(mod, context, program);
+				if (!missing.size) continue;
 
         // Nasty hack here that will almost certainly break in future TypeDoc versions.
         context.setActiveProgram(program);
+
+        let internalContext: Context;
+				if (app.options.getValue("placeInternalsInOwningModule")) {
+					internalContext = context.withScope(mod);
+				} else {
+					const internalNs = context
+						.withScope(mod)
+						.createDeclarationReflection(
+							ReflectionKind.Module,
+							void 0,
+							void 0,
+							app.options.getValue("internalModule"),
+						);
+					internalNs[InternalModule] = true;
+					context.finalizeDeclarationReflection(internalNs);
+					internalContext = context.withScope(internalNs);
+				}
+
 
         const internalNs = context
           .withScope(mod)
@@ -166,8 +239,8 @@ export function load(app: Application) {
             void 0,
             context.converter.application.options.getValue("internalModule"),
           );
+          internalNs[InternalModule] = true;
         context.finalizeDeclarationReflection(internalNs);
-        const internalContext = context.withScope(internalNs);
 
         // Keep track of which symbols we've tried to convert. If they don't get converted
         // when calling convertSymbol, then the user has excluded them somehow, don't go into
@@ -182,7 +255,7 @@ export function load(app: Application) {
             tried.add(s);
           }
 
-          missing = discoverMissingExports(context, program);
+          missing = discoverMissingExports(mod, context, program);
           for (const s of tried) {
             missing.delete(s);
           }
@@ -198,15 +271,41 @@ export function load(app: Application) {
 
       app["missingExportsPlugin"].knownPrograms.clear();
       app["missingExportsPlugin"].referencedSymbols.clear();
-      app["missingExportsPlugin"].symbolToActiveRefl.clear();
+      app["missingExportsPlugin"].symbolToOwningModule.clear();
+
     },
-    void 0,
     1e9,
   );
+
+  app.renderer.on(Renderer.EVENT_BEGIN, () => {
+		if (app.options.getValue("collapseInternalModule")) {
+			app.renderer.hooks.on("head.end", () =>
+				JSX.createElement(JSX.Raw, {
+					html: HOOK_JS.replace(
+						"NAME",
+						JSON.stringify(app.options.getValue("internalModule")),
+					),
+				}),
+			);
+		}
+	});
 }
 
 // open a new file for appending
 const fd = fs.openSync("./accessed", "a");
+
+function getOwningModule(context: Context): Reflection {
+	let refl = context.scope;
+	// Go up the reflection hierarchy until we get to a module
+	while (!refl.kindOf(ModuleLike)) {
+		refl = refl.parent!;
+	}
+	// The <internal> module cannot be an owning module.
+	if (refl[InternalModule]) {
+		return refl.parent!;
+	}
+	return refl;
+}
 
 // append string to file
 function shouldConvertSymbol(

@@ -27,5 +27,5 @@
       "module": "commonjs"
     }
   },
-  "exclude": ["node_modules", "archived"]
+  "exclude": ["node_modules", "archived", "cloud-function"]
 }
